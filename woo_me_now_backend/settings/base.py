@@ -51,6 +51,11 @@ INSTALLED_APPS = [
     "modelcluster",
     "taggit",
 
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+
     "apps.main"
 
 ]
@@ -213,5 +218,5 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_DIST": "SIDECAR",
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
-    "PREPROCESSING_HOOKS": ["WooMeNow.schema.custom_preprocessing_hook"],
+    "PREPROCESSING_HOOKS": ["woo_me_now_backend.schema.custom_preprocessing_hook"],
 }
