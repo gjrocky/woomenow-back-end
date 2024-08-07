@@ -5,4 +5,5 @@ app_name = "api"
 
 urlpatterns = [
     path("auth/", obtain_auth_token),
+    path("pages/", include("api.pages.urls")),
 ]
