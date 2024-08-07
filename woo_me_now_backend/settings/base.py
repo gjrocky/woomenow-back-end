@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import environ
-
+from corsheaders.defaults import default_headers
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
-
+    "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_spectacular",
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -220,3 +221,9 @@ SPECTACULAR_SETTINGS = {
     "REDOC_DIST": "SIDECAR",
     "PREPROCESSING_HOOKS": ["woo_me_now_backend.schema.custom_preprocessing_hook"],
 }
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-conn-origin',
+]

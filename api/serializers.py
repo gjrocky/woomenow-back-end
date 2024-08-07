@@ -45,3 +45,7 @@ class ImageSerializer(serializers.Serializer):
 
 class Pagination(PageNumberPagination):
     page_size = 9
+
+
+def get_text(text):
+    return BeautifulSoup(text, "html.parser").get_text()
