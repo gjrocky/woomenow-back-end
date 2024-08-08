@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
+from wagtail.blocks import StreamValue
 from wagtail.images.models import Image
 from wagtail.rich_text import RichText
 from bs4 import BeautifulSoup
@@ -18,7 +19,7 @@ class StreamFieldBlockSerializer(serializers.Field):
         elif isinstance(block, Image):
             return dict(url=block.file.url)
         elif isinstance(block, RichText):
-            return dict(info=block.__html__())
+            return dict(info=BeautifulSoup(block.__html__(), 'html.parser').get_text())
         else:
             return dict(name=block)
 
@@ -29,9 +30,12 @@ class StreamFieldBlockSerializer(serializers.Field):
                 data[field_name] = field_value.file.url
             elif isinstance(field_value, RichText):
                 data[field_name] = BeautifulSoup(field_value.__html__(), 'html.parser').get_text()
+            elif isinstance(field_value, StreamValue):
+                data[field_name] = [self.serialize_block(value.value) for value in field_value]
             else:
                 data[field_name] = field_value
         return data
+
 
 
 class ImageSerializer(serializers.Serializer):

@@ -5,7 +5,7 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.fields import StreamField, RichTextField
 from wagtail.models import Page
 
-from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision
+from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
 
 
 class FAQs(Page):
@@ -183,3 +183,47 @@ class About(Page):
     class Meta:
         verbose_name = "About Us"
         verbose_name_plural = "About Us"
+
+
+class Pricing(Page):
+    max_count = 1
+
+    heading = models.TextField(_("Heading"), blank=True, null=True, max_length=100)
+    description = models.TextField(_("Description"), blank=True, null=True, max_length=1000)
+    note = models.TextField(_("Note"), blank=True, null=True, max_length=1000)
+    CTA_btn = models.TextField(_("CTA Button"), blank=True, null=True)
+    CTA_btn_icon = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True,
+        related_name="+",
+    )
+    cards = StreamField(
+        [("cards", PricingCard())],use_json_field=True
+    )
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("heading"),
+                FieldPanel("description"),
+                FieldPanel("note"),
+                FieldPanel("CTA_btn"),
+                FieldPanel("CTA_btn_icon"),
+            ],
+            heading="Main Content",
+            classname="collapsible collapsed",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("cards"),
+            ],
+            heading="pricing Content",
+            classname="collapsible collapsed",
+        ),
+    ]
+    subpage_types = []
+
+    class Meta:
+        verbose_name = "Pricing"
+        verbose_name_plural = "Pricing"
