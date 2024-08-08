@@ -5,7 +5,7 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.fields import StreamField, RichTextField
 from wagtail.models import Page
 
-from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards
+from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision
 
 
 class FAQs(Page):
@@ -136,3 +136,50 @@ class Business(Page):
     class Meta:
         verbose_name = "business"
         verbose_name_plural = "business"
+
+
+class About(Page):
+    max_count = 1
+    vision_points = StreamField(
+        [("mission_and_vision", OurMissionVision())], min_num=3, use_json_field=True
+    )
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="+",
+    )
+    description = RichTextField(
+        _("Description"),
+        blank=True,
+        null=True,
+        max_length=2000,
+        help_text="Main Description",
+    )
+    heading = RichTextField(
+        _("Heading"), blank=True, null=True, max_length=2000, help_text="Main Heading"
+    )
+    vision_title = RichTextField(_("Title"), max_length=500)
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("heading"),
+                FieldPanel("description"),
+                FieldPanel("image"),
+            ],
+            "Hero Section",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("vision_title"),
+                FieldPanel("vision_points"),
+            ],
+            "Vision Points Section",
+        ),
+    ]
+    subpage_types = []
+
+    class Meta:
+        verbose_name = "About Us"
+        verbose_name_plural = "About Us"

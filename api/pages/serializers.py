@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import (
-    FAQs, Business,
+    FAQs, Business, About,
 )
 
 
@@ -57,4 +57,25 @@ class BusinessSerializer(serializers.ModelSerializer):
             "choose_image",
             "faq",
             "key_point",
+        ]
+
+
+class AboutSerializer(serializers.ModelSerializer):
+    cards = StreamFieldBlockSerializer(source="vision_points")
+    vision_title = serializers.SerializerMethodField(source="vision_title")
+
+    def get_vision_title(self, obj):
+        return get_text(obj.vision_title)
+
+    class Meta:
+        model = About
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "description",
+            "heading",
+            "vision_title",
+            "image",
+            "cards",
         ]

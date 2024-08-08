@@ -27,3 +27,9 @@ class WinPlanCards(blocks.StructBlock):
         required=True, max_length=150, help_text="Block Description"
     )
     image = ImageChooserBlock(required=True)
+
+
+class OurMissionVision(blocks.StructBlock):
+    image = ImageChooserBlock(required=True)
+    heading = blocks.RichTextBlock(required=True, max_length=50, help_text='Block Title')
+    description = blocks.RichTextBlock(required=True, max_length=150, help_text='Block Description')
