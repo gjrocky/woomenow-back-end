@@ -5,6 +5,39 @@ from wagtail.images.models import Image
 from wagtail.rich_text import RichText
 from bs4 import BeautifulSoup
 
+from apps.snippet.models import Category, State
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "id",
+            "name",
+        ]
+
+
+class StatesSerializer(serializers.ModelSerializer):
+    cities = serializers.SerializerMethodField()
+
+    def get_cities(self, obj):
+        return [
+            dict(
+                name=city.name,
+                slug=city.slug,
+                locality=[
+                    dict(
+                        name=loc.name,
+                        slug=loc.slug
+                    ) for loc in city.Localities.all()],
+            )
+            for city in obj.cities.all()
+        ]
+
+    class Meta:
+        model = State
+        fields = ["id", "name", "slug", "ISO_code", "cities"]
+
 
 class StreamFieldBlockSerializer(serializers.Field):
     def to_representation(self, value):
@@ -19,7 +52,7 @@ class StreamFieldBlockSerializer(serializers.Field):
         elif isinstance(block, Image):
             return dict(url=block.file.url)
         elif isinstance(block, RichText):
-            return dict(info=BeautifulSoup(block.__html__(), 'html.parser').get_text())
+            return dict(info=block.__html__())
         else:
             return dict(name=block)
 
@@ -29,7 +62,7 @@ class StreamFieldBlockSerializer(serializers.Field):
             if isinstance(field_value, Image):
                 data[field_name] = field_value.file.url
             elif isinstance(field_value, RichText):
-                data[field_name] = BeautifulSoup(field_value.__html__(), 'html.parser').get_text()
+                data[field_name] = field_value.__html__()
             elif isinstance(field_value, StreamValue):
                 data[field_name] = [self.serialize_block(value.value) for value in field_value]
             else:
@@ -53,3 +86,5 @@ class Pagination(PageNumberPagination):
 
 def get_text(text):
     return BeautifulSoup(text, "html.parser").get_text()
+
+

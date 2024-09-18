@@ -19,18 +19,29 @@ class BusinessSerializer(serializers.ModelSerializer):
     why_choose_us_cards = StreamFieldBlockSerializer()
     win_plan_cards = StreamFieldBlockSerializer()
     faq = StreamFieldBlockSerializer()
+    choose_image = serializers.SerializerMethodField(source="price_btn")
+    CTA_btn = serializers.SerializerMethodField(source="CTA_btn")
     price_button = serializers.SerializerMethodField(source="price_btn")
-    heading = serializers.SerializerMethodField(source="heading")
-    description = serializers.SerializerMethodField(source="description")
+    CTA_btn_icon = serializers.SerializerMethodField(source="CTA_btn_icon")
 
-    def get_heading(self, obj):
-        return get_text(obj.heading)
-
-    def get_description(self, obj):
-        return get_text(obj.description)
+    def get_CTA_btn(self,obj):
+        return get_text(obj.CTA_btn)
 
     def get_price_button(self, obj):
         return get_text(obj.price_btn)
+
+    def get_choose_image(self, obj):
+        try:
+            return obj.choose_image.file.url
+        except:
+            return None
+
+    def get_CTA_btn_icon(self, obj):
+        try:
+            return obj.CTA_btn_icon.file.url
+        except:
+            return None
+
 
     class Meta:
         model = Business
@@ -46,6 +57,7 @@ class BusinessSerializer(serializers.ModelSerializer):
             "video_3",
             "choose_heading",
             "choose_description",
+            "choose_image",
             "win_plan_heading",
             "win_plan_description",
             "win_plan_cards",
@@ -54,7 +66,6 @@ class BusinessSerializer(serializers.ModelSerializer):
             "price_description",
             "price_button",
             "CTA_btn_icon",
-            "choose_image",
             "faq",
             "key_point",
         ]
@@ -62,10 +73,6 @@ class BusinessSerializer(serializers.ModelSerializer):
 
 class AboutSerializer(serializers.ModelSerializer):
     cards = StreamFieldBlockSerializer(source="vision_points")
-    vision_title = serializers.SerializerMethodField(source="vision_title")
-
-    def get_vision_title(self, obj):
-        return get_text(obj.vision_title)
 
     class Meta:
         model = About
@@ -94,6 +101,5 @@ class PricingSerializer(serializers.ModelSerializer):
             "description",
             'note',
             'CTA_btn',
-            'CTA_btn_icon',
             'pricing_cards'
         ]

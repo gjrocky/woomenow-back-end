@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
 
-    "apps.main"
+    "apps.main",
+    "apps.snippet"
 
 ]
 
@@ -222,7 +223,8 @@ SPECTACULAR_SETTINGS = {
     "PREPROCESSING_HOOKS": ["woo_me_now_backend.schema.custom_preprocessing_hook"],
 }
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://172.20.10.2:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-conn-origin',

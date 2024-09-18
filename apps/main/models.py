@@ -2,10 +2,26 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.contrib.forms.forms import FormBuilder
+from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.fields import StreamField, RichTextField
 from wagtail.models import Page
 
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
+
+
+class CustomFormBuilder(FormBuilder):
+    def get_create_field_function(self, type):
+        create_field_function = super().get_create_field_function(type)
+
+        def wrapped_create_field_function(field, options):
+            created_field = create_field_function(field, options)
+            created_field.widget.attrs.update(
+                {"placeholder": field.placeholder},
+            )
+            return created_field
+
+        return wrapped_create_field_function
 
 
 class FAQs(Page):
@@ -99,7 +115,7 @@ class Business(Page):
             [
                 FieldPanel("choose_heading"),
                 FieldPanel("choose_description"),
-                FieldPanel("price_btn"),
+                FieldPanel("choose_image"),
                 FieldPanel("why_choose_us_cards"),
             ],
             heading="Why choose Us Section",
@@ -188,19 +204,12 @@ class About(Page):
 class Pricing(Page):
     max_count = 1
 
-    heading = models.TextField(_("Heading"), blank=True, null=True, max_length=100)
-    description = models.TextField(_("Description"), blank=True, null=True, max_length=1000)
-    note = models.TextField(_("Note"), blank=True, null=True, max_length=1000)
-    CTA_btn = models.TextField(_("CTA Button"), blank=True, null=True)
-    CTA_btn_icon = models.ForeignKey(
-        "wagtailimages.Image",
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True,
-        related_name="+",
-    )
+    heading = RichTextField(_("Heading"), blank=True, null=True, max_length=100)
+    description = RichTextField(_("Description"), blank=True, null=True, max_length=1000)
+    note = RichTextField(_("Note"), blank=True, null=True, max_length=1000)
+    CTA_btn = RichTextField(_("CTA Button"), blank=True, null=True)
     cards = StreamField(
-        [("cards", PricingCard())],use_json_field=True
+        [("cards", PricingCard())], use_json_field=True
     )
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -209,7 +218,6 @@ class Pricing(Page):
                 FieldPanel("description"),
                 FieldPanel("note"),
                 FieldPanel("CTA_btn"),
-                FieldPanel("CTA_btn_icon"),
             ],
             heading="Main Content",
             classname="collapsible collapsed",
