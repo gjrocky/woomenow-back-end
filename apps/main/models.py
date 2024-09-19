@@ -1,27 +1,18 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.forms.forms import FormBuilder
 from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.fields import StreamField, RichTextField
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
+from apps.main.choices import RestaurantType
+from apps.snippet.models import BaseModel
 
-
-class CustomFormBuilder(FormBuilder):
-    def get_create_field_function(self, type):
-        create_field_function = super().get_create_field_function(type)
-
-        def wrapped_create_field_function(field, options):
-            created_field = create_field_function(field, options)
-            created_field.widget.attrs.update(
-                {"placeholder": field.placeholder},
-            )
-            return created_field
-
-        return wrapped_create_field_function
+CustomUser = get_user_model()
 
 
 class FAQs(Page):
@@ -39,7 +30,7 @@ class Business(Page):
     CTA_btn = RichTextField(_("CTA Button"), blank=True, null=True)
     CTA_btn_icon = models.ForeignKey(
         "wagtailimages.Image",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="+",
@@ -69,7 +60,7 @@ class Business(Page):
     choose_description = RichTextField(_("Description"), blank=True, null=True)
     choose_image = models.ForeignKey(
         "wagtailimages.Image",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         blank=True,
         null=True,
         related_name="+",
@@ -163,7 +154,7 @@ class About(Page):
         "wagtailimages.Image",
         blank=True,
         null=True,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="+",
     )
     description = RichTextField(
@@ -235,3 +226,191 @@ class Pricing(Page):
     class Meta:
         verbose_name = "Pricing"
         verbose_name_plural = "Pricing"
+
+
+class Influencer(Page):
+    profile = models.ForeignKey(
+        "wagtailimages.Image",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    name = RichTextField(_("Name"), max_length=500)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("name"),
+                FieldPanel("profile"),
+                FieldPanel("user"),
+            ],
+            heading="Influencer Content",
+            classname="collapsible collapsed",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = "Influencer"
+        verbose_name_plural = "Influencers"
+
+
+class Invitation(BaseModel):
+    restaurant_name = models.TextField(_("Restaurant Name"), max_length=500)
+    location = models.CharField(_("Location"), max_length=255)
+    invited_by = models.ForeignKey('Influencer', on_delete=models.CASCADE)
+    invite_to = models.EmailField(_("Invite To"), max_length=255)
+
+    panels = [
+        FieldPanel("restaurant_name"),
+        FieldPanel("location"),
+        FieldPanel("invited_by"),
+        FieldPanel("invite_to"),
+    ]
+
+    def __str__(self):
+        return self.invite_to
+
+    class Meta:
+        verbose_name = "Invitation"
+        verbose_name_plural = "Invitations"
+
+
+class Review(BaseModel):
+    content = models.TextField(_("Content"), max_length=5000)
+    rating = models.IntegerField(_("Rating"), default=5)
+    is_verified = models.BooleanField(_("Is Verified"), default=False)
+    posted_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    no_of_likes = models.IntegerField(_("Likes"), default=0)
+    bill = models.ForeignKey(
+        "wagtailimages.Image",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    images = StreamField([('image', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True,blank=True)
+
+    panels = [
+        FieldPanel("posted_by"),
+        FieldPanel("content"),
+        FieldPanel("rating"),
+        FieldPanel("is_verified"),
+        FieldPanel("no_of_likes"),
+        FieldPanel("bill"),
+        FieldPanel("images"),
+        FieldPanel("restaurant"),
+    ]
+
+    def __str__(self):
+        return self.posted_by.full_name
+
+    class Meta:
+        verbose_name = "Review"
+        verbose_name_plural = "Reviews"
+
+
+class Franchise(BaseModel):
+    name = models.CharField(_("Name"), max_length=255)
+
+    panels = [
+        FieldPanel("name"),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Franchise"
+        verbose_name_plural = "Franchise"
+
+
+class Restaurant(Page):
+    name = RichTextField(_("Name"), max_length=500)
+    description = RichTextField(_("Description"), max_length=10000)
+    email = models.EmailField(_("Email"), max_length=255, null=True, blank=True)
+    phone_number = models.TextField(_('Phone Number'), blank=True, null=True)
+    location = models.TextField(_("Location"), max_length=2000)
+    is_franchise = models.BooleanField(_("Is Franchise"), default=False)
+    franchise = models.ForeignKey('Franchise', on_delete=models.SET_NULL, null=True, blank=True)
+    menus = StreamField([('menu', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
+    invited_by = models.ForeignKey('Influencer', on_delete=models.SET_NULL, null=True, blank=True)
+    recommended_by = ParentalManyToManyField(CustomUser, null=True, blank=True)
+    type = models.CharField(_('Restaurant Type'), max_length=255, choices=RestaurantType.choices)
+    categories = ParentalManyToManyField("snippet.Category", blank=True, related_name="Restaurants")
+    city = models.ForeignKey("snippet.City", on_delete=models.PROTECT, related_name="Restaurants")
+    is_featured = models.BooleanField(_("Featured Place"), default=False)
+    is_home_featured = models.BooleanField(_("Home Featured Place"), default=False)
+    restaurant_images = StreamField([('image', ImageChooserBlock())], use_json_field=True)
+    rating = models.DecimalField(_("Rating"), max_length=5, blank=True, null=True, max_digits=5, decimal_places=1)
+    reservation_url = models.URLField(_("Reservation URL"), null=True, blank=True)
+    website_url = models.URLField(_("Website URL"), null=True, blank=True)
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("name"),
+                FieldPanel("description"),
+                FieldPanel("email"),
+                FieldPanel("phone_number"),
+                FieldPanel("location"),
+            ],
+            "Restaurant Details",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("type"),
+                FieldPanel("categories"),
+                FieldPanel("city"),
+                FieldPanel("menus"),
+                FieldPanel("restaurant_images"),
+                FieldPanel("recommended_by"),
+            ],
+            "Information",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("is_franchise"),
+                FieldPanel("franchise"),
+                FieldPanel("rating"),
+                FieldPanel("reservation_url"),
+                FieldPanel("website_url"),
+                FieldPanel("invited_by"),
+                FieldPanel("is_featured"),
+                FieldPanel("is_home_featured"),
+            ],
+            "Additional Information",
+        ),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Restaurant"
+        verbose_name_plural = "Restaurants"
+
+
+class Reservation(BaseModel):
+    customer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, blank=True)
+    emergency_contact = models.CharField(_("Emergency Contact"), max_length=255, null=True, blank=True)
+    timing = models.DateTimeField(_("Timing"))
+    people = models.IntegerField(_("No of Guest"), default=0)
+
+    panels = [
+        FieldPanel("customer"),
+        FieldPanel("restaurant"),
+        FieldPanel("emergency_contact"),
+        FieldPanel("timing"),
+        FieldPanel("people"),
+    ]
+
+    def __str__(self):
+        return self.restaurant.name
+
+    class Meta:
+        verbose_name = "Reservation"
+        verbose_name_plural = "Reservations"

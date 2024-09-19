@@ -1,10 +1,12 @@
+from bs4 import BeautifulSoup
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from wagtail.blocks import StreamValue
+from wagtail.fields import StreamField
 from wagtail.images.models import Image
 from wagtail.rich_text import RichText
-from bs4 import BeautifulSoup
-
+from apps.main.blocks import PricingCard
+from apps.main.models import Franchise
 from apps.snippet.models import Category, State
 
 
@@ -69,6 +71,19 @@ class StreamFieldBlockSerializer(serializers.Field):
                 data[field_name] = field_value
         return data
 
+    def to_internal_value(self, data):
+        stream_field = StreamField(PricingCard())
+        return stream_field.stream_block.get_prep_value(data)
+
+
+class FranchiseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Franchise
+        fields = '__all__'
+
+
+class Pagination(PageNumberPagination):
+    page_size = 9
 
 
 class ImageSerializer(serializers.Serializer):
@@ -80,11 +95,5 @@ class ImageSerializer(serializers.Serializer):
         return obj.value.file.url
 
 
-class Pagination(PageNumberPagination):
-    page_size = 9
-
-
 def get_text(text):
     return BeautifulSoup(text, "html.parser").get_text()
-
-

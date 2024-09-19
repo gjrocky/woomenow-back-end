@@ -1,9 +1,7 @@
-from rest_framework import status
-from rest_framework.generics import ListAPIView, CreateAPIView
-from rest_framework.parsers import MultiPartParser
-from rest_framework.response import Response
+from rest_framework.generics import ListAPIView, ListCreateAPIView
 
-from api.serializers import CategorySerializer, StatesSerializer
+from api.serializers import CategorySerializer, StatesSerializer, FranchiseSerializer
+from apps.main.models import Franchise
 from apps.snippet.models import Category, State
 
 
@@ -15,3 +13,10 @@ class CategoryAPIView(ListAPIView):
 class StateAPIView(ListAPIView):
     queryset = State.objects.all()
     serializer_class = StatesSerializer
+
+
+class FranchiseAPIView(ListAPIView):
+    queryset = Franchise.objects.all()
+    serializer_class = FranchiseSerializer
+
+

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from api.serializers import StreamFieldBlockSerializer
+from apps.main.models import Invitation, Review
 from apps.snippet.models import IPLocation, Contact
 
 
@@ -14,24 +16,48 @@ class ContactSerializer(serializers.ModelSerializer):
         model = Contact
         fields = "__all__"
 
-# class DynamicFormSerializer(serializers.Serializer):
-#     def __init__(self, *args, **kwargs):
-#         form_page = kwargs.pop("form_page")
-#         super().__init__(*args, **kwargs)
-#
-#         for field in form_page.form_fields.all():
-#             field_name = field.clean_name
-#             field_type = field.field_type
-#
-#             if field_type == "singleline":
-#                 self.fields[field_name] = serializers.CharField()
-#             elif field_type == "multiline":
-#                 self.fields[field_name] = serializers.CharField(
-#                     style={"base_template": "textarea.html"}
-#                 )
-#             elif field_type == "email":
-#                 self.fields[field_name] = serializers.EmailField()
-#             elif field_type == "number":
-#                 self.fields[field_name] = serializers.IntegerField()
-#             elif field_type == "url":
-#                 self.fields[field_name] = serializers.URLField()
+
+class InvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitation
+        fields = "__all__"
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    posted_by = serializers.SerializerMethodField(source='posted_by')
+    restaurant = serializers.SerializerMethodField(source='restaurant')
+    bill = serializers.SerializerMethodField(source='bill')
+    images = StreamFieldBlockSerializer(required=False)
+
+    def get_posted_by(self, obj):
+        try:
+            profile = obj.posted_by.wagtail_userprofile.avatar.url
+        except:
+            profile = None
+        return dict(
+            id=obj.posted_by.id,
+            name=obj.posted_by.full_name,
+            email=obj.posted_by.email,
+            profile=profile,
+        )
+
+
+    def get_bill(self, obj):
+        try:
+            bill = obj.bill.file.url
+            return dict(url=bill, id=obj.bill.id)
+        except:
+            return dict()
+
+    def get_restaurant(self, obj):
+        try:
+            return dict(
+                name=obj.restaurant.name,
+                id=obj.restaurant.id,
+            )
+        except:
+            return dict()
+
+    class Meta:
+        model = Review
+        fields = ['id', 'content', 'rating', 'is_verified', 'no_of_likes', 'posted_by', 'bill', 'images', 'restaurant']

@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 import environ
 from corsheaders.defaults import default_headers
+
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
@@ -46,10 +48,12 @@ INSTALLED_APPS = [
     "wagtail.documents",
     "wagtail.images",
     "wagtail.search",
+    'wagtail_modeladmin',
     "wagtail.admin",
     "wagtail",
     "modelcluster",
     "taggit",
+    'wagtail.api.v2',
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
@@ -57,7 +61,8 @@ INSTALLED_APPS = [
     "drf_spectacular_sidecar",
 
     "apps.main",
-    "apps.snippet"
+    "apps.snippet",
+    "apps.users"
 
 ]
 
@@ -147,6 +152,8 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
+AUTH_USER_MODEL = 'users.User'
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME", default="")
@@ -221,7 +228,14 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
     "REDOC_DIST": "SIDECAR",
     "PREPROCESSING_HOOKS": ["woo_me_now_backend.schema.custom_preprocessing_hook"],
+    'COMPONENT_SPLIT_REQUEST': True,
 }
+SPECTACULAR_SETTINGS.update({
+    'SWAGGER_UI_SETTINGS': {
+        'docExpansion': 'none',
+    }
+})
+
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://172.20.10.2:3000']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
