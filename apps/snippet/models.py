@@ -1,11 +1,15 @@
 import urllib.parse
 
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import OneToOneField, TextField
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel
 from wagtail.search import index
+
+CustomUser = get_user_model()
 
 
 class BaseModel(models.Model):
@@ -106,10 +110,15 @@ class Locality(BaseModel):
 
 class Category(BaseModel):
     name = models.TextField(_("Name"), max_length=50)
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.CASCADE,
+        related_name="+")
     slug = models.TextField(_("Slug"), max_length=100, unique=True)
 
     panels = [
         FieldPanel("name"),
+        FieldPanel("image"),
     ]
 
     def save(self, *args, **kwargs):
@@ -184,7 +193,6 @@ class Campaign(BaseModel):
         )
 
 
-
 class Contact(BaseModel):
     name = models.CharField(_("Name"), max_length=50)
     email = models.EmailField(_("Email"))
@@ -198,3 +206,29 @@ class Contact(BaseModel):
     class Meta:
         verbose_name = "Contact"
         verbose_name_plural = "Contacts"
+
+
+class JoinTheWooForm(BaseModel):
+    name = models.CharField(_("Name"), max_length=50)
+    email = models.EmailField(_("Email"))
+    phone = models.CharField(_("Phone"), max_length=20, null=True, blank=True)
+    city = models.CharField(_("City"), max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Join The Woo"
+        verbose_name_plural = "Join The Woo"
+
+
+class Point(BaseModel):
+    user = OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="points")
+    content = TextField(_("Content"), max_length=5000)
+
+    def __str__(self):
+        return self.user.first_name
+
+    class Meta:
+        verbose_name = "Point"
+        verbose_name_plural = "Points"

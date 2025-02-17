@@ -22,7 +22,7 @@ class WhyChooseUsCards(blocks.StructBlock):
 class WinPlanCards(blocks.StructBlock):
     heading = blocks.RichTextBlock(required=True, max_length=50, help_text="Block Title")
     description = blocks.RichTextBlock(
-        required=True, max_length=150, help_text="Block Description"
+        required=True, max_length=255, help_text="Block Description"
     )
     image = ImageChooserBlock(required=True)
 
@@ -36,7 +36,7 @@ class OurMissionVision(blocks.StructBlock):
 class PricingCard(blocks.StructBlock):
     heading = blocks.TextBlock(required=True, max_length=50, help_text='Heading')
     description = blocks.TextBlock(required=True, max_length=50, help_text='Description')
-    price = blocks.TextBlock(required=True, max_length=50, help_text='Price')
+    price = blocks.TextBlock(required=False, max_length=50, help_text='Price')
     extra = blocks.TextBlock(required=False, max_length=500, help_text='Extra Description')
     saving = blocks.TextBlock(required=False, max_length=500, help_text='Savings Description')
     points = blocks.StreamBlock([

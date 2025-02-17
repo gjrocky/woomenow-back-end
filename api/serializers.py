@@ -9,13 +9,25 @@ from apps.main.blocks import PricingCard
 from apps.main.models import Franchise
 from apps.snippet.models import Category, State
 
+from django.conf import settings
+
 
 class CategorySerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField(source="image")
+
+    def get_image(self, obj):
+        try:
+            return obj.image.file.url
+        except:
+            return None
+
     class Meta:
         model = Category
         fields = [
             "id",
             "name",
+            "slug",
+            "image"
         ]
 
 

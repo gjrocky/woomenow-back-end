@@ -42,14 +42,17 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractUser):
     username = None
-    first_name = None
-    last_name = None
 
     email = models.EmailField(_("Email Address"), unique=True, db_index=True)
-    full_name = models.CharField(_("Full Name"), max_length=255)
+    profile_picture = models.FileField("Profile Picture", null=True, blank=True)
+    first_name = models.CharField(_("First Name"), max_length=30, blank=True)
+    last_name = models.CharField(_("Last Name"), max_length=30, blank=True)
+    point = models.IntegerField(default=0)
+    city = models.ForeignKey('snippet.City', null=True, blank=True, on_delete=models.SET_NULL)
+    date_of_birth = models.DateField(_("Date of Birth"), null=True, blank=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['full_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
 

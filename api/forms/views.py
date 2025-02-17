@@ -1,14 +1,14 @@
 from django.db.models import Q
-from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.constants import QUERY_PARAMS
-from api.forms.serializers import IPLocationSerializer, ContactSerializer, InvitationSerializer, ReviewSerializer
+from api.forms.serializers import IPLocationSerializer, ContactSerializer, InvitationSerializer, ReviewSerializer, \
+    JoinTheWooSerializer
 from apps.main.models import Invitation, Review, Restaurant
-from apps.snippet.models import IPLocation, Contact
+from apps.snippet.models import IPLocation, Contact, JoinTheWooForm
 from apps.users.models import User
 
 
@@ -32,6 +32,16 @@ class ContactAPIView(CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class JoinTheWooAPIView(CreateAPIView):
+    queryset = JoinTheWooForm.objects.all()
+    serializer_class = JoinTheWooSerializer
+
+    def perform_create(self, serializer):
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class InvitationAPIView(ListCreateAPIView):
     queryset = Invitation.objects.all()
     serializer_class = InvitationSerializer
@@ -42,16 +52,16 @@ class InvitationAPIView(ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@extend_schema(
-    parameters=[
-        OpenApiParameter(
-            name="user", description="User ID", required=False, type=int
-        ),
-        OpenApiParameter(
-            name="restaurant", description="Restaurant ID", required=False, type=int
-        )
-    ]
-)
+# @extend_schema(
+#     parameters=[
+#         OpenApiParameter(
+#             name="user", description="User ID", required=False, type=int
+#         ),
+#         OpenApiParameter(
+#             name="restaurant", description="Restaurant ID", required=False, type=int
+#         )
+#     ]
+# )
 # class ReviewAPIView(ListCreateAPIView):
 #     queryset = Review.objects.all()
 #     serializer_class = ReviewSerializer

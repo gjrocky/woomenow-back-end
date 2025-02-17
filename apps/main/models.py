@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import JSONField
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
+from wagtail import blocks
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.blocks import URLBlock
 from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.fields import StreamField, RichTextField
 from wagtail.images.blocks import ImageChooserBlock
@@ -237,14 +240,22 @@ class Influencer(Page):
         related_name="+",
     )
     name = RichTextField(_("Name"), max_length=500)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.PROTECT)
+    description = RichTextField(_("Description"), blank=True, null=True, max_length=10000)
+    social_links = StreamField([('link', URLBlock())], use_json_field=True, null=True, blank=True)
+    city = models.ForeignKey('snippet.City', on_delete=models.SET_NULL, null=True, blank=True)
+    restaurant_images = StreamField([('image', ImageChooserBlock())], null=True, blank=True, use_json_field=True)
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
                 FieldPanel("name"),
                 FieldPanel("profile"),
+                FieldPanel("description"),
+                FieldPanel("city"),
+                FieldPanel("restaurant_images"),
                 FieldPanel("user"),
+                FieldPanel("social_links"),
             ],
             heading="Influencer Content",
             classname="collapsible collapsed",
@@ -256,11 +267,51 @@ class Influencer(Page):
         verbose_name_plural = "Influencers"
 
 
+class JoinTheWoo(Page):
+    max_count = 1
+    subpage_types = []
+
+    heading = RichTextField(
+        _("Heading"), max_length=500, help_text="Main Heading"
+    )
+    description = RichTextField(
+        _("Short Description"),
+        max_length=500,
+        help_text="Short Description",
+    )
+    about_community = RichTextField(_('Description'), max_length=2000, help_text="Main Description")
+    sub_heading = RichTextField(_('Sub Heading'), max_length=500)
+    community_points = StreamField(
+        [("point", blocks.RichTextBlock(required=True, max_length=2000, help_text='Block Title'))], min_num=3,
+        use_json_field=True
+    )
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel(
+            [
+                FieldPanel("heading"),
+                FieldPanel("description"),
+                FieldPanel("about_community"),
+                FieldPanel("sub_heading"),
+                FieldPanel("community_points"),
+            ],
+            heading="Join The Woo Content",
+            classname="collapsible collapsed",
+        ),
+    ]
+
+    class Meta:
+        verbose_name = "Join The Woo"
+        verbose_name_plural = "Join The Woo"
+
+
 class Invitation(BaseModel):
     restaurant_name = models.TextField(_("Restaurant Name"), max_length=500)
     location = models.CharField(_("Location"), max_length=255)
     invited_by = models.ForeignKey('Influencer', on_delete=models.CASCADE)
     invite_to = models.EmailField(_("Invite To"), max_length=255)
+    type = models.CharField('Restaurant Type', choices=RestaurantType.choices, max_length=255)
+    google_link = models.URLField(_("Google Link"), max_length=255, blank=True, null=True)
 
     panels = [
         FieldPanel("restaurant_name"),
@@ -281,7 +332,8 @@ class Review(BaseModel):
     content = models.TextField(_("Content"), max_length=5000)
     rating = models.IntegerField(_("Rating"), default=5)
     is_verified = models.BooleanField(_("Is Verified"), default=False)
-    posted_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    is_published = models.BooleanField(_("Is Published"), default=False)
+    posted_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
     no_of_likes = models.IntegerField(_("Likes"), default=0)
     bill = models.ForeignKey(
         "wagtailimages.Image",
@@ -291,7 +343,7 @@ class Review(BaseModel):
         related_name="+",
     )
     images = StreamField([('image', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
-    restaurant = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True,blank=True)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True, blank=True)
 
     panels = [
         FieldPanel("posted_by"),
@@ -305,7 +357,7 @@ class Review(BaseModel):
     ]
 
     def __str__(self):
-        return self.posted_by.full_name
+        return self.posted_by.first_name
 
     class Meta:
         verbose_name = "Review"
@@ -327,32 +379,51 @@ class Franchise(BaseModel):
         verbose_name_plural = "Franchise"
 
 
+def default_reservation_time():
+    return {"reservation": {}}
+
+
+def default_extra_info():
+    return {"extra_info": {}}
+
+
 class Restaurant(Page):
     name = RichTextField(_("Name"), max_length=500)
-    description = RichTextField(_("Description"), max_length=10000)
+    short_description = RichTextField(_("Short Description"), max_length=2000)
+    about_restaurant = RichTextField(_("About"), max_length=10000, null=True, blank=True)
     email = models.EmailField(_("Email"), max_length=255, null=True, blank=True)
     phone_number = models.TextField(_('Phone Number'), blank=True, null=True)
-    location = models.TextField(_("Location"), max_length=2000)
+    location = models.TextField(_("Location"), max_length=2000, blank=True, null=True)
     is_franchise = models.BooleanField(_("Is Franchise"), default=False)
     franchise = models.ForeignKey('Franchise', on_delete=models.SET_NULL, null=True, blank=True)
     menus = StreamField([('menu', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
     invited_by = models.ForeignKey('Influencer', on_delete=models.SET_NULL, null=True, blank=True)
-    recommended_by = ParentalManyToManyField(CustomUser, null=True, blank=True)
+    recommended_by = ParentalManyToManyField(CustomUser)
     type = models.CharField(_('Restaurant Type'), max_length=255, choices=RestaurantType.choices)
     categories = ParentalManyToManyField("snippet.Category", blank=True, related_name="Restaurants")
-    city = models.ForeignKey("snippet.City", on_delete=models.PROTECT, related_name="Restaurants")
+    city = models.ForeignKey("snippet.City", on_delete=models.SET_NULL, related_name="Restaurants", null=True,
+                             blank=True)
     is_featured = models.BooleanField(_("Featured Place"), default=False)
     is_home_featured = models.BooleanField(_("Home Featured Place"), default=False)
     restaurant_images = StreamField([('image', ImageChooserBlock())], use_json_field=True)
-    rating = models.DecimalField(_("Rating"), max_length=5, blank=True, null=True, max_digits=5, decimal_places=1)
-    reservation_url = models.URLField(_("Reservation URL"), null=True, blank=True)
+    rating = models.DecimalField(_("Rating"), blank=True, null=True, max_digits=5, decimal_places=1)
     website_url = models.URLField(_("Website URL"), null=True, blank=True)
+    profile_pic = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="+",
+    )
+    reservation_time = JSONField(_("Reservation Time"), blank=True, null=True, default=default_reservation_time)
+    extra_info = JSONField(_("Additional Information"), blank=True, null=True, default=default_extra_info)
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
                 FieldPanel("name"),
-                FieldPanel("description"),
+                FieldPanel("short_description"),
+                FieldPanel("about_restaurant"),
                 FieldPanel("email"),
                 FieldPanel("phone_number"),
                 FieldPanel("location"),
@@ -375,7 +446,6 @@ class Restaurant(Page):
                 FieldPanel("is_franchise"),
                 FieldPanel("franchise"),
                 FieldPanel("rating"),
-                FieldPanel("reservation_url"),
                 FieldPanel("website_url"),
                 FieldPanel("invited_by"),
                 FieldPanel("is_featured"),

@@ -6,7 +6,7 @@ from .models import (
     City,
     State,
     Category,
-    IPLocation, Contact,
+    IPLocation, Contact, JoinTheWooForm,
 )
 
 
@@ -25,3 +25,4 @@ register_snippet(State)
 register_snippet(Category)
 register_snippet(IPLocation)
 register_snippet(Contact)
+register_snippet(JoinTheWooForm)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from api.serializers import StreamFieldBlockSerializer
 from apps.main.models import Invitation, Review
-from apps.snippet.models import IPLocation, Contact
+from apps.snippet.models import IPLocation, Contact, JoinTheWooForm
 
 
 class IPLocationSerializer(serializers.ModelSerializer):
@@ -23,6 +23,12 @@ class InvitationSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class JoinTheWooSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JoinTheWooForm
+        fields = "__all__"
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     posted_by = serializers.SerializerMethodField(source='posted_by')
     restaurant = serializers.SerializerMethodField(source='restaurant')
@@ -40,7 +46,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             email=obj.posted_by.email,
             profile=profile,
         )
-
 
     def get_bill(self, obj):
         try:

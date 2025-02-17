@@ -1,13 +1,22 @@
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.generics import ListAPIView
 
 from api.serializers import CategorySerializer, StatesSerializer, FranchiseSerializer
 from apps.main.models import Franchise
-from apps.snippet.models import Category, State
+from apps.snippet.models import Category, State, City
 
 
 class CategoryAPIView(ListAPIView):
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        categories = Category.objects.all()
+        city = self.request.query_params.get('city')
+        if city:
+            categories = categories.filter(Restaurants__city__slug=city)
+        else:
+            city = City.objects.first()
+            categories = categories.filter(Restaurants__city__slug=city.slug)
+        return categories
 
 
 class StateAPIView(ListAPIView):
@@ -18,5 +27,3 @@ class StateAPIView(ListAPIView):
 class FranchiseAPIView(ListAPIView):
     queryset = Franchise.objects.all()
     serializer_class = FranchiseSerializer
-
-
