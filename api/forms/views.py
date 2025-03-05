@@ -1,15 +1,24 @@
+from datetime import datetime
+
 from django.db.models import Q
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework import permissions
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from wagtail.images.models import Image
 
 from api.constants import QUERY_PARAMS
 from api.forms.serializers import IPLocationSerializer, ContactSerializer, InvitationSerializer, ReviewSerializer, \
     JoinTheWooSerializer
-from apps.main.models import Invitation, Review, Restaurant
+from api.serializers import Pagination
+from api.serializers import ReviewSerializer as RSerializer
+from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer
 from apps.snippet.models import IPLocation, Contact, JoinTheWooForm
-from apps.users.models import User
 
 
 class IPLocationAPIView(CreateAPIView):
@@ -89,39 +98,190 @@ class InvitationAPIView(ListCreateAPIView):
 #             )
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ReviewAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        reviews = Review.objects.all()
-        filter_query = Q()
-        query_params = dict(
-            posted_by_id=self.request.query_params.get(QUERY_PARAMS["user"]),
-            restaurant_id=self.request.query_params.get(
-                QUERY_PARAMS["restaurant"]
-            ),
-        )
-        for key, value in query_params.items():
-            if value:
-                filter_query &= Q(**{key: value})
-
-        reviews = reviews.filter(filter_query)
-
-        if reviews:
-            serializer = ReviewSerializer(reviews, many=True)
-            return Response(serializer.data)
-        else:
-            return Response({"error": "reviews not found"}, status=404)
+class BookmarkAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        serializer = ReviewSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                user = User.objects.get(id=request.data["posted_by_id"])
-                restaurant = Restaurant.objects.get(id=request.data["restaurant_id"])
-            except Exception as e:
-                return Response(e, status=status.HTTP_400_BAD_REQUEST)
-            instance = serializer.save()
-            instance.posted_by = user
-            instance.restaurant = restaurant
-            instance.save()
-            return Response(ReviewSerializer(instance).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        if not user.is_authenticated:
+            return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            restaurant = Restaurant.objects.get(id=request.data['id'])
+            if restaurant in user.Restaurants.all():
+                user.Restaurants.remove(restaurant)
+                return Response({"message": "Bookmark removed successfully"}, status=status.HTTP_200_OK)
+            user.Restaurants.add(restaurant)
+            return Response({"message": "Bookmark added successfully", 'added': True}, status=status.HTTP_200_OK)
+        except Restaurant.DoesNotExist:
+            return Response({"message": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@extend_schema(
+    parameters=[
+        # OpenApiParameter(
+        #     name="user", description="User ID", required=False, type=int
+        # ),
+        OpenApiParameter(
+            name="restaurant", description="Restaurant ID", required=False, type=int
+        )
+    ]
+)
+class ReviewAPIView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        filter_query = Q()
+        restaurant_id = self.request.query_params.get(
+            QUERY_PARAMS["restaurant"]
+        )
+        sort = self.request.query_params.get('sort', 'Newest')
+        is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
+
+        reviews = Review.objects.filter(restaurant_id=restaurant_id, is_published=True)
+        thumb_up = 0
+        heart = 0
+        diamond = 0
+        for review in reviews:
+            if review.rating >= 4:
+                diamond += 1
+            elif review.rating < 2.5:
+                thumb_up += 1
+            else:
+                heart += 1
+        extra_info = dict(no_of_reviews=reviews.count(),
+                          no_of_likes=dict(diamond=diamond, heart=heart, thumb_up=thumb_up))
+
+        filter_type = dict(heart='heart', diamond='diamond', thumb_up='thumb_up')
+        filter = self.request.query_params.get('filter')
+        limit = self.request.query_params.get('limit', None)
+        if filter and filter == filter_type['diamond']:
+            filter_query &= Q(rating__gt=4)
+        elif filter and filter == filter_type['heart']:
+            filter_query &= (Q(rating__lte=4) & Q(rating__gte=2.5))
+        elif filter and filter == filter_type['thumb_up']:
+            filter_query &= Q(rating__lt=2.5)
+
+        reviews = reviews.filter(filter_query).order_by('-created_at' if sort == 'Newest' else 'created_at')
+        if limit:
+            reviews = reviews[:int(limit)]
+        if is_paginate:
+            paginator = Pagination()
+            page = paginator.paginate_queryset(reviews, request, view=self)
+
+            total_pages = (paginator.page.paginator.count // paginator.page_size) + (
+                1 if paginator.page.paginator.count % paginator.page_size > 0 else 0)
+
+            serializer = ReviewSerializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data).data
+            response_data['total_pages'] = total_pages
+        else:
+            serializer = ReviewSerializer(reviews, many=True)
+            response_data = serializer.data
+        if reviews:
+            return Response({'data': response_data, **extra_info})
+        else:
+            return Response({'data': [], **extra_info}, status=200)
+
+
+class ReviewPostAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser,)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        bill = request.data.get('file[]', None)
+
+        if not request.data.get('res_id'):
+            return Response({'message': 'Provide the restaurant ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not bill:
+            return Response({'message': 'Provide the receipt'}, status=status.HTTP_400_BAD_REQUEST)
+
+        wagtail_image = Image.objects.create(title=bill.name, file=bill)
+
+        json_data = dict(vibe=data.get('aura[]'), dish=data.get('dish'), cleanliness=data.get('cleanliness'),
+                         service=data.get('service'), food=data.get('food'), ambience=data.get('ambience'))
+
+        review = Review(posted_by=request.user, bill=wagtail_image, content=data.get('message'),
+                        rating=data.get('recommended'),
+                        restaurant_id=request.data.get('res_id'), more_info=json_data, created_at=datetime.now())
+        review.save()
+        return Response({'message': 'Your review has been published after verification.'},
+                        status=status.HTTP_201_CREATED)
+
+
+class PendingReviewAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Review.objects.all()
+    serializer_class = RSerializer
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(is_verified=False)[:10]
+        serializer = self.serializer_class(queryset, many=True)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        id = data.get('id')
+        is_approved = data.get('is_approved', None)
+        if not id:
+            return Response({'message': 'Provide the Review ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if is_approved == None:
+            return Response({'message': 'Provide the proper data'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            queryset = self.queryset.get(id=id)
+            queryset.is_published = is_approved
+            queryset.is_verified = True
+            queryset.save()
+            return Response({'message': 'Review is Updated'}, status=status.HTTP_200_OK)
+
+        except Review.DoesNotExist:
+            return Response({'message': 'Provided the Review ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class BecomeAnInfluencerAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        insta = request.data.get('instagram')
+        tiktok = request.data.get('tiktok')
+        other = request.data.get('other')
+
+        if not insta and not tiktok and not other:
+            return Response({'message': 'Provide social media link'}, status=status.HTTP_400_BAD_REQUEST)
+
+        becomeAnInfluencer = BecomeInfluencer(user=user, insta_link=insta, tiktok_link=tiktok, other_link=other)
+        becomeAnInfluencer.save()
+
+        return Response({'message': 'Your Become An Influencer request has been submitted.'},
+                        status=status.HTTP_201_CREATED)
+
+
+class RestaurantInvitationAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if not user.influencer:
+            return Response({"message": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
+        queryset = Invitation.objects.filter(invited_by=user.influencer)
+        serializer = InvitationSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        if not user.influencer:
+            return Response({"message": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = InvitationSerializer(data={'influ_id': user.influencer.id, **request.data})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({'message': 'Our team will the check & verify the restaurant/experience'},
+                            status=status.HTTP_201_CREATED)

@@ -5,11 +5,10 @@ from wagtail.blocks import StreamValue
 from wagtail.fields import StreamField
 from wagtail.images.models import Image
 from wagtail.rich_text import RichText
-from apps.main.blocks import PricingCard
-from apps.main.models import Franchise
-from apps.snippet.models import Category, State
 
-from django.conf import settings
+from apps.main.blocks import PricingCard
+from apps.main.models import Franchise, Review
+from apps.snippet.models import Category, State, City, Ambience
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -39,6 +38,46 @@ class StatesSerializer(serializers.ModelSerializer):
             dict(
                 name=city.name,
                 slug=city.slug,
+                locality=[
+                    dict(
+                        name=loc.name,
+                        slug=loc.slug
+                    ) for loc in city.Localities.all()],
+            )
+            for city in obj.cities.all()
+        ]
+
+    class Meta:
+        model = State
+        fields = ["id", "name", "slug", "ISO_code", "cities"]
+
+
+class CitiesSerializer(serializers.ModelSerializer):
+    state = serializers.SerializerMethodField(source="state")
+
+    def get_state(self, obj):
+        return dict(
+            name=obj.state.name,
+            slug=obj.state.slug,
+            ISO_code=obj.state.ISO_code,
+        )
+
+    class Meta:
+        model = City
+        fields = ["id", "name", "slug", "state"]
+
+
+class StatesInfluencerSerializer(serializers.ModelSerializer):
+    cities = serializers.SerializerMethodField()
+
+    def get_cities(self, obj):
+        return [
+            dict(
+                name=city.name,
+                slug=city.slug,
+                influencer_count=city.influencers.count(),
+                dining=city.Restaurants.filter(type='dining').count(),
+                experience=city.Restaurants.filter(type='experience').count(),
                 locality=[
                     dict(
                         name=loc.name,
@@ -95,7 +134,8 @@ class FranchiseSerializer(serializers.ModelSerializer):
 
 
 class Pagination(PageNumberPagination):
-    page_size = 9
+    page_size = 1
+    page_size_query_param = 'page_size'
 
 
 class ImageSerializer(serializers.Serializer):
@@ -107,5 +147,46 @@ class ImageSerializer(serializers.Serializer):
         return obj.value.file.url
 
 
+class AmbienceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ambience
+        fields = ['id', 'name']
+
+
 def get_text(text):
     return BeautifulSoup(text, "html.parser").get_text()
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    restaurant = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
+    bill = serializers.SerializerMethodField()
+
+    def get_bill(self, obj):
+        try:
+            return obj.bill.file.url
+        except:
+            return None
+
+    def get_user(self,obj):
+        return f'{obj.posted_by.first_name } {obj.posted_by.last_name}'
+
+    def get_restaurant(self, obj):
+        try:
+            image = obj.restaurant.restaurant_images[0].value.file.url
+        except:
+            image = None
+        return dict(
+            name=get_text(obj.restaurant.name),
+            id=obj.restaurant.id,
+            slug=obj.restaurant.slug,
+            image=image,
+        )
+
+    def get_created_at(self, obj):
+        return obj.created_at.strftime("%b %d, %Y")
+
+    class Meta:
+        model = Review
+        fields = ['id', 'content', 'is_verified','bill', 'is_published', 'more_info', 'rating', 'created_at', 'restaurant','user']

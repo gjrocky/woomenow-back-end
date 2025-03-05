@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from wagtail.images.models import Image
 
+
 class StreamFieldSerializer(serializers.Field):
     def to_representation(self, value):
         """Convert StreamField value to a JSON-serializable format."""
@@ -28,6 +29,7 @@ class StreamFieldSerializer(serializers.Field):
                 result.append({
                     "type": block.block_type,
                     "value": block.value,  # Other non-image values
+                    "id": block.id,
                 })
 
         return result  # Returns a JSON-compatible format
@@ -36,3 +38,15 @@ class StreamFieldSerializer(serializers.Field):
         print(data)
         """Convert JSON data back into StreamField format."""
         return data  # Assumes data is already in correct format
+
+
+def city(obj):
+    return dict(
+        name=obj.city.name,
+        slug=obj.city.slug,
+        state=dict(
+            name=obj.city.state.name,
+            slug=obj.city.state.slug,
+            ISO_code=obj.city.state.ISO_code,
+        )
+    )

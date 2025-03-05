@@ -6,7 +6,8 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 
-from api.views import StateAPIView, CategoryAPIView, FranchiseAPIView
+from api.views import StateAPIView, CategoryAPIView, FranchiseAPIView, StateInfluencerAPIView, CityAPIView, \
+    AmbienceAPIView, RecommendationAPIView, ReviewAPIView
 
 app_name = "api"
 
@@ -16,7 +17,13 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path("categories/", CategoryAPIView.as_view(), name="categories"),
     path("states/", StateAPIView.as_view(), name="states"),
+    path("cities/", CityAPIView.as_view(), name="cities"),
     path("franchise/", FranchiseAPIView.as_view(), name="franchise"),
+    path("state-influencers/", StateInfluencerAPIView.as_view(), name="state-influencers"),
+    path("ambience/", AmbienceAPIView.as_view(), name="ambience"),
+    path("recommendation/", RecommendationAPIView.as_view(), name="recommendation"),
+    path("reviews/", ReviewAPIView.as_view(), name="reviews"),
+
     path("auth/", obtain_auth_token),
 
     path('authetication/', include('dj_rest_auth.urls')),

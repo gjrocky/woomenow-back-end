@@ -232,3 +232,14 @@ class Point(BaseModel):
     class Meta:
         verbose_name = "Point"
         verbose_name_plural = "Points"
+
+
+class Ambience(BaseModel):
+    name = models.CharField(_("Name"), max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Ambience"
+        verbose_name_plural = "Ambiences"

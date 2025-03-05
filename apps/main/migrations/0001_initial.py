@@ -139,7 +139,6 @@ class Migration(migrations.Migration):
                 ('rating', models.DecimalField(blank=True, decimal_places=1, max_digits=5, null=True, verbose_name='Rating')),
                 ('website_url', models.URLField(blank=True, null=True, verbose_name='Website URL')),
                 ('reservation_time', models.JSONField(blank=True, default=apps.main.models.default_reservation_time, null=True, verbose_name='Reservation Time')),
-                ('extra_info', models.JSONField(blank=True, default=apps.main.models.default_extra_info, null=True, verbose_name='Additional Information')),
             ],
             options={
                 'verbose_name': 'Restaurant',

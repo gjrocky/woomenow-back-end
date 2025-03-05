@@ -12,7 +12,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
-from apps.main.choices import RestaurantType
+from apps.main.choices import RestaurantType, BudgetType
 from apps.snippet.models import BaseModel
 
 CustomUser = get_user_model()
@@ -240,10 +240,11 @@ class Influencer(Page):
         related_name="+",
     )
     name = RichTextField(_("Name"), max_length=500)
-    user = models.OneToOneField(CustomUser, on_delete=models.PROTECT)
+    user = models.OneToOneField(CustomUser, on_delete=models.PROTECT, related_name='influencer')
     description = RichTextField(_("Description"), blank=True, null=True, max_length=10000)
     social_links = StreamField([('link', URLBlock())], use_json_field=True, null=True, blank=True)
-    city = models.ForeignKey('snippet.City', on_delete=models.SET_NULL, null=True, blank=True)
+    city = models.ForeignKey('snippet.City', on_delete=models.SET_NULL, null=True, blank=True,
+                             related_name="influencers")
     restaurant_images = StreamField([('image', ImageChooserBlock())], null=True, blank=True, use_json_field=True)
 
     content_panels = Page.content_panels + [
@@ -312,12 +313,16 @@ class Invitation(BaseModel):
     invite_to = models.EmailField(_("Invite To"), max_length=255)
     type = models.CharField('Restaurant Type', choices=RestaurantType.choices, max_length=255)
     google_link = models.URLField(_("Google Link"), max_length=255, blank=True, null=True)
+    phone = models.CharField(_("Phone Number"), max_length=255)
 
     panels = [
         FieldPanel("restaurant_name"),
         FieldPanel("location"),
         FieldPanel("invited_by"),
         FieldPanel("invite_to"),
+        FieldPanel("type"),
+        FieldPanel("google_link"),
+        FieldPanel("phone"),
     ]
 
     def __str__(self):
@@ -329,12 +334,12 @@ class Invitation(BaseModel):
 
 
 class Review(BaseModel):
-    content = models.TextField(_("Content"), max_length=5000)
+    content = models.TextField(_("Content"), max_length=5000, null=True, blank=True)
     rating = models.IntegerField(_("Rating"), default=5)
+    more_info = models.JSONField(_('More Information'), null=True, blank=True)
     is_verified = models.BooleanField(_("Is Verified"), default=False)
     is_published = models.BooleanField(_("Is Published"), default=False)
     posted_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
-    no_of_likes = models.IntegerField(_("Likes"), default=0)
     bill = models.ForeignKey(
         "wagtailimages.Image",
         blank=True,
@@ -344,13 +349,14 @@ class Review(BaseModel):
     )
     images = StreamField([('image', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
     restaurant = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True, blank=True)
-
+    approved_by = models.OneToOneField('Influencer', on_delete=models.SET_NULL, null=True, blank=True, )
     panels = [
         FieldPanel("posted_by"),
         FieldPanel("content"),
         FieldPanel("rating"),
         FieldPanel("is_verified"),
-        FieldPanel("no_of_likes"),
+        FieldPanel("is_published"),
+        FieldPanel("more_info"),
         FieldPanel("bill"),
         FieldPanel("images"),
         FieldPanel("restaurant"),
@@ -383,10 +389,6 @@ def default_reservation_time():
     return {"reservation": {}}
 
 
-def default_extra_info():
-    return {"extra_info": {}}
-
-
 class Restaurant(Page):
     name = RichTextField(_("Name"), max_length=500)
     short_description = RichTextField(_("Short Description"), max_length=2000)
@@ -398,7 +400,7 @@ class Restaurant(Page):
     franchise = models.ForeignKey('Franchise', on_delete=models.SET_NULL, null=True, blank=True)
     menus = StreamField([('menu', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
     invited_by = models.ForeignKey('Influencer', on_delete=models.SET_NULL, null=True, blank=True)
-    recommended_by = ParentalManyToManyField(CustomUser)
+    recommended_by = ParentalManyToManyField(CustomUser, related_name='Restaurants')
     type = models.CharField(_('Restaurant Type'), max_length=255, choices=RestaurantType.choices)
     categories = ParentalManyToManyField("snippet.Category", blank=True, related_name="Restaurants")
     city = models.ForeignKey("snippet.City", on_delete=models.SET_NULL, related_name="Restaurants", null=True,
@@ -416,7 +418,9 @@ class Restaurant(Page):
         related_name="+",
     )
     reservation_time = JSONField(_("Reservation Time"), blank=True, null=True, default=default_reservation_time)
-    extra_info = JSONField(_("Additional Information"), blank=True, null=True, default=default_extra_info)
+    budget_friendly = models.CharField(_('Restaurant Type'), max_length=255, choices=BudgetType.choices,
+                                       default=BudgetType.INEXPENSIVE)
+    ambience = ParentalManyToManyField("snippet.Ambience", blank=True, related_name="Restaurants")
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -443,6 +447,8 @@ class Restaurant(Page):
         ),
         MultiFieldPanel(
             [
+                FieldPanel("ambience"),
+                FieldPanel("reservation_time"),
                 FieldPanel("is_franchise"),
                 FieldPanel("franchise"),
                 FieldPanel("rating"),
@@ -484,3 +490,24 @@ class Reservation(BaseModel):
     class Meta:
         verbose_name = "Reservation"
         verbose_name_plural = "Reservations"
+
+
+class BecomeInfluencer(BaseModel):
+    user = models.OneToOneField(CustomUser, on_delete=models.PROTECT, related_name='become_an_influencer')
+    insta_link = models.URLField(_('Instagram'), null=True, blank=True)
+    tiktok_link = models.URLField(_('TikTok'), null=True, blank=True)
+    other_link = models.URLField(_('Other'), null=True, blank=True)
+
+    panels = [
+        FieldPanel("user"),
+        FieldPanel("insta_link"),
+        FieldPanel("tiktok_link"),
+        FieldPanel("other_link"),
+    ]
+
+    def __str__(self):
+        return self.user.first_name
+
+    class Meta:
+        verbose_name = "Become Influencer"
+        verbose_name_plural = "Become Influencers"

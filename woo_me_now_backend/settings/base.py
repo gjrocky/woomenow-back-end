@@ -265,16 +265,12 @@ SPECTACULAR_SETTINGS.update({
 })
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3001','http://localhost:3000']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3001','http://localhost:3000']
+CORS_ALLOWED_ORIGINS = env.list('ALLOWED_ORIGINS',default=[])
+CSRF_TRUSTED_ORIGINS = env.list('ALLOWED_ORIGINS',default=[])
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-conn-origin',
 ]
-
-
-
-
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
@@ -284,4 +280,3 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 APPEND_SLASH = False
 SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.MySocialAccount'
-

@@ -50,11 +50,23 @@ class User(AbstractUser):
     point = models.IntegerField(default=0)
     city = models.ForeignKey('snippet.City', null=True, blank=True, on_delete=models.SET_NULL)
     date_of_birth = models.DateField(_("Date of Birth"), null=True, blank=True)
+    phone = models.CharField(_('Phone Number'), max_length=30, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
+
+    def save(self, *args, **kwargs):
+        """Ensure password is hashed when saving a user."""
+        if self.pk:  # Only hash password if updating an existing user
+            old_user = User.objects.filter(pk=self.pk).first()
+            if old_user and old_user.password != self.password:
+                self.set_password(self.password)  # Hash only if changed
+        else:
+            self.set_password(self.password)  # Hash for new users
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.email

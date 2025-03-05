@@ -2,10 +2,12 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from api.auth.serializers import UserSerializer
@@ -43,6 +45,7 @@ class GoogleLoginView(SocialLoginView):
 
 
 class UserView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser,)
 

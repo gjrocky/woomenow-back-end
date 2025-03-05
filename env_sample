@@ -1,6 +1,7 @@
 DJANGO_SECRET_KEY
 DJANGO_DEBUG                     # OPTIONAL | Default: False
 DJANGO_ALLOWED_HOST              # NEEDED IF DJANGO_DEBUG False | comma separated string without space in between
+ALLOWED_ORIGINS                  # OPTIONAL | Default: []
 
 DATABASE_URL                     # OPTIONAL | Default: sqlite:///db.sqlite | eg: psql://<user>:<password>@<host>:<port>/<db_name>
 
