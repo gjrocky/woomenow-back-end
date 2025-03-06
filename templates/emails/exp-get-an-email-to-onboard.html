@@ -9,6 +9,12 @@
     <meta name="supported-color-schemes" content="light dark"/>
     <title>When rest/exp get an email to onboard</title>
     <style type="text/css" rel="stylesheet" media="all">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: #cccccc;
             margin: 0;
@@ -33,71 +39,151 @@
         p {
             margin: 0;
         }
+
+        @media (max-width: 576px) {
+            body, table, td, a {
+                -webkit-text-size-adjust: none !important;
+            }
+
+            .main-heading {
+                font-size: 18px !important;
+                padding: 24px 0 !important;
+                line-height: 22px !important;
+            }
+
+            .main-content {
+                padding: 16px !important;
+            }
+
+            .main-sub-content {
+                padding: 16px 0 0 !important;
+            }
+
+            .sub-content {
+                padding: 20px !important;
+            }
+
+            .sub-info {
+                font-size: 14px !important;
+                padding-bottom: 16px !important;
+                line-height: 20px !important;
+            }
+
+            .content {
+                font-size: 14px !important;
+
+            }
+
+            .btn-info {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: max-content !important;
+            }
+
+            .main-sub-info {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            a {
+
+                word-wrap: break-word !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                display: block !important;
+            }
+
+            .content-wrapper {
+                padding-bottom: 16px !important;
+
+            }
+        }
     </style>
 </head>
 <body>
-<div style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
-    <table style="background: transparent; margin: 0 auto;border-spacing: 0;font-family:manrope,sans-serif;" align="center">
+<div class="main-content" style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
+    <table style="background: transparent; margin: 0 auto;border-spacing: 0;font-family:manrope,sans-serif;"
+           align="center">
         <tbody>
         <tr>
             <td>
-                <table align="center" style="width: 100%; max-width: 592px;">
+                <table class="main-sub-info" align="center" style="width: 100%; max-width: 592px;">
                     <tbody>
                     <tr>
-                        <td style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
+                        <td class="sub-content"
+                            style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
                             <table align="left">
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <a href="/" style="display: inline-block;"><img style="width: 100%; max-width: 98px; height: auto; display: block;" src="../../static/images/woomenow-logo.png" alt="woomenow logo"/></a>
+                                        <a href="/" style="display: inline-block;"><img
+                                                style="width: 100%; max-width: 98px; height: auto; display: block;"
+                                                src="../../static/images/woomenow-logo.png" alt="woomenow logo"/></a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
+                                    <td class="main-heading"
+                                        style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
                                         Congratulations! You’re Now Part of WooMeNow.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        Hello {{Restaurant/Experience Name}} Team,
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                        Hello {{ Restaurant/Experience Name }} Team,
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         We’re thrilled to welcome you to WooMeNow, the platform where dining and
                                         experience providers like you connect with eager customers seeking unique and
                                         memorable experiences.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         Your application has been reviewed and approved by our team. Now, it’s time to
                                         take the final step to set up your account and showcase your offerings to our
                                         community!
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px;">
+                                    <td class="content-wrapper" style="padding-bottom: 24px;">
                                         <table>
                                             <tbody>
                                             <tr>
-                                                <td style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="content"
+                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     Complete Your Onboarding in Just a Few Steps:
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <ol style="margin: 0; padding-left: 18px;">
-                                                        <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
+                                                        <li class="content"
+                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
                                                             <strong>Click the Link Below</strong> to access your
                                                             unique onboarding form.
                                                         </li>
-                                                        <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px; padding: 16px 0;">
+                                                        <li class="content"
+                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px; padding: 16px 0;">
                                                             <strong>Fill Out the Details</strong> about your
                                                             restaurant/experience, including menus, photos,
                                                             descriptions, and more.
                                                         </li>
-                                                        <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px; ">
+                                                        <li class="content"
+                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px; ">
                                                             <strong>Start Showcasing Your Business</strong> to a wide
                                                             audience of potential guests.
                                                         </li>
@@ -113,21 +199,27 @@
                                         <table>
                                             <tbody>
                                             <tr>
-                                                <td style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="content"
+                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     Benefits of Joining WooMeNow:
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <ul style="margin: 0; padding-left: 28px;">
-                                                        <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
-                                                            Attract new customers who are actively seeking your offerings.
+                                                        <li class="content"
+                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
+                                                            Attract new customers who are actively seeking your
+                                                            offerings.
                                                         </li>
-                                                        <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
+                                                        <li class="content"
+                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
                                                             Manage bookings and experiences with ease.
                                                         </li>
-                                                        <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px; ">
-                                                            Build trust and visibility through verified reviews and seamless user experiences.
+                                                        <li class="content"
+                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px; ">
+                                                            Build trust and visibility through verified reviews and
+                                                            seamless user experiences.
                                                         </li>
                                                     </ul>
                                                 </td>
@@ -137,16 +229,18 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px;">
+                                    <td class="content-wrapper" style="padding-bottom: 24px;">
                                         <table>
                                             <tbody>
                                             <tr>
-                                                <td style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="content"
+                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     Support & Contact
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="content"
+                                                    style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     If you have any questions or need help during the onboarding
                                                     process, our team is here to support you every step of the way. Feel
                                                     free to contact us at support@woomenow.com.
@@ -157,13 +251,14 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         We’re excited to see your business thrive on WooMeNow!
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href=""
+                                        <a class="btn-info" href=""
                                            style="padding: 12px 16px; background: linear-gradient(45deg, #FC33FF 0%, #6B00F5 100%); display: inline-block; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                             View Booking Dashboard
                                         </a>
@@ -174,7 +269,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 32px 40px 0">
+                        <td class="main-sub-content" style="padding: 32px 40px 0">
                             <table align="center">
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
@@ -190,7 +285,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
+                                    <td class="main-sub-content"
+                                        style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
                                         Don’t want any more emails from WooMeNow? <span style="color:#9A4AFF;">Unsubscribe</span>.
                                     </td>
                                 </tr>
@@ -201,7 +297,6 @@
                 </table>
             </td>
         </tr>
-
         </tbody>
     </table>
 </div>

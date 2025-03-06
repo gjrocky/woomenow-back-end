@@ -9,6 +9,12 @@
     <meta name="supported-color-schemes" content="light dark"/>
     <title>When rest/exp get an email to onboard</title>
     <style type="text/css" rel="stylesheet" media="all">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: #cccccc;
             margin: 0;
@@ -35,6 +41,67 @@
         }
 
         @media (max-width: 576px) {
+            body, table, td, a {
+                -webkit-text-size-adjust: none !important;
+            }
+
+            .main-heading {
+                font-size: 18px !important;
+                padding: 24px 0 !important;
+                line-height: 22px !important;
+            }
+
+            .main-content {
+                padding: 16px !important;
+            }
+
+            .main-sub-content {
+                padding: 16px 0 0 !important;
+            }
+
+            .sub-content {
+                padding: 20px !important;
+            }
+
+            .sub-info {
+                font-size: 14px !important;
+                padding-bottom: 16px !important;
+                line-height: 20px !important;
+            }
+
+            .btn-info {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: max-content !important;
+            }
+
+            .main-sub-info {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            a {
+
+                word-wrap: break-word !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                display: block !important;
+            }
+
+            .content-wrapper {
+                padding-bottom: 16px !important;
+
+            }
+
             .mobile-card-wrapper {
                 width: 100% !important;
                 border-spacing: unset !important;
@@ -46,22 +113,23 @@
             .mobile-card {
                 width: unset !important;
                 display: block;
-                margin-bottom: 16px;
+                margin-bottom: 12px;
             }
         }
     </style>
 </head>
 <body>
-<div style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
+<div class="main-content" style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
     <table style="background: transparent; margin: 0 auto;border-spacing: 0;font-family:manrope,sans-serif;"
            align="center">
         <tbody>
         <tr>
             <td>
-                <table align="center" style="width: 100%; max-width: 592px;">
+                <table class="main-sub-info" align="center" style="width: 100%; max-width: 592px;">
                     <tbody>
                     <tr>
-                        <td style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
+                        <td class="sub-content"
+                            style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
                             <table align="left">
                                 <tbody>
                                 <tr>
@@ -72,28 +140,32 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
+                                    <td class="main-heading"
+                                        style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
                                         Your Reservation is Confirmed!
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         Hi [Influencer’s First Name], We Need Your Expertise!
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         Your reservation is all set! Thank you for booking through WooMeNow – we’re
                                         excited for you to enjoy this experience. Below, you’ll find all the details you
                                         need to make the most of your visit.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px;">
+                                    <td class="content-wrapper" style="padding-bottom: 24px;">
                                         <table style="width: 100%;">
                                             <tbody>
                                             <tr>
-                                                <td style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="sub-info"
+                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     Here’s What You Booked:
                                                 </td>
                                             </tr>
@@ -144,19 +216,21 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         Invite friends or family to join by sharing your reservation details.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        After your visit, we’d love to hear your thoughts to help others make great choices too.
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                        After your visit, we’d love to hear your thoughts to help others make great
+                                        choices too.
                                     </td>
                                 </tr>
-
                                 <tr>
                                     <td>
-                                        <a href=""
+                                        <a class="btn-info" href=""
                                            style="padding: 12px 16px;
                                            background: linear-gradient(45deg, #FC33FF 0%, #6B00F5 100%);
                                            display: inline-block;
@@ -173,7 +247,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 32px 40px 0">
+                        <td class="main-sub-content" style="padding: 32px 40px 0">
                             <table align="center">
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
@@ -189,7 +263,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
+                                    <td class="main-sub-content"
+                                        style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
                                         Don’t want any more emails from WooMeNow? <span style="color:#9A4AFF;">Unsubscribe</span>.
                                     </td>
                                 </tr>
