@@ -9,6 +9,12 @@
     <meta name="supported-color-schemes" content="light dark"/>
     <title>When rest/exp get an email to onboard</title>
     <style type="text/css" rel="stylesheet" media="all">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: #cccccc;
             margin: 0;
@@ -33,18 +39,106 @@
         p {
             margin: 0;
         }
+
+        @media (max-width: 576px) {
+            body, table, td, a {
+                -webkit-text-size-adjust: none !important;
+            }
+
+            .main-heading {
+                font-size: 18px !important;
+                padding: 24px 0 !important;
+                line-height: 22px !important;
+            }
+
+            .main-content {
+                padding: 16px !important;
+            }
+
+            .main-sub-content {
+                padding: 16px 0 0 !important;
+            }
+
+            .sub-content {
+                padding: 20px !important;
+            }
+
+            .sub-info {
+                font-size: 14px !important;
+                padding-bottom: 16px !important;
+                line-height: 20px !important;
+            }
+
+            .content {
+                font-size: 14px !important;
+
+            }
+
+            .btn-info {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: max-content !important;
+            }
+
+            .main-sub-info {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            a {
+
+                word-wrap: break-word !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                display: block !important;
+            }
+
+            .content-wrapper {
+                padding-bottom: 16px !important;
+
+            }
+
+            .offer-wrapper {
+                padding: 12px !important;
+            }
+
+            .offer-heading {
+                font-size: 14px !important;
+                line-height: 16px !important;
+            }
+
+            .offer-content {
+                font-size: 14px !important;
+                line-height: 20px !important;
+            }
+
+            .x-padding {
+                padding: 16px 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
-<div style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
-    <table style="background: transparent; margin: 0 auto;border-spacing: 0;font-family:manrope,sans-serif;" align="center">
+<div class="main-content" style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
+    <table style="background: transparent; margin: 0 auto;border-spacing: 0;font-family:manrope,sans-serif;"
+           align="center">
         <tbody>
         <tr>
             <td>
-                <table align="center" style="width: 100%; max-width: 592px;">
+                <table class="main-sub-info" align="center" style="width: 100%; max-width: 592px;">
                     <tbody>
                     <tr>
-                        <td style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
+                        <td class="sub-content"
+                            style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
                             <table align="left">
                                 <tbody>
                                 <tr>
@@ -55,17 +149,20 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
+                                    <td class="main-heading"
+                                        style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
                                         A Special Offer Just for You!
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         Hi, [Username]
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                         We appreciate you taking the time to share your experience at
                                         [Restaurant/Experience Name] on WooMeNow. Your honest feedback is valuable to
                                         both us and our partners, as it helps ensure a high-quality experience for
@@ -73,16 +170,18 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding-bottom: 24px;">
+                                    <td class="content-wrapper" style="padding-bottom: 24px;">
                                         <table>
                                             <tbody>
                                             <tr>
-                                                <td style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="content"
+                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     A Gesture of Goodwill from [Restaurant/Experience Name]
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="content"
+                                                    style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     The team at [Restaurant/Experience Name] is truly sorry your last
                                                     visit didn’t meet expectations. To show their appreciation for your
                                                     feedback – and to give you a chance to enjoy the best they have to
@@ -94,16 +193,19 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 24px; border: 1px dashed #334155; background: #64748B14; ">
+                                    <td class="offer-wrapper"
+                                        style="padding: 24px; border: 1px dashed #334155; background: #64748B14; ">
                                         <table style="width: 100%;">
                                             <tbody>
                                             <tr>
-                                                <td align="center" style="padding-bottom: 8px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <td class="offer-heading" align="center"
+                                                    style="padding-bottom: 8px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
                                                     Your Exclusive Offer
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td align="center" style="font-weight: 400; font-size: 20px; line-height: 32px; color: #FFFFFF;">
+                                                <td class="offer-content" align="center"
+                                                    style="font-weight: 400; font-size: 20px; line-height: 32px; color: #FFFFFF;">
                                                     10% Off on your next visit
                                                 </td>
                                             </tr>
@@ -112,7 +214,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 24px 0;">
+                                    <td class="x-padding" style="padding: 24px 0;">
                                         <table>
                                             <tbody>
                                             <tr>
@@ -122,7 +224,7 @@
                                             </tr>
                                             <tr>
                                                 <td style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                                    Simply visit {{Restaurant/Experience Name}} and present this offer.
+                                                    Simply visit {{ Restaurant/Experience Name}} and present this offer.
                                                     They’re looking forward to giving you the warm, welcoming experience
                                                     they’re known for.
                                                 </td>
@@ -133,7 +235,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href=""
+                                        <a class="btn-info" href=""
                                            style="padding: 12px 16px;
                                            background: linear-gradient(45deg, #FC33FF 0%, #6B00F5 100%);
                                            display: inline-block;
@@ -150,7 +252,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 32px 40px 0">
+                        <td class="main-sub-content" style="padding: 32px 40px 0">
                             <table align="center">
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
@@ -166,7 +268,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
+                                    <td class="main-sub-content"
+                                        style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
                                         Don’t want any more emails from WooMeNow? <span style="color:#9A4AFF;">Unsubscribe</span>.
                                     </td>
                                 </tr>
@@ -177,7 +280,6 @@
                 </table>
             </td>
         </tr>
-
         </tbody>
     </table>
 </div>
