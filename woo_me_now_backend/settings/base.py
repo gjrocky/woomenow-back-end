@@ -95,6 +95,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     'allauth.account.middleware.AccountMiddleware',
+    "woo_me_now_backend.middleware.RequestMiddleware"
 ]
 
 ROOT_URLCONF = "woo_me_now_backend.urls"
@@ -243,8 +244,9 @@ REST_FRAMEWORK = {
 }
 REST_USE_JWT = True
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
@@ -265,8 +267,8 @@ SPECTACULAR_SETTINGS.update({
 })
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = env.list('ALLOWED_ORIGINS',default=[])
-CSRF_TRUSTED_ORIGINS = env.list('ALLOWED_ORIGINS',default=[])
+CORS_ALLOWED_ORIGINS = env.list('ALLOWED_ORIGINS', default=[])
+CSRF_TRUSTED_ORIGINS = env.list('ALLOWED_ORIGINS', default=[])
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'x-conn-origin',
@@ -280,3 +282,4 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 APPEND_SLASH = False
 SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.MySocialAccount'
+SITE_ID = 1

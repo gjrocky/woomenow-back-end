@@ -1,12 +1,10 @@
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 
 from api.pages.views import FAQsPageAPIViews, BusinessPageAPIView, AboutPageAPIView, PricingPageAPIView, \
     JoinTheWooPageAPIView, InfluencerPageAPIView, InfluencerListingPageAPIView, RestaurantListingPageAPIView, \
     RestaurantPageAPIView, UpdateInfluencerPageAPIView, RestaurantReviewsAPIView, RestaurantRecommendationAPIView, \
-    RestaurantDetailsAPIView
-
-from rest_framework.authtoken.views import obtain_auth_token
-
+    RestaurantDetailsAPIView, RestaurantDetailAPIView, RestaurantCreateAPIView, RestaurantInviteAPIView
 
 app_name = "pages"
 
@@ -24,7 +22,10 @@ urlpatterns = [
     path("restaurant/<pk>/", RestaurantPageAPIView.as_view(), name="restaurant-detail"),
     path("restaurant-reviews/", RestaurantReviewsAPIView.as_view(), name="restaurant-reviews"),
     path("restaurant-recommendation/", RestaurantRecommendationAPIView.as_view(), name="restaurant-recommendation"),
-    path("restaurant-detail/", RestaurantDetailsAPIView.as_view(), name="restaurant-recommendation"),
+    path("restaurant-detail/", RestaurantDetailsAPIView.as_view(), name="restaurant-detail"),
+    path("restaurant-info/<pk>/", RestaurantDetailAPIView.as_view(), name="restaurant-info"),
     path("restaurant-menus/", RestaurantDetailsAPIView.as_view(), name="restaurant-menus"),
     path("restaurant-images/", RestaurantDetailsAPIView.as_view(), name="restaurant-images"),
+    path("restaurant-create/", RestaurantCreateAPIView.as_view(), name="restaurant-create"),
+    path("restaurant-invite/", RestaurantInviteAPIView.as_view(), name="restaurant-invite"),
 ]

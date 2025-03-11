@@ -111,8 +111,13 @@ class BookmarkAPIView(APIView):
             restaurant = Restaurant.objects.get(id=request.data['id'])
             if restaurant in user.Restaurants.all():
                 user.Restaurants.remove(restaurant)
+                user.point = user.point - 1 if user.point > 0 else 0
+                user.save()
                 return Response({"message": "Bookmark removed successfully"}, status=status.HTTP_200_OK)
             user.Restaurants.add(restaurant)
+            user.point = user.point + 1
+            user.save()
+
             return Response({"message": "Bookmark added successfully", 'added': True}, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
             return Response({"message": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -236,6 +241,9 @@ class PendingReviewAPIView(APIView):
         try:
             queryset = self.queryset.get(id=id)
             queryset.is_published = is_approved
+            if is_approved:
+                queryset.posted_by.point = queryset.posted_by.point + 20
+                queryset.posted_by.save()
             queryset.is_verified = True
             queryset.save()
             return Response({'message': 'Review is Updated'}, status=status.HTTP_200_OK)

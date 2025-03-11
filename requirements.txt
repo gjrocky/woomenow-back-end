@@ -10,3 +10,5 @@ drf-spectacular-sidecar==2024.7.1
 requests==2.32.3
 wagtail==6.2
 wagtail-modeladmin==2.1.0
+cryptography==43.0.3
+dj-rest-auth==6.0.0

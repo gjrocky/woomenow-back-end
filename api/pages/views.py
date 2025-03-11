@@ -1,3 +1,6 @@
+import json
+import uuid
+
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -9,14 +12,17 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from wagtail.blocks import StreamValue
+from wagtail.images.models import Image
+from wagtail.models import Page
 
 from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSerializer, PricingSerializer, \
     JoinTheWooSerializer, InfluencerSerializer, InfluencerListSerializer, RestaurantListSerializer, \
     RestaurantSerializer, UpdateInfluencerSerializer, RestaurantReviewSerializer, RestaurantRecommendationSerializer, \
-    RestaurantDetailSerializer
+    RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer
 from api.serializers import Pagination
-from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review
-from apps.snippet.models import City
+from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation
+from apps.snippet.models import City, Category, Ambience
 
 
 class FAQsPageAPIViews(RetrieveAPIView):
@@ -226,15 +232,39 @@ class RestaurantReviewsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         restaurant_id = request.query_params.get("restaurant_id")
         limit = request.query_params.get("limit")
+        sort = request.query_params.get("sort")
+        q = request.query_params.get("q")
+        is_paginate = request.query_params.get("is_pagination", 'false') == 'true'
+
         queryset = self.queryset.filter(restaurant_id=restaurant_id, is_published=True)
+        extra_info = dict(no_of_reviews=queryset.count(), page_size=Pagination.page_size)
+
         if not queryset:
             return Response({"message": "No reviews Found"}, status=status.HTTP_404_NOT_FOUND)
 
+        if q:
+            query = Q(content__icontains=q) | Q(posted_by__first_name__icontains=q) | Q(
+                posted_by__last_name__icontains=q) | Q(approved_by__name__icontains=q) | Q(
+                posted_by__influencer__name__icontains=q)
+            queryset = queryset.filter(query)
+
         if limit:
             queryset = queryset[:int(limit)]
+        else:
+            order_by = 'created_at' if sort == 'Oldest' else '-created_at'
+            queryset = queryset.order_by(order_by)
+        response_data = dict()
+        if is_paginate:
+            paginator = Pagination()
+            page = paginator.paginate_queryset(queryset, request, view=self)
 
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = self.serializer_class(page, many=True)
+            response_data['data'] = paginator.get_paginated_response(serializer.data).data
+        else:
+            serializer = self.serializer_class(queryset, many=True)
+            response_data['data'] = serializer.data
+        response_data['pagination'] = extra_info
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class RestaurantRecommendationAPIView(APIView):
@@ -247,11 +277,30 @@ class RestaurantRecommendationAPIView(APIView):
     def get(self, request, *args, **kwargs):
         restaurant_id = request.query_params.get("restaurant_id")
         limit = request.query_params.get("limit")
+        sort = request.query_params.get("sort")
+
+        q = request.query_params.get("q")
+
         try:
             queryset = self.queryset.get(id=restaurant_id)
 
             serializer = self.serializer_class(queryset)
             data = serializer.data
+
+            if q:
+                recommended_by = []
+                for item in data.get('recommended_by'):
+                    try:
+                        if q.lower() in item.get('influencer', {}).get('name', '').lower():
+                            recommended_by.append(item)
+                    except:
+                        if q.lower() in item.get('user', {}).get('name', '').lower():
+                            recommended_by.append(item)
+                data['recommended_by'] = recommended_by
+
+            if sort == 'Oldest':
+                data['recommended_by'] = data['recommended_by'][::-1]
+
             if limit:
                 data = {'id': data.get('id'), 'recommended_by': data.get('recommended_by')[:int(limit)]}
             return Response(data, status=status.HTTP_200_OK)
@@ -275,3 +324,137 @@ class RestaurantDetailsAPIView(APIView):
 
         except Restaurant.DoesNotExist:
             return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, *args, **kwargs):
+        restaurant_id = request.query_params.get("restaurant_id")
+        try:
+            queryset = self.queryset.get(id=restaurant_id)
+            serializer = self.serializer_class(queryset, data=request.data, partial=True, context={'request': request})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class RestaurantDetailAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = RestaurantDetailsSerializer
+    queryset = Restaurant.objects.live()
+    lookup_field = 'pk'
+
+    def get(self, request, *args, **kwargs):
+        restaurant_id = kwargs.get("pk")
+        try:
+            queryset = self.queryset.get(id=restaurant_id)
+            serializer = self.serializer_class(queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Restaurant.DoesNotExist:
+            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, *args, **kwargs):
+
+        if not request.data.get('data'):
+            return Response({"message": "Provide restaurant data"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            queryset = self.queryset.get(id=kwargs.get("pk"))
+            serializer = self.serializer_class(queryset, data=request.data, partial=True, context={'request': request})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class RestaurantCreateAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = RestaurantCreateSerializer
+
+    def post(self, request, *args, **kwargs):
+        if not request.data.get('data'):
+            return Response({"message": "Provide restaurant data"}, status=status.HTTP_404_NOT_FOUND)
+
+        data = json.loads(request.data.get('data'))
+        menus = request.data.getlist('menus[]')
+        photos = request.data.getlist('photos[]')
+        profile = request.data.get('profile[]')
+
+        if not profile:
+            return Response({"message": "Provide profile picture"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not menus:
+            return Response({"message": "Provide Menus picture"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not photos:
+            return Response({"message": "Provide photos picture"}, status=status.HTTP_404_NOT_FOUND)
+        id = uuid.uuid4()
+        parent_page = Page.objects.all().order_by('first_published_at').first()
+        restaurant = parent_page.add_child(
+            instance=Restaurant(title=id,
+                                slug=id,
+                                name=data.get('name'),
+                                short_description=data.get('short_description'),
+                                about_restaurant=data.get('about_restaurant'),
+                                email=data.get('email'),
+                                phone_number=data.get('phone_number'),
+                                location=data.get('map'),
+                                type=data.get('type'),
+                                reservation_time=data.get('reservation_time'),
+                                budget_friendly=data.get('budget_friendly'),
+                                )
+        )
+
+        restaurant.categories.set(Category.objects.filter(id__in=data.get('categories', [])))
+        restaurant.ambience.set(Ambience.objects.filter(id__in=data.get('ambience', [])))
+        restaurant.city = City.objects.get(id=data.get('city', ''))
+        restaurant.user = request.user
+
+        if restaurant.restaurant_images is None:
+            restaurant.restaurant_images = StreamValue(restaurant.restaurant_images.stream_block, [])
+
+        if restaurant.menus is None:
+            restaurant.menus = StreamValue(restaurant.menus.stream_block, [])
+
+        images = list(restaurant.restaurant_images)
+        for img_file in photos:
+            wagtail_image = Image.objects.create(title=img_file.name, file=img_file)
+            images.append(('image', wagtail_image))
+
+        restaurant.restaurant_images = StreamValue(
+            restaurant.restaurant_images.stream_block,
+            images
+        )
+
+        if menus:
+            images = list(restaurant.menus)  # Ensure it's a list
+            for img_file in menus:
+                wagtail_image = Image.objects.create(title=img_file.name, file=img_file)
+                images.append(('menu', wagtail_image))  # Append in the correct format
+
+            restaurant.menus = StreamValue(
+                restaurant.menus.stream_block,
+                images
+            )
+        if profile:
+            wagtail_image = Image.objects.create(title=profile.name,
+                                                 file=profile)
+            restaurant.profile_pic = wagtail_image
+
+        restaurant.save()
+        restaurant.save_revision().publish()
+
+        return Response({"message": "Restaurant Created Successfully"}, status=status.HTTP_201_CREATED)
+
+
+class RestaurantInviteAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+            res = Invitation.objects.filter(invite_to=request.user.email)
+            if res:
+                return Response({'message': 'success'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Fail'}, status=status.HTTP_404_NOT_FOUND)

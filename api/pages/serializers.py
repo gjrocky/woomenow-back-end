@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import serializers
 from wagtail.blocks import StreamValue
 from wagtail.images.models import Image
@@ -7,6 +9,7 @@ from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import (
     FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review,
 )
+from apps.snippet.models import Category, Ambience
 
 
 class FAQsSerializer(serializers.ModelSerializer):
@@ -388,7 +391,7 @@ class RestaurantRecommendationSerializer(serializers.ModelSerializer):
                 influencer = None
             r_obj = dict(
                 influencer=influencer,
-                user=dict(id=r.id, name=get_text(r.first_name),email=r.email),
+                user=dict(id=r.id, name=get_text(r.first_name), email=r.email),
             )
             r_by.append(r_obj)
         return r_by
@@ -422,3 +425,128 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
                 data.pop('menus', None)
 
         return data
+
+    def update(self, instance, validated_data):
+        res_files = self.initial_data.getlist('res_files[]', None)
+        res_menu = self.initial_data.getlist('res_menu[]', None)
+        delete_img = self.initial_data.get('delete_id', None)
+        delete_menu = self.initial_data.get('delete_menu', None)
+
+        if instance.restaurant_images is None:
+            instance.restaurant_images = StreamValue(instance.restaurant_images.stream_block, [])
+
+        if instance.menus is None:
+            instance.menus = StreamValue(instance.menus.stream_block, [])
+
+        if delete_img:
+            updated_images = [
+                img for img in instance.restaurant_images if
+                img.block_type == "image" and img.value.id != int(delete_img)
+            ]
+            instance.restaurant_images = StreamValue(
+                instance.restaurant_images.stream_block,
+                [("image", img.value) for img in updated_images]
+            )
+            instance.save(update_fields=['restaurant_images'])
+
+        if delete_menu:
+            updated_images = [
+                img for img in instance.menus if
+                img.block_type == "menu" and img.value.id != int(delete_menu)
+            ]
+            instance.menus = StreamValue(
+                instance.menus.stream_block,
+                [("menu", img.value) for img in updated_images]
+            )
+            instance.save(update_fields=['menus'])
+
+        if res_files:
+            images = list(instance.restaurant_images)  # Ensure it's a list
+            for img_file in res_files:
+                wagtail_image = Image.objects.create(title=img_file.name, file=img_file)
+                images.append(('image', wagtail_image))  # Append in the correct format
+
+            instance.restaurant_images = StreamValue(
+                instance.restaurant_images.stream_block,
+                images
+            )
+        if res_menu:
+            images = list(instance.menus)  # Ensure it's a list
+            for img_file in res_menu:
+                wagtail_image = Image.objects.create(title=img_file.name, file=img_file)
+                images.append(('menu', wagtail_image))  # Append in the correct format
+
+            instance.menus = StreamValue(
+                instance.menus.stream_block,
+                images
+            )
+        instance.save()
+        return instance
+
+
+class RestaurantDetailsSerializer(serializers.ModelSerializer):
+    ambience = serializers.SerializerMethodField(source='ambience')
+    categories = serializers.SerializerMethodField(source='categories')
+    name = serializers.SerializerMethodField()
+    short_description = serializers.SerializerMethodField()
+    about_restaurant = serializers.SerializerMethodField()
+    profile_pic = serializers.SerializerMethodField()
+
+    def get_profile_pic(self, obj):
+        try:
+            return obj.profile_pic.file.url
+        except:
+            return None
+
+    def get_name(self, obj):
+        return get_text(obj.name)
+
+    def get_short_description(self, obj):
+        return get_text(obj.short_description)
+
+    def get_about_restaurant(self, obj):
+        return get_text(obj.about_restaurant)
+
+    def get_categories(self, obj):
+        categories = obj.categories.all()
+        if categories:
+            return [dict(id=cat.id, name=cat.name, slug=cat.slug) for cat in categories]
+        return []
+
+    def get_ambience(self, obj):
+        ambience = obj.ambience.all()
+        if ambience:
+            return [dict(id=amb.id, name=amb.name) for amb in ambience]
+        return []
+
+    class Meta:
+        model = Restaurant
+        fields = ['id', 'slug', 'title', 'name', 'short_description', 'about_restaurant', 'email', 'phone_number',
+                  'reservation_time', 'budget_friendly', 'categories', 'ambience', 'profile_pic', 'type']
+
+    def update(self, instance, validated_data):
+        data = json.loads(self.initial_data.get('data'))
+        instance.name = data.get('name', instance.name)
+        instance.short_description = data.get('short_description', instance.short_description)
+        instance.about_restaurant = data.get('about_restaurant', instance.about_restaurant)
+        instance.email = data.get('email', instance.email)
+        instance.phone_number = data.get('phone_number', instance.phone_number)
+        instance.budget_friendly = data.get('budget_friendly', instance.budget_friendly)
+        instance.categories.set(Category.objects.filter(id__in=data.get('categories')))
+        instance.ambience.set(Ambience.objects.filter(id__in=data.get('ambience')))
+        if data.get('reservation_time'):
+            instance.reservation_time = dict(reservation=data.get('reservation_time'))
+
+        if self.initial_data.get('files[]'):
+            wagtail_image = Image.objects.create(title=self.initial_data.get('files[]').name,
+                                                 file=self.initial_data.get('files[]'))
+            instance.profile_pic = wagtail_image
+
+        instance.save()
+        return instance
+
+
+class RestaurantCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restaurant
+        fields = '__all__'

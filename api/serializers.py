@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from wagtail.blocks import StreamValue
 from wagtail.fields import StreamField
 from wagtail.images.models import Image
@@ -9,6 +11,7 @@ from wagtail.rich_text import RichText
 from apps.main.blocks import PricingCard
 from apps.main.models import Franchise, Review
 from apps.snippet.models import Category, State, City, Ambience
+from apps.users.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -134,7 +137,7 @@ class FranchiseSerializer(serializers.ModelSerializer):
 
 
 class Pagination(PageNumberPagination):
-    page_size = 1
+    page_size = 3
     page_size_query_param = 'page_size'
 
 
@@ -169,8 +172,8 @@ class ReviewSerializer(serializers.ModelSerializer):
         except:
             return None
 
-    def get_user(self,obj):
-        return f'{obj.posted_by.first_name } {obj.posted_by.last_name}'
+    def get_user(self, obj):
+        return f'{obj.posted_by.first_name} {obj.posted_by.last_name}'
 
     def get_restaurant(self, obj):
         try:
@@ -189,4 +192,18 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['id', 'content', 'is_verified','bill', 'is_published', 'more_info', 'rating', 'created_at', 'restaurant','user']
+        fields = ['id', 'content', 'is_verified', 'bill', 'is_published', 'more_info', 'rating', 'created_at',
+                  'restaurant', 'user']
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["email"] = user.email  # Add email to JWT payload
+        return token
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        get_object_or_404(User, email=email)
+        return super().validate(attrs)

@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField
+from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
 from wagtail import blocks
@@ -421,10 +422,12 @@ class Restaurant(Page):
     budget_friendly = models.CharField(_('Restaurant Type'), max_length=255, choices=BudgetType.choices,
                                        default=BudgetType.INEXPENSIVE)
     ambience = ParentalManyToManyField("snippet.Ambience", blank=True, related_name="Restaurants")
-
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='restaurants')
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
+                FieldPanel("user"),
+                FieldPanel("profile_pic"),
                 FieldPanel("name"),
                 FieldPanel("short_description"),
                 FieldPanel("about_restaurant"),
@@ -511,3 +514,12 @@ class BecomeInfluencer(BaseModel):
     class Meta:
         verbose_name = "Become Influencer"
         verbose_name_plural = "Become Influencers"
+
+
+class OTPVerification(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    expires_at = models.DateTimeField(default=now())
+
+    def is_valid(self):
+        return now() < self.expires_at

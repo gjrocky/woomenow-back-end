@@ -2,10 +2,11 @@ from rest_framework import permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.pages.serializers import RestaurantListSerializer
 from api.serializers import CategorySerializer, StatesSerializer, FranchiseSerializer, StatesInfluencerSerializer, \
-    CitiesSerializer, AmbienceSerializer, ReviewSerializer
+    CitiesSerializer, AmbienceSerializer, ReviewSerializer, CustomTokenObtainPairSerializer
 from apps.main.models import Franchise, Restaurant, Review
 from apps.snippet.models import Category, State, City, Ambience
 

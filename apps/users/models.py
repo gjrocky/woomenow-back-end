@@ -2,7 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from woo_me_now_backend.middleware import RequestMiddleware
 
 class CustomUserManager(BaseUserManager):
     """
@@ -58,13 +58,16 @@ class User(AbstractUser):
     objects = CustomUserManager()
 
     def save(self, *args, **kwargs):
-        """Ensure password is hashed when saving a user."""
-        if self.pk:  # Only hash password if updating an existing user
-            old_user = User.objects.filter(pk=self.pk).first()
-            if old_user and old_user.password != self.password:
-                self.set_password(self.password)  # Hash only if changed
-        else:
-            self.set_password(self.password)  # Hash for new users
+        request = RequestMiddleware.get_request()
+
+        if request and "/admin/" in request.path:  # Detect Wagtail Admin
+            print(f"User {self.email} modified from Wagtail Admin")  # Debugging
+            if self.pk:
+                old_user = User.objects.filter(pk=self.pk).first()
+                if old_user and old_user.password != self.password:
+                    self.set_password(self.password)
+            else:
+                self.set_password(self.password)
 
         super().save(*args, **kwargs)
 

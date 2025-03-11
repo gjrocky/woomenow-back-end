@@ -25,7 +25,7 @@ class UserSerializer(ModelSerializer):
             return False
 
     def get_restaurants(self, obj):
-        restaurants = obj.Restaurants.all()
+        restaurants = obj.restaurants.all()
         if not restaurants:
             return []
         data = []
@@ -34,7 +34,15 @@ class UserSerializer(ModelSerializer):
                 img = res.profile_pic.file.url
             except:
                 img = None
-            data.append({'id': res.id, 'name': get_text(res.name), 'image': img})
+            data.append({'id': res.id,
+                         'name': get_text(res.name),
+                         'image': img,
+                         'city': dict(name=obj.city.name,
+                                      state=dict(
+                                          name=obj.city.state.name,
+                                          ISO_code=obj.city.state.ISO_code))
+                         }
+                        )
         return data
 
     class Meta:
