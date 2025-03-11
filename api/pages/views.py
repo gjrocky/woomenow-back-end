@@ -20,9 +20,10 @@ from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSeria
     JoinTheWooSerializer, InfluencerSerializer, InfluencerListSerializer, RestaurantListSerializer, \
     RestaurantSerializer, UpdateInfluencerSerializer, RestaurantReviewSerializer, RestaurantRecommendationSerializer, \
     RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer
-from api.serializers import Pagination
+from api.serializers import Pagination, get_text
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation
 from apps.snippet.models import City, Category, Ambience
+from send_email import send_email
 
 
 class FAQsPageAPIViews(RetrieveAPIView):
@@ -445,6 +446,12 @@ class RestaurantCreateAPIView(APIView):
 
         restaurant.save()
         restaurant.save_revision().publish()
+
+        e = [restaurant.user.email]
+        body = 'emails/welcome-for-rest.html'
+        context = dict(name=get_text(restaurant.name))
+        subject_context = dict(subject='Welcome to WooMeNow!')
+        send_email(e, body, context, subject_context)
 
         return Response({"message": "Restaurant Created Successfully"}, status=status.HTTP_201_CREATED)
 

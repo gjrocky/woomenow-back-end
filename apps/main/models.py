@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField
@@ -15,6 +16,7 @@ from wagtail.models import Page
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
 from apps.main.choices import RestaurantType, BudgetType
 from apps.snippet.models import BaseModel
+from send_email import send_email
 
 CustomUser = get_user_model()
 
@@ -267,6 +269,18 @@ class Influencer(Page):
     class Meta:
         verbose_name = "Influencer"
         verbose_name_plural = "Influencers"
+
+    def get_text(self, text):
+        return BeautifulSoup(text, "html.parser").get_text()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            e = [self.user.email]
+            body = 'emails/become-an-influencer.html'
+            context = dict(name=self.get_text(self.name))
+            subject_context = dict(subject='Welcome to the WooMeNow Influencer Community!')
+            send_email(e, body, context, subject_context)
+        super().save(*args, **kwargs)
 
 
 class JoinTheWoo(Page):

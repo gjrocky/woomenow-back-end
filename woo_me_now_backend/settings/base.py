@@ -283,3 +283,15 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 APPEND_SLASH = False
 SOCIALACCOUNT_ADAPTER = 'apps.users.adapters.MySocialAccount'
 SITE_ID = 1
+
+if env.str('EMAIL_HOST_USER', default=''):
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', default='')
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', default='')
+    EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', default='')
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

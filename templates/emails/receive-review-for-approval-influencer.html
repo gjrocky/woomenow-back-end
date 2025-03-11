@@ -156,7 +156,7 @@
                                 <tr>
                                     <td class="sub-info"
                                         style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        Hi [Influencer’s First Name], We Need Your Expertise!
+                                        Hi {{ name }}, We Need Your Expertise!
                                     </td>
                                 </tr>
                                 <tr>
@@ -194,19 +194,19 @@
                                                                 style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
                                                                 <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">Restaurant Name</span>
                                                                 <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">[Restaurant Name]</span>
+                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ res_name }}</span>
                                                             </td>
                                                             <td class="mobile-card"
                                                                 style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
                                                                 <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">Review Date</span>
                                                                 <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">10 Aug 2024</span>
+                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ date }}</span>
                                                             </td>
                                                             <td class="mobile-card"
                                                                 style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
                                                                 <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">User’s Rating</span>
                                                                 <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">3 out of 5</span>
+                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ rating }} out of 5</span>
                                                             </td>
                                                         </tr>
                                                         </tbody>
@@ -223,13 +223,7 @@
                                                                 style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
                                                                 <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">Review Summary</span>
                                                                 <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                                                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-                                                                    ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                                                                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                                                                    velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                                                                    cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                                                                    laborum.</span>
+                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ summary }}</span>
                                                             </td>
                                                         </tr>
                                                         </tbody>

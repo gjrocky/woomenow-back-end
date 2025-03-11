@@ -3,7 +3,7 @@ import random
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-from django.core.mail import send_mail
+
 from django.utils.timezone import now, timedelta
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -17,6 +17,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from api.auth.serializers import UserSerializer
 from apps.main.models import OTPVerification
 from apps.users.models import User
+from send_email import send_email
 
 
 class GoogleLoginView(SocialLoginView):
@@ -68,16 +69,6 @@ class UserView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def send_otp_email(email, otp_code):
-    """Helper function to send OTP via email"""
-    send_mail(
-        "Your OTP Code",
-        f"Your OTP code is {otp_code}. It expires in 10 minutes.",
-        "your_email@gmail.com",
-        [email],
-        fail_silently=False,
-    )
-
 
 class SignupAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -102,8 +93,11 @@ class SignupAPIView(APIView):
         otp_code = str(random.randint(100000, 999999))
         OTPVerification.objects.create(user=user, otp=otp_code, expires_at=now() + timedelta(minutes=10))
 
-        # Send OTP via Email
-        send_otp_email(email, otp_code)
+        e = [email]
+        body = 'emails/confirmation.html'
+        context = dict(username=user.first_name, otp=otp_code)
+        subject_context = dict(subject='Confirm your email address.')
+        send_email(e, body, context, subject_context)
 
         return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
 
@@ -116,6 +110,12 @@ class VerifyOTPAPIView(APIView):
         try:
             user = User.objects.get(email=email)
             otp_entry = OTPVerification.objects.get(user=user)
+            if not user.is_active:
+                e = [email]
+                body = 'emails/welcome-for-users.html'
+                context = dict(username=user.first_name)
+                subject_context = dict(subject='Welcome to WooMeNow!')
+                send_email(e, body, context, subject_context)
             user.is_active = True
             user.save()
 
@@ -136,12 +136,17 @@ class ResendOTPAPIView(APIView):
         try:
             user = User.objects.get(email=email)
             otp_entry, created = OTPVerification.objects.get_or_create(user=user)
+            otp = str(random.randint(100000, 999999))
 
-            otp_entry.otp = str(random.randint(100000, 999999))
+            otp_entry.otp = otp
             otp_entry.expires_at = now() + timedelta(minutes=10)
             otp_entry.save()
 
-            send_otp_email(email, otp_entry.otp)
+            e = [email]
+            body = 'emails/resend.html'
+            context = dict(username=user.first_name, otp=otp)
+            subject_context = dict(subject='Your New Verification Code.')
+            send_email(e, body, context, subject_context)
 
             return Response({"message": "OTP resent"}, status=status.HTTP_200_OK)
 
@@ -155,12 +160,16 @@ class ResetPasswordAPIView(APIView):
         try:
             user = User.objects.get(email=email)
             otp_entry, created = OTPVerification.objects.get_or_create(user=user)
-
-            otp_entry.otp = str(random.randint(100000, 999999))
+            otp = str(random.randint(100000, 999999))
+            otp_entry.otp = otp
             otp_entry.expires_at = now() + timedelta(minutes=10)
             otp_entry.save()
 
-            send_otp_email(email, otp_entry.otp)
+            e = [email]
+            body = 'emails/reset.html'
+            context = dict(username=user.first_name, otp=otp)
+            subject_context = dict(subject='Reset your password.')
+            send_email(e, body, context, subject_context)
 
             return Response({"message": "OTP resent"}, status=status.HTTP_200_OK)
 

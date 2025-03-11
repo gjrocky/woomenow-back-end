@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from bs4 import BeautifulSoup
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import permissions
@@ -17,8 +18,13 @@ from api.forms.serializers import IPLocationSerializer, ContactSerializer, Invit
     JoinTheWooSerializer
 from api.serializers import Pagination
 from api.serializers import ReviewSerializer as RSerializer
-from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer
+from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer, Influencer
 from apps.snippet.models import IPLocation, Contact, JoinTheWooForm
+from send_email import send_email
+
+
+def get_text(text):
+    return BeautifulSoup(text, "html.parser").get_text()
 
 
 class IPLocationAPIView(CreateAPIView):
@@ -213,8 +219,26 @@ class ReviewPostAPIView(APIView):
                         rating=data.get('recommended'),
                         restaurant_id=request.data.get('res_id'), more_info=json_data, created_at=datetime.now())
         review.save()
-        return Response({'message': 'Your review has been published after verification.'},
-                        status=status.HTTP_201_CREATED)
+        try:
+            res = Restaurant.objects.get(id=request.data.get('res_id'))
+            influencers = Influencer.objects.filter(city=res.city)
+
+            for i in influencers:
+                e = [i.user.email]
+                body = 'emails/receive-review-for-approval-influencer.html'
+                context = dict(name=get_text(i.name),
+                               res_name=get_text(res.name),
+                               date=review.created_at.strftime("%b %d, %Y"),
+                               rating=review.rating,
+                               summary=review.content
+                               )
+                subject_context = dict(subject='New Review Awaiting Your Approval.')
+                send_email(e, body, context, subject_context)
+
+            return Response({'message': 'Your review has been published after verification.'},
+                            status=status.HTTP_201_CREATED)
+        except Restaurant.DoesNotExist:
+            return Response({'message': 'Provided the Restaurant ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PendingReviewAPIView(APIView):
@@ -291,5 +315,10 @@ class RestaurantInvitationAPIView(APIView):
         serializer = InvitationSerializer(data={'influ_id': user.influencer.id, **request.data})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            e = [request.data.get('invite_to')]
+            body = 'emails/exp-get-an-email-to-onboard.html'
+            context = dict(name=request.data.get('restaurant_name'))
+            subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
+            send_email(e, body, context, subject_context)
             return Response({'message': 'Our team will the check & verify the restaurant/experience'},
                             status=status.HTTP_201_CREATED)
