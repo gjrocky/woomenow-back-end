@@ -3,7 +3,7 @@ import random
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
-
+from django.conf import settings
 from django.utils.timezone import now, timedelta
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -24,7 +24,7 @@ class GoogleLoginView(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
     authentication_classes = []
-    callback_url = 'http://localhost:3000'
+    callback_url = settings.CALLBACK_URL
 
     def get_response(self):
         response = super().get_response()
@@ -67,7 +67,6 @@ class UserView(APIView):
             print('saving')
             serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 class SignupAPIView(APIView):

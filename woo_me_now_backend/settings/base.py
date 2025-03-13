@@ -24,6 +24,9 @@ env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOST', default=['*'] if DEBUG else [])
+CALLBACK_URL = env.str('CALLBACK_URL', default='http://localhost:3000' if DEBUG else '')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from django.db.models import Q
+from django.db.models import Q, Avg
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import permissions
 from rest_framework import status
@@ -264,10 +264,16 @@ class PendingReviewAPIView(APIView):
 
         try:
             queryset = self.queryset.get(id=id)
+            res = queryset.restaurant
             queryset.is_published = is_approved
             if is_approved:
                 queryset.posted_by.point = queryset.posted_by.point + 20
                 queryset.posted_by.save()
+                average_rating = res.reviews.filter(is_published=True).aggregate(avg_rating=Avg('rating'))['avg_rating']
+                if average_rating is not None:
+                    average_rating = round(average_rating, 2)
+                res.rating = average_rating
+                res.save()
             queryset.is_verified = True
             queryset.save()
             return Response({'message': 'Review is Updated'}, status=status.HTTP_200_OK)

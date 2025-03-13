@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "woo_me_now_backend.settings.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "woo_me_now_backend.settings.base")
 
 application = get_wsgi_application()

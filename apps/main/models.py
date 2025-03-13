@@ -363,7 +363,8 @@ class Review(BaseModel):
         related_name="+",
     )
     images = StreamField([('image', ImageChooserBlock())], use_json_field=True, null=True, blank=True)
-    restaurant = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True, blank=True)
+    restaurant = models.ForeignKey('Restaurant', on_delete=models.SET_NULL, null=True, blank=True,
+                                   related_name='reviews')
     approved_by = models.OneToOneField('Influencer', on_delete=models.SET_NULL, null=True, blank=True, )
     panels = [
         FieldPanel("posted_by"),
@@ -423,7 +424,7 @@ class Restaurant(Page):
     is_featured = models.BooleanField(_("Featured Place"), default=False)
     is_home_featured = models.BooleanField(_("Home Featured Place"), default=False)
     restaurant_images = StreamField([('image', ImageChooserBlock())], use_json_field=True)
-    rating = models.DecimalField(_("Rating"), blank=True, null=True, max_digits=5, decimal_places=1)
+    rating = models.DecimalField(_("Rating"), blank=True, null=True, max_digits=5, decimal_places=4)
     website_url = models.URLField(_("Website URL"), null=True, blank=True)
     profile_pic = models.ForeignKey(
         "wagtailimages.Image",
