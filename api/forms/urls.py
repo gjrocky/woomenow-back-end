@@ -1,7 +1,8 @@
 from django.urls import path
 
 from api.forms.views import IPLocationAPIView, ContactAPIView, InvitationAPIView, ReviewAPIView, JoinTheWooAPIView, \
-    BookmarkAPIView, ReviewPostAPIView, PendingReviewAPIView, BecomeAnInfluencerAPIView, RestaurantInvitationAPIView
+    BookmarkAPIView, ReviewPostAPIView, PendingReviewAPIView, BecomeAnInfluencerAPIView, RestaurantInvitationAPIView, \
+    CampaignAPIView
 
 app_name = "forms"
 
@@ -16,5 +17,6 @@ urlpatterns = [
     path("become-an-influencer/", BecomeAnInfluencerAPIView.as_view(), name="become-an-influencer"),
     path("restaurant-invitation/", RestaurantInvitationAPIView.as_view(), name="restaurant-invitation"),
     path("bookmark/", BookmarkAPIView.as_view(), name="bookmark"),
+    path("campaign/<slug>/", CampaignAPIView.as_view(), name="campaign"),
 
 ]

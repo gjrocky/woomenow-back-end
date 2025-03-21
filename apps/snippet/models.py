@@ -112,7 +112,9 @@ class Category(BaseModel):
     name = models.TextField(_("Name"), max_length=50)
     image = models.ForeignKey(
         "wagtailimages.Image",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
         related_name="+")
     slug = models.TextField(_("Slug"), max_length=100, unique=True)
 
@@ -135,7 +137,6 @@ class Category(BaseModel):
 
 class CampaignTracker(BaseModel):
     ip = models.CharField(_("IP Address"), max_length=30)
-    user_id = models.CharField(_("ID"), max_length=255)
     location = models.CharField(_("Location"), max_length=255)
     user_device = models.TextField(_("User Device Details"), max_length=2000)
     extra_data = models.JSONField(_("extra"), null=True, blank=True)
@@ -148,7 +149,6 @@ class CampaignTracker(BaseModel):
 
     panels = [
         FieldPanel("ip", read_only=True),
-        FieldPanel("user_id", read_only=True),
         FieldPanel("location", read_only=True),
         FieldPanel("user_device", read_only=True),
         FieldPanel("campaign", read_only=True),
@@ -156,7 +156,7 @@ class CampaignTracker(BaseModel):
     ]
 
     def __str__(self):
-        return self.user_id
+        return self.ip
 
     class Meta:
         verbose_name = "Campaign Tracker"
@@ -168,10 +168,7 @@ class Campaign(BaseModel):
     utm_source = models.CharField(_("UTM Source"), max_length=50)
     utm_medium = models.CharField(_("UTM Medium"), max_length=50)
     utm_campaign = models.CharField(_("UTM Campaign"), max_length=50)
-    redirect_to = ParentalKey(
-        "wagtailcore.Page",
-        on_delete=models.CASCADE,
-    )
+    redirect_to = models.CharField(_("Redirect To"), max_length=50)
     is_active = models.BooleanField(_("Is Active"), default=False)
     slug = models.CharField(_("Slug"), max_length=50, unique=True, db_index=True)
 

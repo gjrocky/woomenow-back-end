@@ -1,0 +1,32 @@
+{
+  "heading": "Our Mission & Vision",
+  "description": "Building Relationships, Supporting Small Businesses\n\nAt WooMeNow, we’re on a mission to strengthen relationships and empower small businesses. Our platform brings communities together by curating top recommendations for restaurants and experiences, sourced from trusted influencers and locals in cities across the country. By inspiring memorable date nights, we aim to help couples connect, celebrate, and create lasting memories.\n\nFor small businesses, WooMeNow is revolutionizing the reviews industry. Our approach highlights the positive while providing tools to address feedback constructively, fostering growth and collaboration instead of harm. We believe in lifting businesses up, not tearing them down.\n\nAt its core, WooMeNow serves both people and businesses, creating a platform where everyone wins.",
+  "vision_title": "Brand Core Values - S.H.A.R.E.",
+  "vision_points": [
+    {
+      "heading": "Servant Leader",
+      "description": "Being Humble & Helping others",
+      "img": "apps/main/fixtures/images/about/Our Mission icons.png"
+    },
+    {
+      "heading": "Human",
+      "description": "Being Real & Authentic",
+      "img": "apps/main/fixtures/images/about/Our Mission icons-1.png"
+    },
+    {
+      "heading": "Accountability",
+      "description": "Being Responsible in doing what is right",
+      "img": "apps/main/fixtures/images/about/Our Mission icons-2.png"
+    },
+    {
+      "heading": "Relational",
+      "description": "Being in Community and Collaborating with others",
+      "img": "apps/main/fixtures/images/about/Our Mission icons-3.png"
+    },
+    {
+      "heading": "Empathy",
+      "description": "Being emotionally intelligent to others feelings",
+      "img": "apps/main/fixtures/images/about/Our Mission icons-4.png"
+    }
+  ]
+}

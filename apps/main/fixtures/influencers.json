@@ -1,0 +1,448 @@
+[
+  {
+    "user": {
+      "email": "anthony.untaran+influncer_erica-g-untaran@gmail.com",
+      "first_name": "Erica",
+      "last_name": "Untaran"
+    },
+    "influencer": {
+      "name": "Erica G. Untaran",
+      "description": "Erica G. is the wife and business partner of WooMeNow owner & founder Anthony Untaran. Known as a fashionista and event planner who enjoys good food and getting dressed up for date nights. She takes a lot of pride in her Filipino culture and loves to support local Filipino businesses. She has a big heart for the youth and volunteers her time with high school kids at Grace Family Church through United as well as Homebuilders ministering to other married couples with her husband, Anthony. Together they are the force that makes WooMeNow a purposeful movement for healthy relationships in families, friendships and loved ones. Matthew 18:20 - \"For when two or more gather in my name, there am I with them.\"",
+      "social_links": [
+        "https://www.instagram.com/miss_eg/"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/erica.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influncer_tiana@gmail.com",
+      "first_name": "Tiana",
+      "last_name": "A"
+    },
+    "influencer": {
+      "name": "Tiana",
+      "description": "Helping you find your new favorite spot in Tampa Bay✨",
+      "social_links": [
+        "https://www.instagram.com/foodbytiana/?igsh=MzRlODBiNWFlZA%3D%3D#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Tiana.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influncer_meredith@gmail.com",
+      "first_name": "Meredith",
+      "last_name": "M"
+    },
+    "influencer": {
+      "name": "Meredith",
+      "description": "Meredith is a prominent radio co-host for the #1 Morning show in Tampa...Orlando & The Freak Show on Wild 94.1. She is also a wife and a mother of two beautiful daughters! ",
+      "social_links": [
+        "https://www.instagram.com/kissmew/?hl=en"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Meredith.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influncer_tini-allegra-karl-anderson@gmail.com",
+      "first_name": "Tini Allegra",
+      "last_name": "Karl Anderson"
+    },
+    "influencer": {
+      "name": "Tini Allegra & Karl Anderson",
+      "description": "Tini Allegra is the wife of WWE Superstar Karl Anderson, proud mother of 5 boys and business owner of @strawtinisweets! Tini & her husband value spending quality time doing family outings and the occasional Date Night among their busy schedules.",
+      "social_links": [
+        "https://www.instagram.com/tiniallegra/?igsh=MWQyaXE4ZXdhaXk3cA%3D%3D#",
+        "https://www.instagram.com/machinegunka/?igsh=MTVyYnJ2cWxrOXFycw%3D%3D#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Tini Allegra.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influncer_dolmar-keisha-cross@gmail.com",
+      "first_name": "Dolmar ",
+      "last_name": "Keisha Cross"
+    },
+    "influencer": {
+      "name": "Dolmar & Keisha Cross",
+      "description": "Dolmar Cross | Real Estate Investor | Entrepreneur | TV Host\n\nDolmar Cross went from hustling part-time gigs to flipping over 1,000 properties, turning a bold move at 20—using a student loan to start his real estate business—into a thriving career. Now a top player in Tampa’s market, he specializes in everything from single-family homes to waterfront estates.\n\nAs the host of A&E’s reality series Zombie House Flipping and founder of Real Advisors, Dolmar has helped thousands achieve financial freedom. His company has been recognized on Inc. Magazine’s fastest-growing private companies list for four years running. A devoted husband and father of three, he’s building more than wealth—he’s creating a lasting legacy.",
+      "social_links": [
+        "https://www.instagram.com/dolmarcross/?igsh=bDFudWQ3MjBneTNn#",
+        "https://www.instagram.com/iamkeishacross/?igsh=YnFjcWhmMm1kczh6#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Dolmar.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influncer_will-adams-dj-justwill@gmail.com",
+      "first_name": "Will",
+      "last_name": "Adams"
+    },
+    "influencer": {
+      "name": "Will Adams (DJ JustWill)",
+      "description": "Will Adams (DJ JustWill) – DJ | Performer | Choreographer\n\nDJ JustWill is a powerhouse entertainer with a career spanning music, dance, and creative direction. He’s worked with legends like Madonna, Usher, and the Black Eyed Peas, while also leading campaigns for brands like Mercedes, Nike, and Hennessy.\n\nHis DJ performances and music credits include the NBA, NFL, Step Up 6, World of Dance, and So You Think You Can Dance. From the Grammys to the iHeart Music Awards, JustWill knows how to energize any crowd.\n\nBorn into a DJ family, music is in his DNA. His passion? Creating unforgettable experiences through sound and movement.",
+      "social_links": [
+        "https://www.instagram.com/willdabeast__/?igsh=ZWY3cmJtbDRkMWRz#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Will Adams.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_eduar-gaby@gmail.com",
+      "first_name": "Eduar",
+      "last_name": "Gaby"
+    },
+    "influencer": {
+      "name": "Eduar & Gaby",
+      "description": "Meet Eduar & Gaby: A Dynamic Duo\n\nEduar and Gaby, both in their late twenties, bring passion and drive to everything they do. Gaby, originally from Los Angeles, and Eduar, with roots in Cuba, first crossed paths at a company convention, sparking both a professional and personal journey together. As Senior Vice Presidents at Primerica, they have a combined 16 years of industry expertise, having launched their careers straight out of high school.\n\nOver the past three years, their relationship has flourished, and they are now proud parents to a beautiful baby boy, with dreams of growing their family. In their downtime, Eduar and Gaby love discovering new restaurants, traveling to exciting destinations, and savoring every moment with their son and loved ones.",
+      "social_links": [
+        "https://www.instagram.com/eduarr21/?igsh=dHFnaXQ1bmh4OWp4#",
+        "https://www.instagram.com/anythingforgabby/?igsh=bzl0dzN5NHlpbnFz#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Eduar.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_hannah-buck@gmail.com",
+      "first_name": "Hannah",
+      "last_name": "Buck"
+    },
+    "influencer": {
+      "name": "Hannah Buck",
+      "description": "Hannah Buck is a content creator, entrepreneur, and Rumble Boxing instructor in the Tampa area. She grew up in Toledo Ohio with her three brothers. She is a big ice cream enthusiast and helped run her family’s ice cream stores growing up in Toledo. On a night out, Hannah values the ambience just as much as the service and food. She loves a good photo worthy spot!",
+      "social_links": [
+        "https://www.tiktok.com/@hannahvbuck?_t=8kDM1RN38SB&_r=1",
+        "https://www.instagram.com/hannahvbuck/?igsh=MzRlODBiNWFlZA%3D%3D#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Hannah.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_davy-rolando@gmail.com",
+      "first_name": "Davy",
+      "last_name": "Rolando"
+    },
+    "influencer": {
+      "name": "Davy Rolando",
+      "description": "Davy Rolando is the co-founder of Emphasis Tattoo, DJ & former radio personality co-hosting with Orlando and Freak Show on Wild 94.1!",
+      "social_links": [
+        "https://www.instagram.com/davy_rolando/?hl=en"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Davy.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_rachel-almanza@gmail.com",
+      "first_name": "Rachel",
+      "last_name": "Almanza"
+    },
+    "influencer": {
+      "name": "Rachel Almanza",
+      "description": "Rachel Almanza is the pageant director for Miss Florida Petite, a pageant for ladies 5'6 & under in height. Rachel aims to inspire and empower women everywhere.",
+      "social_links": [
+        "https://www.instagram.com/rachelalmanza/#"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Rachel.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_davontay-robinson@gmail.com",
+      "first_name": "Davontay",
+      "last_name": "Robinson"
+    },
+    "influencer": {
+      "name": "Davontay Robinson",
+      "description": "Davontay Robinson is co-founder of Snap House, Tampa's original interactive photo studio & event hosting space. In addition, she is a full-time mother and wife of NFL wide receiver Demarcus Robinson. She also holds a black belt in Tae Kwon Do, so watch out! \uD83D\uDE01",
+      "social_links": [
+        "https://www.instagram.com/davontay_m/?hl=en"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Davontay.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_greg-3lg-wolf@gmail.com",
+      "first_name": "Greg",
+      "last_name": "Wolf"
+    },
+    "influencer": {
+      "name": "Greg '3LG' Wolf",
+      "description": "The in-game host the Tampa Bay Lightning and the USF Bulls Men & Women's basketball, Greg's energetic style is second to none when it comes to Tampa Bay sports! Greg also serves as Vice President of one of Tampa's leading Marketing & Promotions company...Street Laced Marketing & Promotions. On top of all of this, Greg is a husband and a dad.",
+      "social_links": [
+        "https://www.instagram.com/gregwolftbl/"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Greg.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_angela-smith@gmail.com",
+      "first_name": "Angela",
+      "last_name": "Smith"
+    },
+    "influencer": {
+      "name": "Angela Smith",
+      "description": "Angela Smith is the owner of @ordermychocolate Custom Chocolate Dipped Oreos and part of the Off The Field NFL Wives Association. She is the proud wife of former Buccaneer and Super Bowl champ, Alex Smith and mother three wonderful boys. Angela loves a fun night out with her close girlfriends or date nights with her hubby. Sushi is always her top pick for food choice! On Sundays you can find her at Courageous Church praising the lord and lifting up others.",
+      "social_links": [
+        "https://www.instagram.com/angelaysmith/?hl=en"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Angela.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_travis-and-ashley-jennings@gmail.com",
+      "first_name": "Travis",
+      "last_name": "Jennings"
+    },
+    "influencer": {
+      "name": "Travis and Ashley Jennings",
+      "description": "Travis and Ashley Jennings are a couple who believe in the power of giving back. They are dedicated to making a positive impact in their community through their involvement in various charitable causes. Ashley also sits on the Board of Directors at Foundation of Caring They are both active in organizing and participating in fundraising events and are very passionate about making a difference! Travis and Ashley are also proud parents of three awesome kids!",
+      "social_links": [
+        "https://www.facebook.com/Ash.Ley.J0517"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Travis.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_keisha-abelgas@gmail.com",
+      "first_name": "Keisha ",
+      "last_name": "Abelgas"
+    },
+    "influencer": {
+      "name": "Keisha Abelgas",
+      "description": "Keisha Abelgas is the current America's Ideal Miss Florida and a recent nursing graduate from the University of Central Florida! An adventurous girl, she loves to try new restaurants and activities, and has enjoyed exploring everything Tampa has to offer. Currently, she's been obsessed with Asian and seafood cuisine!",
+      "social_links": [
+        "https://www.instagram.com/keisha_abelgas/"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Keisha.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_dj-bonoan@gmail.com",
+      "first_name": "DJ",
+      "last_name": "Bonoan"
+    },
+    "influencer": {
+      "name": "DJ Bonoan",
+      "description": "DJ is an engineer turned film maker and launched HADJI Studios in 2017, a Tampa based boutique video production company. His team produces beautiful, exciting, share-worthy content for forward thinking brands and companies with purpose!",
+      "social_links": [
+        "https://www.facebook.com/dj.bonoan"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/DJ Bonoan.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_jenn-richardson@gmail.com",
+      "first_name": "Jenn",
+      "last_name": "Richardson"
+    },
+    "influencer": {
+      "name": "Jenn Richardson",
+      "description": "Jenn Richardson is the CEO of the growing clothing brand, Fit Couture Collection + curator\\/owner of the “oh hey, Tampa Bay” blog. Jenn is not only a successful business owner, she's also a mother of two wonderful boys, Mason & Parker. ",
+      "social_links": [
+        "https://www.instagram.com/oohheytampabay/?hl=en"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Jenn.png",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_dr-brandon-mack@gmail.com",
+      "first_name": "Dr. Brandon",
+      "last_name": "Mack"
+    },
+    "influencer": {
+      "name": "Dr. Brandon Mack",
+      "description": "Dr. Brandon Mack is a business owner for one of Tampa's most progressive and holistic practices that is changing the face of dentistry...Eden Dental Aesthetics! His practice defines what a luxury dental experience looks like! ",
+      "social_links": [
+        "https://www.instagram.com/drbrandonmack/"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Brandon.png",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_bella@gmail.com",
+      "first_name": "Bella",
+      "last_name": "B"
+    },
+    "influencer": {
+      "name": "Bella",
+      "description": "Bella is a Local Blogger from Dallas, TX and is of Mexican & Japanese descent. She is currently studying to become a Real Estate agent in the Dallas area and loves God & her Family! For the some of the hot spots to go in Dallas, check out her Recommendations! \uD83D\uDD25\uD83D\uDD25\uD83D\uDD25",
+      "social_links": [
+        "https://www.instagram.com/Bella_wuuu/"
+      ],
+      "city": "Dallas",
+      "profile": "apps/main/fixtures/images/influencer/bella.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_chuck-koch-aka-dj-dirty-hands@gmail.com",
+      "first_name": "Chuck",
+      "last_name": "Koch"
+    },
+    "influencer": {
+      "name": "Chuck Koch aka DJ Dirty Hands",
+      "description": "Chuck has lived in the D.C. area for over 20 years and started out DJ'ing at some of the city's most popular night clubs hosting numerous athletes, music artists and celebrities! He's part owner of Chicken + Whiskey, a Peruvian style chicken joint who partnered with super star chef Enrique Limardo! The Whiskey Bar features 99 incredible whiskeys, including international & local favorites. Chuck is married to his lovely wife Eduarda and have two fantastic kids together!",
+      "social_links": [
+        "https://www.instagram.com/dirtyhands74/"
+      ],
+      "city": "Washington D.C",
+      "profile": "apps/main/fixtures/images/influencer/Chuck.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_aaron-ward@gmail.com",
+      "first_name": "Aaron",
+      "last_name": "Ward"
+    },
+    "influencer": {
+      "name": "Aaron Ward",
+      "description": "Aaron resides in the St. Pete area of Tampa Bay. He's an entrepreneur, author, sneaker head & last but certainly not least, a Christ lover! Owner of CryoTrim + Trinity Outfitters Author of \"If the shoe fits a sneakerhead's guide to life\".",
+      "social_links": [
+        "https://www.instagram.com/iftheshoefits84/"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Aaron.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_la-loca@gmail.com",
+      "first_name": "La",
+      "last_name": "Loca"
+    },
+    "influencer": {
+      "name": "La Loca",
+      "description": "La Loca's zest for life and faith in the Lord helped launch her radio career in Florida, working at more than half a dozen stations including Power 95.3, 102 Jamz Orlands, 95.7 The Beat and Wild 98.7 FM in Tampa before returning to New York's tri-state area where you can tune into her middays on Radio 103.9 and Hot 93.3 in Dallas, Texas. Her work hard, play hard attitude has awared her opportunities to appear in television, host events, travel and more, something that she shares openly with her thousands of subscribers on her YouTube channel, It's La Loca TV.",
+      "social_links": [
+        "https://www.instagram.com/itslaloca/"
+      ],
+      "city": "New York",
+      "profile": "apps/main/fixtures/images/influencer/La Loca.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_mark-bayani-teodosio@gmail.com",
+      "first_name": "Mark",
+      "last_name": "Teodosio"
+    },
+    "influencer": {
+      "name": "Mark Bayani Teodosio",
+      "description": "A Filipino Comic Book Creator Mark 'Bayani' Teodosio of the comic book, \"The Realest Bayani\"! Born in NY and is a single dad of a 5 yr old boy named Hero! \uD83E\uDD61\uD83C\uDFA7 #TheRealestBAYANI \uD83D\uDC51⚡\uFE0F@TheCityNeedsYou #TCNY ✝\uFE0F\uD83E\uDDFF Listen to “GOD” by Mark Teodosio",
+      "social_links": [
+        "https://www.instagram.com/bayani.nyc/"
+      ],
+      "city": "New York",
+      "profile": "apps/main/fixtures/images/influencer/Mark.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_rocumi-wallace-and-holly-gonzales@gmail.com",
+      "first_name": "Roumi",
+      "last_name": "Wallace"
+    },
+    "influencer": {
+      "name": "Roumi Wallace and Holly Gonzales",
+      "description": "Roumi & Holly are married and have a blended family with three wonderful kids. Roumi is a father of two boys and has served as a Fireman in S. FL for over 15 years. Holly is a mother of a beautiful daughter and is a real estate agent in S. FL.",
+      "social_links": [
+        "https://www.instagram.com/the.holly.g/"
+      ],
+      "city": "Miami",
+      "profile": "apps/main/fixtures/images/influencer/Roumi Wallace.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_giselle-cintron@gmail.com",
+      "first_name": "Giselle ",
+      "last_name": "Cintron"
+    },
+    "influencer": {
+      "name": "Giselle Cintron",
+      "description": "Giselle is a New Jersey \"Local\" who knows about some great places to go in both NJ & NYC. She is a NJ Notary and Head of Originations at Park Rock Capital! She loves spending time with friends, being outdoors and staying active!",
+      "social_links": [
+        "https://www.instagram.com/giselleliz_/"
+      ],
+      "city": "New York",
+      "profile": "apps/main/fixtures/images/influencer/Giselle.jpg",
+      "restaurant_images": ""
+    }
+  },
+  {
+    "user": {
+      "email": "anthony.untaran+influencer_javy-andux@gmail.com",
+      "first_name": "Javy  ",
+      "last_name": "Andux"
+    },
+    "influencer": {
+      "name": "Javy Andux",
+      "description": "Javy was born and raised in Tampa, FL, one of Tampa's only ambassador + educator for Wahl! He is the owner of the American Dream Barber shop who also hosts and organizes Barber Battles & Events! Javy is married to his lovely wife, Jasmin parenting a blended family with three awesome kids!",
+      "social_links": [
+        "https://www.instagram.com/mr.clipperovercomb/"
+      ],
+      "city": "Tampa",
+      "profile": "apps/main/fixtures/images/influencer/Javy Andux.jpg ",
+      "restaurant_images": ""
+    }
+  }
+]

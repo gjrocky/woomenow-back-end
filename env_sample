@@ -4,6 +4,10 @@ DJANGO_ALLOWED_HOST              # NEEDED IF DJANGO_DEBUG False | comma separate
 ALLOWED_ORIGINS                  # OPTIONAL | Default: []
 CALLBACK_URL                     # NEEDED   | SOCIAL LOGIN
 DATABASE_URL                     # OPTIONAL | Default: sqlite:///db.sqlite | eg: psql://<user>:<password>@<host>:<port>/<db_name>
+ADMIN_EMAIL                      # NEEDED
+ADMIN_PASSWORD                   # NEEDED
+BIG_DATA_CLOUD_API_KEYS          # NEEDED if you want to location | comma separated string without space in between
+RESET_DAYS                       # OPTIONAL   | update user ip entry
 
 DISCORD_WEBHOOK_URL              # OPTIONAL | to get error msg on discord | Default: ''
 

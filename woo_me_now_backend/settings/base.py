@@ -298,3 +298,25 @@ if env.str('EMAIL_HOST_USER', default=''):
     EMAIL_USE_SSL = False
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console_handler": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        # More info on '' (unnamed) loggers at the end of this comment
+        "": {
+            "level": "INFO",
+            "handlers": ["console_handler"],
+        },
+    },
+}
+
+BIG_DATA_CLOUD_API_KEYS = env.list("BIG_DATA_CLOUD_API_KEYS", default=[])
+RESET_DAYS = env.int("RESET_DAYS", default=14)
+ADMIN_EMAIL = env.str("ADMIN_EMAIL", default=14)
+ADMIN_PASSWORD = env.str("ADMIN_PASSWORD", default=14)

@@ -1,0 +1,227 @@
+[
+  {
+    "model": "home.category",
+    "pk": 1,
+    "fields": {
+      "created_at": "2023-10-12T06:00:09.995Z",
+      "modified_at": "2023-10-12T06:00:09.995Z",
+      "name": "Uncategorized"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 2,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.010Z",
+      "modified_at": "2023-10-12T06:00:10.010Z",
+      "name": "Featured"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 3,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.025Z",
+      "modified_at": "2023-10-12T06:00:10.025Z",
+      "name": "WooMe Wednesday"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 4,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.035Z",
+      "modified_at": "2023-10-12T06:00:10.035Z",
+      "name": "Steakhouse"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 5,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.053Z",
+      "modified_at": "2023-10-12T06:00:10.053Z",
+      "name": "Romantic Date Night"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 6,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.067Z",
+      "modified_at": "2023-10-12T06:00:10.067Z",
+      "name": "Latin"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 7,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.078Z",
+      "modified_at": "2023-10-12T06:00:10.078Z",
+      "name": "Italian"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 8,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.093Z",
+      "modified_at": "2023-10-12T06:00:10.095Z",
+      "name": "Local Flavor"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 9,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.108Z",
+      "modified_at": "2023-10-12T06:00:10.108Z",
+      "name": "Beach/Waterfront"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 10,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.122Z",
+      "modified_at": "2023-10-12T06:00:10.122Z",
+      "name": "Asian"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 11,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.130Z",
+      "modified_at": "2023-10-12T06:00:10.130Z",
+      "name": "Rooftop"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 12,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.148Z",
+      "modified_at": "2023-10-12T06:00:10.148Z",
+      "name": "Outdoors/Adventurous"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 13,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.163Z",
+      "modified_at": "2023-10-12T06:00:10.163Z",
+      "name": "Self-Care"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 14,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.176Z",
+      "modified_at": "2023-10-12T06:00:10.176Z",
+      "name": "Arts and Culture"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 15,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.187Z",
+      "modified_at": "2023-10-12T06:00:10.187Z",
+      "name": "Live Music"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 16,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.204Z",
+      "modified_at": "2023-10-12T06:00:10.204Z",
+      "name": "Unique"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 17,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.212Z",
+      "modified_at": "2023-10-12T06:00:10.212Z",
+      "name": "Hands-On Classes"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 18,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.231Z",
+      "modified_at": "2023-10-12T06:00:10.231Z",
+      "name": "Dessert"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 19,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.246Z",
+      "modified_at": "2023-10-12T06:00:10.246Z",
+      "name": "Adrenaline Rush"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 20,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.260Z",
+      "modified_at": "2023-10-12T06:00:10.260Z",
+      "name": "Coffee House"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 21,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.273Z",
+      "modified_at": "2023-10-12T06:00:10.273Z",
+      "name": "Vegan/Healthy"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 22,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.290Z",
+      "modified_at": "2023-10-12T06:00:10.292Z",
+      "name": "Brunch"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 23,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.305Z",
+      "modified_at": "2023-10-12T06:00:10.305Z",
+      "name": "Breweries/Cigar Bars"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 24,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.318Z",
+      "modified_at": "2023-10-12T06:00:10.318Z",
+      "name": "Seafood"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 25,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Casual Dining"
+    }
+  }
+]

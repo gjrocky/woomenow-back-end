@@ -1,0 +1,59 @@
+{
+  "heading": "Content Packages",
+  "description": "Choose one of our standard packages or allow us to customize one for you!",
+  "note": "*Package pricing may increase to reflect current market demand and campaign details",
+  "CTA_btn": "Book Your Free Video Shoot",
+  "cards": [
+    {
+      "heading": "Basic",
+      "description": "Begin your journey with a strategic content creation plan for your business.",
+      "price": "$1,100.00",
+      "extra": "(rates may vary based on the Local influencer)",
+      "saving": "",
+      "points": [
+        {
+          "points": "2x ready-to-post :30 second reels per month with trending music (posted every other week)"
+        },
+        {
+          "points": "1x Date Night video shoot with our creative team"
+        },
+        {
+          "points": "Influencer Collaboration: we will provide a Local Influencer for a Date Night video shoot at your business"
+        },
+        {
+          "points": "Minimum of 3 story posts from our Influencer tagging your business."
+        },
+        {
+          "points": "Placement in the Featured Partners section of our website"
+        }
+      ]
+    },
+    {
+      "heading": "Pro",
+      "description": "Unleash the power of your business with consistent content creation.",
+      "price": "$1,700.00",
+      "extra": "(rates may vary based on the Local influencer)",
+      "saving": "Savings of $500.00 per month",
+      "points": [
+        {
+          "points": "4x ready-to-post :30 second reels per month with trending music (posted every week)"
+        },
+        {
+          "points": "Edited Video testimonial from our Influencer of the Date Night for business use in marketing efforts"
+        },
+        {
+          "points": "1x Date Night video shoot with our creative team"
+        },
+        {
+          "points": "Influencer Collaboration: we will provide a Local Influencer for a Date Night video shoot at your business"
+        },
+        {
+          "points": "Minimum of 3 story posts from their Date Night tagging your business."
+        },
+        {
+          "points": "Placement in the Featured Partners section of our website"
+        }
+      ]
+    }
+  ]
+}

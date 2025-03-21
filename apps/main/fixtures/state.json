@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Florida",
+    "slug": "florida",
+    "ISO_code": "FL",
+    "cities": [
+      {
+        "name": "Tampa",
+        "slug": "tampa"
+      },
+      {
+        "name": "Miami",
+        "slug": "miami"
+      },
+      {
+        "name": "Clearwater",
+        "slug": "clearwater"
+      },
+      {
+        "name": "St. Pete",
+        "slug": "st-pete"
+      }
+    ]
+  },
+  {
+    "name": "Washinton D.C.",
+    "slug": "washinton-dc",
+    "ISO_code": "WA",
+    "cities": [
+      {
+        "name": "Washington D.C.",
+        "slug": "washington-dc"
+      }
+    ]
+  },
+  {
+    "name": "Texas",
+    "slug": "texas",
+    "ISO_code": "TX",
+    "cities": [
+      {
+        "name": "Dallas",
+        "slug": "dallas"
+      }
+    ]
+  },
+  {
+    "name": "New York",
+    "slug": "new-york",
+    "ISO_code": "NY",
+    "cities": [
+      {
+        "name": "New York",
+        "slug": "New-york"
+      }
+    ]
+  }
+]

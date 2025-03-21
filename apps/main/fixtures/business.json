@@ -1,0 +1,83 @@
+{
+  "heading": "Does your business need to produce more content & attract more customers?",
+  "description": "Schedule your FREE Video shoot at your business with one of our Local Influencers with zero obligation!",
+  "CTA_btn": "Schedule your FREE video shoot",
+  "key_point": [
+    {
+      "value": "25+",
+      "text": "Years of experience"
+    },
+    {
+      "value": "1M+",
+      "text": "Followers in our \"Local\" influencer network"
+    },
+    {
+      "value": "7+",
+      "text": "Cities and growing"
+    }
+  ],
+  "choose_heading": "Why Choose Us?",
+  "choose_description": "Say goodbye to the old ways of content creation and embrace the future with our game-changing strategy. Here's what you no longer have to worry about:",
+  "why_choose_us_cards": [
+    {
+      "heading": "Budget Constraints, No More!",
+      "description": "Most businesses struggle with the enormous costs of quality content and video production. Not with us! We've mastered the art of delivering top-notch content at a fraction of the cost you'd expect."
+    },
+    {
+      "heading": "Creativity Made Effortless!",
+      "description": "Struggling with creative concepts and execution? Leave that to our dedicated creative team who will be with you every step of the way, crafting content that captivates and converts."
+    },
+    {
+      "heading": "Risk-Free Content, Guaranteed!",
+      "description": "We understand that you want content that truly represents your brand. We take the risk for you - if the initial content we produce doesn't meet your expectations, you won't pay a dime."
+    },
+    {
+      "heading": "Influencer Headaches, Begone!",
+      "description": "Finding the right influencer and managing campaign expectations can be overwhelming. Relax! Our extensive network of Local Influencers is at your service, making sure your brand's message reaches the right audience."
+    }
+  ],
+  "win_plan_heading": "The Winning Plan",
+  "win_plan_description": "Our content creation process is as simple as it is effective",
+  "win_plan_cards": [
+    {
+      "heading": "Discovery Call",
+      "description": "Discovery Call In just 10-15 minutes, we'll uncover your unique needs and goals, paving the way for a personalized content strategy.",
+      "img": "apps/main/fixtures/images/business/Rectangle 3464918.png"
+    },
+    {
+      "heading": "Lights, Camera, Action",
+      "description": "We'll schedule a video shoot at your business, partnering with a Local Influencer, and our talented videographer to create stunning visual content.",
+      "img": "apps/main/fixtures/images/business/Rectangle 3464918-2.png"
+    },
+    {
+      "heading": "Ready, Set, Post",
+      "description": "Within a lightning-fast 48 hours after the video shoot, you'll receive a fully edited 20-30 second reel, ready to dazzle your social media audience. At this point, you get to decide if you're ready to kickstart your campaign.",
+      "img": "apps/main/fixtures/images/business/Rectangle 3464918-1.png"
+    }
+  ],
+  "price_heading": "Get Started <b>Now</b>!",
+  "price_description": "View our package plans and get started.\n",
+  "price_btn": "",
+  "faqs": [
+    {
+      "que": "What exactly does \"Risk Free\" content creation mean?",
+      "ans": "There are no upfront costs and you pay nothing for the initial content we create until it meets your expectations and approve for us to post it."
+    },
+    {
+      "que": "How does our approach to content creation help small businesses?",
+      "ans": "Your content strategy will be put on auto-pilot with your own dedicated creative team. We will simplify the content creation process for your business and take the worry away so you can focus on running your business."
+    },
+    {
+      "que": "What problems are we helping small businesses solve?",
+      "ans": "We help clients save time and money plus get good engagement on their posts. We accomplish this by creating professional content at a fraction of the cost with very fast turnaround times in collaboration with local influencers to help ensure good engagement."
+    },
+    {
+      "que": "Are there specific industries we specialize in working with?",
+      "ans": "Yes, we mainly work with all types of restaurants + businesses who provide fun experiences for date nights & family/friends outings."
+    },
+    {
+      "que": "What is the WooMeNow platform and how does it help our community?",
+      "ans": "The WooMeNow platform is a Curated Experience Platform that will help people save time in their search for cool date night experiences and fun things to do with family/friends in different cities! All of the Recommendations are from Locals in their respective city! Our Mission is aimed at bettering Families & Relationships, Inspire Connection & Community while creating engaging content for small businesses. We want to bring people together to help create lasting memories through community and content."
+    }
+  ]
+}

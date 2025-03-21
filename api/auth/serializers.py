@@ -57,11 +57,12 @@ class UserSerializer(ModelSerializer):
         instance.first_name = self.initial_data.get('first_name', instance.first_name)
         instance.last_name = self.initial_data.get('last_name', instance.last_name)
         instance.phone = self.initial_data.get('phone', instance.phone)
-        date_str = self.initial_data.get("date_of_birth", instance.date_of_birth)
-        if date_str and isinstance(date_str, str):
-            date_str = date_str.split("T")[0]
+        if self.initial_data.get("date_of_birth"):
+            date_str = self.initial_data.get("date_of_birth", instance.date_of_birth)
+            if date_str and isinstance(date_str, str):
+                date_str = date_str.split("T")[0]
 
-        instance.date_of_birth = date_str
+            instance.date_of_birth = date_str
         instance.point = validated_data.get('point', instance.point)
 
         old_password = self.initial_data.get('password', None)

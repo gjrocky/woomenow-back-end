@@ -1,0 +1,74 @@
+[
+  {
+    "model": "home.campaigntracker",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-01-18T12:39:21.069Z",
+      "modified_at": "2024-01-18T12:39:21.140Z",
+      "ip": "47.198.8.185",
+      "user_id": "gc8bmq7brl0e5ec47srv2vwz9iylazkx",
+      "location": "New Port Richey - Florida - United States of America (the)",
+      "user_device": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1.2 Mobile/15E148 Safari/604.1",
+      "extra_data": {
+        "utm_medium": "print",
+        "utm_source": "card",
+        "utm_campaign": "business"
+      },
+      "campaign": 1
+    }
+  },
+  {
+    "model": "home.campaigntracker",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-01-18T12:41:05.364Z",
+      "modified_at": "2024-01-18T12:41:05.424Z",
+      "ip": "122.177.93.151",
+      "user_id": "u2xwgz8n144ucafjhl2t335vp2d89ypu",
+      "location": "Agra - Uttar Pradesh - India",
+      "user_device": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "extra_data": {
+        "utm_medium": "print",
+        "utm_source": "card",
+        "utm_campaign": "business"
+      },
+      "campaign": 1
+    }
+  },
+  {
+    "model": "home.campaigntracker",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-02-13T18:23:32.567Z",
+      "modified_at": "2024-02-13T18:23:32.628Z",
+      "ip": "12.75.115.100",
+      "user_id": "2mr4v2wjx47qadpy3f5p14sct8ioza5n",
+      "location": "Bartow - Florida - United States of America (the)",
+      "user_device": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3.1 Mobile/15E148 Safari/604.1",
+      "extra_data": {
+        "utm_medium": "print",
+        "utm_source": "card",
+        "utm_campaign": "business"
+      },
+      "campaign": 1
+    }
+  },
+  {
+    "model": "home.campaigntracker",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-02-20T16:41:40.471Z",
+      "modified_at": "2024-02-20T16:41:40.546Z",
+      "ip": "152.58.34.218",
+      "user_id": "38zb3fcxk9efd17sgevki5777zhyqivk",
+      "location": "Ahmedabad - Gujarat - India",
+      "user_device": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
+      "extra_data": {
+        "utm_medium": "print",
+        "utm_source": "card",
+        "utm_campaign": "business"
+      },
+      "campaign": 1
+    }
+  }
+]

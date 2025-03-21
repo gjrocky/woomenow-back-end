@@ -97,7 +97,7 @@ class InfluencerListingPageAPIView(ListAPIView):
 
         if q:
             queryset = queryset.filter(name__icontains=q)
-        return queryset
+        return queryset.distinct()
 
     def list(self, request, *args, **kwargs):
         is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'

@@ -1,7 +1,10 @@
 from datetime import datetime
 
+import requests
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.db.models import Q, Avg
+from django.utils import timezone
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import permissions
 from rest_framework import status
@@ -19,22 +22,86 @@ from api.forms.serializers import IPLocationSerializer, ContactSerializer, Invit
 from api.serializers import Pagination
 from api.serializers import ReviewSerializer as RSerializer
 from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer, Influencer
-from apps.snippet.models import IPLocation, Contact, JoinTheWooForm
+from apps.snippet.models import IPLocation, Contact, JoinTheWooForm, City, Campaign, CampaignTracker
 from send_email import send_email
+
+api_counter = 0
 
 
 def get_text(text):
     return BeautifulSoup(text, "html.parser").get_text()
 
 
-class IPLocationAPIView(CreateAPIView):
+def get_location(ip_add):
+    global api_counter
+    ip_address = ip_add
+    try:
+        api_key = settings.BIG_DATA_CLOUD_API_KEYS[
+            api_counter % len(settings.BIG_DATA_CLOUD_API_KEYS)
+            ]
+        response = requests.get(
+            f"https://api-bdc.net/data/ip-geolocation?ip={ip_address}&key={api_key}"
+        ).json()
+
+        api_counter += 1
+        if api_counter == len(settings.BIG_DATA_CLOUD_API_KEYS):
+            api_counter = 0
+
+    except Exception:
+        response = {}
+    return {
+        "location": response.get("location", dict()),
+        "country": response.get("country", dict()),
+    }
+
+
+def create_update_ip(ip, ip_data):
+    res = get_location(ip)
+    if not ip_data:
+        ip_data = IPLocation.objects.create(ip_address=ip)
+    ip_data.city = res.get("location", {}).get("city", "")
+    ip_data.state = res.get("location", {}).get("principalSubdivision", "")
+    ip_data.country = res.get("country", {}).get("name", "")
+    ip_data.ISO = (
+        res.get("location", {}).get("isoPrincipalSubdivisionCode", "").split("-")[-1]
+    )
+    ip_data.extra = res
+    ip_data.save()
+    return ip_data
+
+
+def get_ip_object(ip):
+    try:
+        ip_data = IPLocation.objects.get(ip_address=ip)
+        days_ago = timezone.now() - timezone.timedelta(days=settings.RESET_DAYS)
+        if ip_data.modified_at > days_ago:
+            return ip_data, ip
+        else:
+            data = create_update_ip(ip, ip_data)
+            return data, ip
+    except IPLocation.DoesNotExist:
+        data = create_update_ip(ip, None)
+        return data, ip
+
+
+class IPLocationAPIView(APIView):
     queryset = IPLocation.objects.all()
     serializer_class = IPLocationSerializer
 
-    def perform_create(self, serializer):
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
+        ip = request.data.get('ip')
+        if ip:
+            data, ip = get_ip_object(ip)
+            city_name = data.city if data.city else None
+        else:
+            city_name = None
+
+        try:
+            location = City.objects.get(name=city_name).slug if city_name else City.objects.first().slug
+        except City.DoesNotExist:
+            location = City.objects.first().slug
+
+        return Response({'location': location}, status=status.HTTP_200_OK)
 
 
 class ContactAPIView(CreateAPIView):
@@ -328,3 +395,31 @@ class RestaurantInvitationAPIView(APIView):
             send_email(e, body, context, subject_context)
             return Response({'message': 'Our team will the check & verify the restaurant/experience'},
                             status=status.HTTP_201_CREATED)
+
+
+class CampaignAPIView(APIView):
+    queryset = Campaign.objects.all()
+    lookup_field = 'slug'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            campaign = self.queryset.get(slug=kwargs.get('slug'), is_active=True)
+            ip = request.query_params.get('ip')
+            location_data, ip = get_ip_object(ip)
+            try:
+                CampaignTracker.objects.get(Q(ip=ip) & Q(campaign=campaign))
+            except CampaignTracker.DoesNotExist:
+                user = CampaignTracker.objects.create(ip=ip)
+                user.user_device = request.META.get("HTTP_USER_AGENT")
+                user.redirect_to = request.path
+                user.location = f"{location_data.city} - {location_data.state} - {location_data.country}"
+                user.extra_data = {
+                    "utm_source": campaign.utm_source,
+                    "utm_medium": campaign.utm_medium,
+                    "utm_campaign": campaign.utm_campaign,
+                }
+                user.campaign = campaign
+                user.save()
+            return Response({"redirect_to": campaign.redirect_to}, status=status.HTTP_200_OK)
+        except Campaign.DoesNotExist:
+            return Response({"message": "Campaigns not available"}, status=status.HTTP_404_NOT_FOUND)

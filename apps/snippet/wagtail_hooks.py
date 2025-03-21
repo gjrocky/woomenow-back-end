@@ -6,7 +6,7 @@ from .models import (
     City,
     State,
     Category,
-    IPLocation, Contact, JoinTheWooForm, Ambience,
+    IPLocation, Contact, JoinTheWooForm, Ambience, CampaignTracker, Campaign,
 )
 
 
@@ -27,3 +27,5 @@ register_snippet(IPLocation)
 register_snippet(Contact)
 register_snippet(JoinTheWooForm)
 register_snippet(Ambience)
+register_snippet(Campaign)
+register_snippet(CampaignTracker)
