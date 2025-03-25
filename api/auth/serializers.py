@@ -2,6 +2,7 @@ from django.contrib.auth.hashers import check_password
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
+from api.helper import password_checker
 from api.serializers import get_text
 from apps.users.models import User
 
@@ -75,6 +76,11 @@ class UserSerializer(ModelSerializer):
 
             if new_password != confirm_password:
                 raise serializers.ValidationError({"confirm_password": "New passwords do not match."})
+
+            password, is_not_valid_pass = password_checker(new_password)
+
+            if is_not_valid_pass:
+                raise serializers.ValidationError({"error": password})
 
             instance.set_password(new_password)
 

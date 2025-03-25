@@ -48,24 +48,26 @@ class ReviewSerializer(serializers.ModelSerializer):
     created_at = serializers.SerializerMethodField()
 
     def get_posted_by(self, obj):
-        influencer = obj.posted_by.influencer
-        if influencer:
-            return dict(
-                id=influencer.id,
-                name=get_text(influencer.name),
-                image=influencer.profile.file.url,
-                email=obj.posted_by.email,
-            )
         try:
-            profile = obj.posted_by.wagtail_userprofile.avatar.url
+            influencer = obj.posted_by.influencer
+            if influencer:
+                return dict(
+                    id=influencer.id,
+                    name=get_text(influencer.name),
+                    image=influencer.profile.file.url,
+                    email=obj.posted_by.email,
+                )
         except:
-            profile = None
-        return dict(
-            id=obj.posted_by.id,
-            name=f'{obj.posted_by.first_name} {obj.posted_by.last_name}',
-            email=obj.posted_by.email,
-            profile=profile,
-        )
+            try:
+                profile = obj.posted_by.wagtail_userprofile.avatar.url
+            except:
+                profile = None
+            return dict(
+                id=obj.posted_by.id,
+                name=f'{obj.posted_by.first_name} {obj.posted_by.last_name}',
+                email=obj.posted_by.email,
+                profile=profile,
+            )
 
     def get_bill(self, obj):
         try:

@@ -1,5 +1,15 @@
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from wagtail.images.models import Image
+
+
+def password_checker(password):
+    try:
+        validate_password(password)
+        return password, False
+    except ValidationError as e:
+        return ', '.join(e.messages), True
 
 
 class StreamFieldSerializer(serializers.Field):

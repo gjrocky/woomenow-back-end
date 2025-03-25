@@ -16,6 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from api.auth.serializers import UserSerializer
+from api.helper import password_checker
 from apps.main.models import OTPVerification
 from apps.users.models import User
 from send_email import send_email
@@ -93,7 +94,12 @@ class SignupAPIView(APIView):
         confirm_password = request.data.get("confirm_password")
 
         if password != confirm_password:
-            return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Passwords are not matched"}, status=status.HTTP_400_BAD_REQUEST)
+
+        password, is_not_valid_pass = password_checker(password)
+
+        if is_not_valid_pass:
+            return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(email=email).exists():
             return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
@@ -199,6 +205,11 @@ class ChangePasswordAPIView(APIView):
 
         if password != confirm_password:
             return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
+
+        password, is_not_valid_pass = password_checker(password)
+
+        if is_not_valid_pass:
+            return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(email=email)
