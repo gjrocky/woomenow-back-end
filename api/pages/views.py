@@ -133,6 +133,7 @@ class RestaurantListingPageAPIView(ListAPIView):
         city = self.request.query_params.get("city")
         q = self.request.query_params.get("q")
         is_featured = self.request.query_params.get("is_featured")
+        is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
         if id:
             city_id = self.queryset.get(id=id).city.id
             queryset = self.queryset.filter(city_id=city_id).exclude(id=id)
@@ -175,6 +176,13 @@ class RestaurantListingPageAPIView(ListAPIView):
         sort = self.request.query_params.get("sort")
         order_by = 'first_published_at' if sort == 'oldest' else '-first_published_at'
         queryset = queryset.filter(q_objects).distinct().order_by(order_by)
+
+        if is_paginate:
+            paginator = Pagination()
+            page = paginator.paginate_queryset(queryset, self.request, view=self)
+
+            response_data = paginator.get_paginated_response(page).data
+            return response_data.get('results')
 
         if limit:
             queryset = queryset[:int(limit)]

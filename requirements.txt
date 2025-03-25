@@ -12,3 +12,4 @@ wagtail==6.2
 wagtail-modeladmin==2.1.0
 cryptography==43.0.3
 dj-rest-auth==6.0.0
+user-agents==2.2.0

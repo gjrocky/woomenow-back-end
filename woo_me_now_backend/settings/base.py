@@ -98,7 +98,8 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     'allauth.account.middleware.AccountMiddleware',
-    "woo_me_now_backend.middleware.RequestMiddleware"
+    "woo_me_now_backend.middleware.RequestMiddleware",
+    "woo_me_now_backend.middleware.DiscordErrorHandlerMiddleware",
 ]
 
 ROOT_URLCONF = "woo_me_now_backend.urls"
@@ -273,8 +274,17 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = env.list('ALLOWED_ORIGINS', default=[])
 CSRF_TRUSTED_ORIGINS = env.list('ALLOWED_ORIGINS', default=[])
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "OPTIONS",
+    "PUT",
+    "PATCH",
+    "DELETE",
+]
+
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'x-conn-origin',
+    "*"
 ]
 
 ACCOUNT_EMAIL_REQUIRED = True
