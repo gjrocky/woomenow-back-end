@@ -17,6 +17,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from api.auth.serializers import UserSerializer
 from api.helper import password_checker
+from apps.main.helper import email_dict
 from apps.main.models import OTPVerification
 from apps.users.models import User
 from send_email import send_email
@@ -115,7 +116,7 @@ class SignupAPIView(APIView):
 
         e = [email]
         body = 'emails/confirmation.html'
-        context = dict(username=user.first_name, otp=otp_code)
+        context = dict(username=user.first_name, otp=otp_code, **email_dict)
         subject_context = dict(subject='Confirm your email address.')
         send_email(e, body, context, subject_context)
 
@@ -133,7 +134,7 @@ class VerifyOTPAPIView(APIView):
             if not user.is_active:
                 e = [email]
                 body = 'emails/welcome-for-users.html'
-                context = dict(username=user.first_name)
+                context = dict(username=user.first_name, **email_dict)
                 subject_context = dict(subject='Welcome to WooMeNow!')
                 send_email(e, body, context, subject_context)
             user.is_active = True
@@ -164,7 +165,7 @@ class ResendOTPAPIView(APIView):
 
             e = [email]
             body = 'emails/resend.html'
-            context = dict(username=user.first_name, otp=otp)
+            context = dict(username=user.first_name, otp=otp, **email_dict)
             subject_context = dict(subject='Your New Verification Code.')
             send_email(e, body, context, subject_context)
 
@@ -187,7 +188,7 @@ class ResetPasswordAPIView(APIView):
 
             e = [email]
             body = 'emails/reset.html'
-            context = dict(username=user.first_name, otp=otp)
+            context = dict(username=user.first_name, otp=otp, **email_dict)
             subject_context = dict(subject='Reset your password.')
             send_email(e, body, context, subject_context)
 

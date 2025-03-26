@@ -6,6 +6,15 @@ CALLBACK_URL                     # NEEDED   | SOCIAL LOGIN
 DATABASE_URL                     # OPTIONAL | Default: sqlite:///db.sqlite | eg: psql://<user>:<password>@<host>:<port>/<db_name>
 ADMIN_EMAIL                      # NEEDED
 ADMIN_PASSWORD                   # NEEDED
+
+FRONT_END_URL                    # NEEDED
+EMAIL_WOO_ME_NOW_LOGO            # NEEDED
+EMAIL_WOO_ME_NOW_CHECKED_ICON    # NEEDED
+EMAIL_WOO_ME_NOW_CONTACT_EMAIL   # NEEDED
+EMAIL_WOO_ME_NOW_CONTACT_NUMBER  # NEEDED
+EMAIL_WOO_ME_NOW_FACEBOOK_LINK   # NEEDED
+EMAIL_WOO_ME_NOW_INSTAGRAM_LINK  # NEEDED
+
 BIG_DATA_CLOUD_API_KEYS          # NEEDED if you want to location | comma separated string without space in between
 RESET_DAYS                       # OPTIONAL   | update user ip entry
 

@@ -21,6 +21,7 @@ from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSeria
     RestaurantSerializer, UpdateInfluencerSerializer, RestaurantReviewSerializer, RestaurantRecommendationSerializer, \
     RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer
 from api.serializers import Pagination, get_text
+from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation
 from apps.snippet.models import City, Category, Ambience
 from send_email import send_email
@@ -457,7 +458,7 @@ class RestaurantCreateAPIView(APIView):
 
         e = [restaurant.user.email]
         body = 'emails/welcome-for-rest.html'
-        context = dict(name=get_text(restaurant.name))
+        context = dict(name=get_text(restaurant.name), **email_dict)
         subject_context = dict(subject='Welcome to WooMeNow!')
         send_email(e, body, context, subject_context)
 

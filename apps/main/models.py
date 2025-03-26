@@ -8,13 +8,13 @@ from modelcluster.fields import ParentalManyToManyField
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.blocks import URLBlock
-from wagtail.contrib.forms.models import AbstractFormField, AbstractEmailForm
 from wagtail.fields import StreamField, RichTextField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
 from apps.main.choices import RestaurantType, BudgetType
+from apps.main.helper import email_dict
 from apps.snippet.models import BaseModel
 from send_email import send_email
 
@@ -277,7 +277,7 @@ class Influencer(Page):
         if not self.pk:
             e = [self.user.email]
             body = 'emails/become-an-influencer.html'
-            context = dict(name=self.get_text(self.name))
+            context = dict(name=self.get_text(self.name), **email_dict)
             subject_context = dict(subject='Welcome to the WooMeNow Influencer Community!')
             send_email(e, body, context, subject_context)
         super().save(*args, **kwargs)

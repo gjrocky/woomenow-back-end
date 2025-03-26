@@ -21,6 +21,7 @@ from api.forms.serializers import IPLocationSerializer, ContactSerializer, Invit
     JoinTheWooSerializer
 from api.serializers import Pagination
 from api.serializers import ReviewSerializer as RSerializer
+from apps.main.helper import email_dict
 from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer, Influencer
 from apps.snippet.models import IPLocation, Contact, JoinTheWooForm, City, Campaign, CampaignTracker
 from send_email import send_email
@@ -293,12 +294,14 @@ class ReviewPostAPIView(APIView):
             for i in influencers:
                 e = [i.user.email]
                 body = 'emails/receive-review-for-approval-influencer.html'
-                context = dict(name=get_text(i.name),
-                               res_name=get_text(res.name),
-                               date=review.created_at.strftime("%b %d, %Y"),
-                               rating=review.rating,
-                               summary=review.content
-                               )
+                context = dict(
+                    name=get_text(i.name),
+                    res_name=get_text(res.name),
+                    date=review.created_at.strftime("%b %d, %Y"),
+                    rating=review.rating,
+                    summary=review.content,
+                    **email_dict
+                )
                 subject_context = dict(subject='New Review Awaiting Your Approval.')
                 send_email(e, body, context, subject_context)
 
@@ -390,7 +393,7 @@ class RestaurantInvitationAPIView(APIView):
             serializer.save()
             e = [request.data.get('invite_to')]
             body = 'emails/exp-get-an-email-to-onboard.html'
-            context = dict(name=request.data.get('restaurant_name'))
+            context = dict(name=request.data.get('restaurant_name'), **email_dict)
             subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
             send_email(e, body, context, subject_context)
             return Response({'message': 'Our team will the check & verify the restaurant/experience'},

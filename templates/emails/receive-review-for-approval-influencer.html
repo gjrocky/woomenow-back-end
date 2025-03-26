@@ -142,9 +142,9 @@
                                 <tbody>
                                 <tr>
                                     <td>
-                                        <a href="/" style="display: inline-block;"><img
+                                       <a href='{{ front_end_link }}' style="display: inline-block;"><img
                                                 style="width: 100%; max-width: 98px; height: auto; display: block;"
-                                                src="../../static/images/woomenow-logo.png" alt="woomenow logo"/></a>
+                                                src="{{ logo }}" alt="woomenow logo"/></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -267,7 +267,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a class="btn-info" href=""
+                                        <a class="btn-info" href="{{ front_end_link }}dashboard/user/reviews"
                                            style="padding: 12px 16px;
                                            background: linear-gradient(45deg, #FC33FF 0%, #6B00F5 100%);
                                            display: inline-block;
@@ -288,15 +288,15 @@
                             <table align="center">
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
-                                        Questions or concerns? Get in touch with us at <span style="color:#9A4AFF;">contact@woomenow.com</span>
-                                        or <span style="color:#9A4AFF;">123-456-7890</span>.
+                                        Questions or concerns? Get in touch with us at <a href="mailto:{{ contact_email }}" style="color:#9A4AFF;">contact@woomenow.com</a>
+                                        or <a href="tel:{{ contact_phone_number }}" style="color:#9A4AFF;">123-456-7890</a>.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
-                                        Never miss a beat! Follow us on <span
-                                            style="color:#9A4AFF;">Twitter, Facebook</span> and <span
-                                            style="color:#9A4AFF;"> Instagram</span>.
+                                        Never miss a beat! Follow us on <a href="{{ fb_link }}"
+                                            style="color:#9A4AFF;">Facebook</a> and <a href="{{ ig_link }}"
+                                            style="color:#9A4AFF;"> Instagram</a>.
                                     </td>
                                 </tr>
                                 <tr>
