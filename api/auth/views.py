@@ -94,6 +94,9 @@ class SignupAPIView(APIView):
         password = request.data.get("password")
         confirm_password = request.data.get("confirm_password")
 
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
         if password != confirm_password:
             return Response({"error": "Passwords are not matched"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -101,9 +104,6 @@ class SignupAPIView(APIView):
 
         if is_not_valid_pass:
             return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
-
-        if User.objects.filter(email=email).exists():
-            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create(first_name=first_name, last_name=last_name, email=email)
         user.set_password(password)
@@ -131,16 +131,16 @@ class VerifyOTPAPIView(APIView):
         try:
             user = User.objects.get(email=email)
             otp_entry = OTPVerification.objects.get(user=user)
-            if not user.is_active:
-                e = [email]
-                body = 'emails/welcome-for-users.html'
-                context = dict(username=user.first_name, **email_dict)
-                subject_context = dict(subject='Welcome to WooMeNow!')
-                send_email(e, body, context, subject_context)
-            user.is_active = True
-            user.save()
 
             if otp_entry.otp == otp_code and otp_entry.is_valid():
+                if not user.is_active:
+                    e = [email]
+                    body = 'emails/welcome-for-users.html'
+                    context = dict(username=user.first_name, **email_dict)
+                    subject_context = dict(subject='Welcome to WooMeNow!')
+                    send_email(e, body, context, subject_context)
+                user.is_active = True
+                user.save()
                 otp_entry.delete()  # OTP used, remove entry
                 return Response({"message": "Email verified"}, status=status.HTTP_200_OK)
             else:
@@ -203,6 +203,10 @@ class ChangePasswordAPIView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
         confirm_password = request.data.get("confirm_password")
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         if password != confirm_password:
             return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
@@ -212,11 +216,6 @@ class ChangePasswordAPIView(APIView):
         if is_not_valid_pass:
             return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            user = User.objects.get(email=email)
-            user.set_password(password)
-            user.save()
-            return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
-
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(password)
+        user.save()
+        return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)

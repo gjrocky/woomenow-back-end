@@ -5,18 +5,21 @@ from django.core.exceptions import ValidationError
 
 class CustomPasswordValidator:
     def validate(self, password, user=None):
+        error_messages = []
         if len(password) < 8:
-            raise ValidationError("Password must be at least 8 characters long.")
+            error_messages.append("Password must be at least 8 characters long.")
         if len(password) > 20:
-            raise ValidationError("Password must not exceed 20 characters.")
+            error_messages.append("Password must not exceed 20 characters.")
         if not re.search(r'[A-Z]', password):
-            raise ValidationError("Password must contain at least one uppercase letter.")
+            error_messages.append("Password must not exceed 20 characters.")
         if not re.search(r'[a-z]', password):
-            raise ValidationError("Password must contain at least one lowercase letter.")
+            error_messages.append("Password must not exceed 20 characters.")
         if not re.search(r'\d', password):
-            raise ValidationError("Password must contain at least one digit.")
+            error_messages.append("Password must not exceed 20 characters.")
         if not re.search(r'[_!@#$%^&*(),.?":{}|<>]', password):
-            raise ValidationError("Password must contain at least one special character (!@#$%^&*()).")
+            error_messages.append("Password must not exceed 20 characters.")
+        if error_messages:
+            raise ValidationError(self.get_help_text())
 
     def get_help_text(self):
         return "Your password must be between 8-20 characters, contain uppercase & lowercase letters, at least one number, and one special character (!@#$%^&*())."
