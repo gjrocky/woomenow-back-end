@@ -66,6 +66,7 @@ def create_categories():
     for c in categories:
         category = Category()
         category.name = c['fields']['name']
+        category.image = get_image(c['fields']['image'],id=True)
         category.save()
 
 

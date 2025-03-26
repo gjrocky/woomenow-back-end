@@ -5,7 +5,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:09.995Z",
       "modified_at": "2023-10-12T06:00:09.995Z",
-      "name": "Uncategorized"
+      "name": "Uncategorized",
+      "image": "apps/main/fixtures/images/categories/Uncategorized.png"
     }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.010Z",
       "modified_at": "2023-10-12T06:00:10.010Z",
-      "name": "Featured"
+      "name": "Featured",
+      "image": "apps/main/fixtures/images/categories/Featured.png"
     }
   },
   {
@@ -23,7 +25,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.025Z",
       "modified_at": "2023-10-12T06:00:10.025Z",
-      "name": "WooMe Wednesday"
+      "name": "WooMe Wednesday",
+      "image": "apps/main/fixtures/images/categories/WooMe Wednesday.png"
     }
   },
   {
@@ -32,7 +35,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.035Z",
       "modified_at": "2023-10-12T06:00:10.035Z",
-      "name": "Steakhouse"
+      "name": "Steakhouse",
+      "image": "apps/main/fixtures/images/categories/Steakhouse.png"
     }
   },
   {
@@ -41,7 +45,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.053Z",
       "modified_at": "2023-10-12T06:00:10.053Z",
-      "name": "Romantic Date Night"
+      "name": "Romantic Date Night",
+      "image": "apps/main/fixtures/images/categories/Romantic Date Night.png"
     }
   },
   {
@@ -50,7 +55,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.067Z",
       "modified_at": "2023-10-12T06:00:10.067Z",
-      "name": "Latin"
+      "name": "Latin",
+      "image": "apps/main/fixtures/images/categories/Latin.png"
     }
   },
   {
@@ -59,7 +65,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.078Z",
       "modified_at": "2023-10-12T06:00:10.078Z",
-      "name": "Italian"
+      "name": "Italian",
+      "image": "apps/main/fixtures/images/categories/Italian.png"
     }
   },
   {
@@ -68,7 +75,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.093Z",
       "modified_at": "2023-10-12T06:00:10.095Z",
-      "name": "Local Flavor"
+      "name": "Local Flavor",
+      "image": "apps/main/fixtures/images/categories/Local Flavor.png"
     }
   },
   {
@@ -77,7 +85,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.108Z",
       "modified_at": "2023-10-12T06:00:10.108Z",
-      "name": "Beach/Waterfront"
+      "name": "Beach/Waterfront",
+      "image": "apps/main/fixtures/images/categories/Beach-Waterfront.png"
     }
   },
   {
@@ -86,7 +95,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.122Z",
       "modified_at": "2023-10-12T06:00:10.122Z",
-      "name": "Asian"
+      "name": "Asian",
+      "image": "apps/main/fixtures/images/categories/Asian.png"
     }
   },
   {
@@ -95,7 +105,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.130Z",
       "modified_at": "2023-10-12T06:00:10.130Z",
-      "name": "Rooftop"
+      "name": "Rooftop",
+      "image": "apps/main/fixtures/images/categories/Rooftop.png"
     }
   },
   {
@@ -104,7 +115,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.148Z",
       "modified_at": "2023-10-12T06:00:10.148Z",
-      "name": "Outdoors/Adventurous"
+      "name": "Outdoors/Adventurous",
+      "image": "apps/main/fixtures/images/categories/Adventurous.png"
     }
   },
   {
@@ -113,7 +125,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.163Z",
       "modified_at": "2023-10-12T06:00:10.163Z",
-      "name": "Self-Care"
+      "name": "Self-Care",
+      "image": "apps/main/fixtures/images/categories/Self-Care.png"
     }
   },
   {
@@ -122,7 +135,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.176Z",
       "modified_at": "2023-10-12T06:00:10.176Z",
-      "name": "Arts and Culture"
+      "name": "Arts and Culture",
+      "image": "apps/main/fixtures/images/categories/Arts and Culture.png"
     }
   },
   {
@@ -131,7 +145,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.187Z",
       "modified_at": "2023-10-12T06:00:10.187Z",
-      "name": "Live Music"
+      "name": "Live Music",
+      "image": "apps/main/fixtures/images/categories/Live Music.png"
     }
   },
   {
@@ -140,7 +155,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.204Z",
       "modified_at": "2023-10-12T06:00:10.204Z",
-      "name": "Unique"
+      "name": "Unique",
+      "image": "apps/main/fixtures/images/categories/Unique.png"
     }
   },
   {
@@ -149,7 +165,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.212Z",
       "modified_at": "2023-10-12T06:00:10.212Z",
-      "name": "Hands-On Classes"
+      "name": "Hands-On Classes",
+      "image": "apps/main/fixtures/images/categories/Hands-On Classes.png"
     }
   },
   {
@@ -158,7 +175,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.231Z",
       "modified_at": "2023-10-12T06:00:10.231Z",
-      "name": "Dessert"
+      "name": "Dessert",
+      "image": "apps/main/fixtures/images/categories/Dessert.png"
     }
   },
   {
@@ -167,7 +185,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.246Z",
       "modified_at": "2023-10-12T06:00:10.246Z",
-      "name": "Adrenaline Rush"
+      "name": "Adrenaline Rush",
+      "image": "apps/main/fixtures/images/categories/Adrenaline Rush.png"
     }
   },
   {
@@ -176,7 +195,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.260Z",
       "modified_at": "2023-10-12T06:00:10.260Z",
-      "name": "Coffee House"
+      "name": "Coffee House",
+      "image": "apps/main/fixtures/images/categories/Coffee House.png"
     }
   },
   {
@@ -185,7 +205,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.273Z",
       "modified_at": "2023-10-12T06:00:10.273Z",
-      "name": "Vegan/Healthy"
+      "name": "Vegan/Healthy",
+      "image": "apps/main/fixtures/images/categories/Vegan-Healthy.png"
     }
   },
   {
@@ -194,7 +215,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.290Z",
       "modified_at": "2023-10-12T06:00:10.292Z",
-      "name": "Brunch"
+      "name": "Brunch",
+      "image": "apps/main/fixtures/images/categories/Brunch.png"
     }
   },
   {
@@ -203,7 +225,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.305Z",
       "modified_at": "2023-10-12T06:00:10.305Z",
-      "name": "Breweries/Cigar Bars"
+      "name": "Breweries/Cigar Bars",
+      "image": "apps/main/fixtures/images/categories/Breweries-Cigar Bars.png"
     }
   },
   {
@@ -212,7 +235,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.318Z",
       "modified_at": "2023-10-12T06:00:10.318Z",
-      "name": "Seafood"
+      "name": "Seafood",
+      "image": "apps/main/fixtures/images/categories/Seafood.png"
     }
   },
   {
@@ -221,7 +245,8 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.333Z",
       "modified_at": "2023-10-12T06:00:10.333Z",
-      "name": "Casual Dining"
+      "name": "Casual Dining",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png"
     }
   }
 ]
