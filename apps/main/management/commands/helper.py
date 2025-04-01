@@ -1,6 +1,5 @@
 import json
 import os
-import uuid
 
 from django.conf import settings
 from django.core.files import File
@@ -66,7 +65,7 @@ def create_categories():
     for c in categories:
         category = Category()
         category.name = c['fields']['name']
-        category.image = get_image(c['fields']['image'],id=True)
+        category.image = get_image(c['fields']['image'], id=True)
         category.save()
 
 
@@ -277,7 +276,8 @@ def create_res():
     root_page = Page.get_first_root_node()
     for res in restaurants:
         r = Restaurant()
-        r.title = uuid.uuid4()
+        r.title = res['title']
+        r.slug = res['slug']
         r.name = res['name']
         r.short_description = res['short_description']
         r.phone_number = res['phone_number']
