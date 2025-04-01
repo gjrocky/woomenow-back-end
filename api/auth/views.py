@@ -98,7 +98,7 @@ class SignupAPIView(APIView):
             return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
         if password != confirm_password:
-            return Response({"error": "Passwords are not matched"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
         password, is_not_valid_pass = password_checker(password)
 
