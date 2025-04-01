@@ -155,7 +155,8 @@ class InfluencerListSerializer(serializers.ModelSerializer):
     recommendations = serializers.SerializerMethodField()
 
     def get_recommendations(self, obj):
-        return [{"id": res.id, "name": get_text(res.name), "image": res.restaurant_images[0].value.file.url} for res in
+        return [{"id": res.id, "name": get_text(res.name), "image": res.restaurant_images[0].value.file.url,
+                 'city': res.city.name, 'state': res.city.state.ISO_code} for res in
                 obj.user.Restaurants.all()[:6]]
 
     def get_profile_image(self, obj):

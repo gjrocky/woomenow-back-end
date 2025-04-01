@@ -179,7 +179,7 @@ class BookmarkAPIView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         if not user.is_authenticated:
-            return Response({"message": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
             restaurant = Restaurant.objects.get(id=request.data['id'])
@@ -194,7 +194,7 @@ class BookmarkAPIView(APIView):
 
             return Response({"message": "Bookmark added successfully", 'added': True}, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
-            return Response({"message": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @extend_schema(
@@ -258,7 +258,7 @@ class ReviewAPIView(APIView):
             serializer = ReviewSerializer(reviews, many=True)
             response_data = serializer.data
         if reviews:
-            return Response({'data': response_data, **extra_info})
+            return Response({'data': response_data, **extra_info}, status=200)
         else:
             return Response({'data': [], **extra_info}, status=200)
 
@@ -273,10 +273,10 @@ class ReviewPostAPIView(APIView):
         bill = request.data.get('file[]', None)
 
         if not request.data.get('res_id'):
-            return Response({'message': 'Provide the restaurant ID'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Provide the restaurant ID'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not bill:
-            return Response({'message': 'Provide the receipt'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Provide the receipt'}, status=status.HTTP_400_BAD_REQUEST)
 
         wagtail_image = Image.objects.create(title=bill.name, file=bill)
 
@@ -308,7 +308,7 @@ class ReviewPostAPIView(APIView):
             return Response({'message': 'Your review has been published after verification.'},
                             status=status.HTTP_201_CREATED)
         except Restaurant.DoesNotExist:
-            return Response({'message': 'Provided the Restaurant ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Provided the Restaurant ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PendingReviewAPIView(APIView):
@@ -327,10 +327,10 @@ class PendingReviewAPIView(APIView):
         id = data.get('id')
         is_approved = data.get('is_approved', None)
         if not id:
-            return Response({'message': 'Provide the Review ID'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Provide the Review ID'}, status=status.HTTP_400_BAD_REQUEST)
 
         if is_approved == None:
-            return Response({'message': 'Provide the proper data'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Provide the proper data'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             queryset = self.queryset.get(id=id)
@@ -349,7 +349,7 @@ class PendingReviewAPIView(APIView):
             return Response({'message': 'Review is Updated'}, status=status.HTTP_200_OK)
 
         except Review.DoesNotExist:
-            return Response({'message': 'Provided the Review ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Provided the Review ID does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class BecomeAnInfluencerAPIView(APIView):
@@ -363,7 +363,7 @@ class BecomeAnInfluencerAPIView(APIView):
         other = request.data.get('other')
 
         if not insta and not tiktok and not other:
-            return Response({'message': 'Provide social media link'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Provide social media link'}, status=status.HTTP_400_BAD_REQUEST)
 
         becomeAnInfluencer = BecomeInfluencer(user=user, insta_link=insta, tiktok_link=tiktok, other_link=other)
         becomeAnInfluencer.save()
@@ -379,7 +379,7 @@ class RestaurantInvitationAPIView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         if not user.influencer:
-            return Response({"message": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
         queryset = Invitation.objects.filter(invited_by=user.influencer)
         serializer = InvitationSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -387,7 +387,7 @@ class RestaurantInvitationAPIView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         if not user.influencer:
-            return Response({"message": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = InvitationSerializer(data={'influ_id': user.influencer.id, **request.data})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -425,4 +425,4 @@ class CampaignAPIView(APIView):
                 user.save()
             return Response({"redirect_to": campaign.redirect_to}, status=status.HTTP_200_OK)
         except Campaign.DoesNotExist:
-            return Response({"message": "Campaigns not available"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Campaigns not available"}, status=status.HTTP_404_NOT_FOUND)

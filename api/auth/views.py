@@ -62,7 +62,7 @@ class UserView(APIView):
 
     def get(self, request, *args, **kwargs):
         serializer = UserSerializer(request.user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -195,7 +195,7 @@ class ResetPasswordAPIView(APIView):
             return Response({"message": "OTP resent"}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Your Provided email is not registered. Please use registered email address."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangePasswordAPIView(APIView):

@@ -141,6 +141,10 @@ class Pagination(PageNumberPagination):
     page_size_query_param = 'page_size'
 
 
+class InfluPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'page_size'
+
 class ImageSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="value.id")
     url = serializers.SerializerMethodField()

@@ -20,7 +20,7 @@ from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSeria
     JoinTheWooSerializer, InfluencerSerializer, InfluencerListSerializer, RestaurantListSerializer, \
     RestaurantSerializer, UpdateInfluencerSerializer, RestaurantReviewSerializer, RestaurantRecommendationSerializer, \
     RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer
-from api.serializers import Pagination, get_text
+from api.serializers import Pagination, get_text, InfluPagination
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation
 from apps.snippet.models import City, Category, Ambience
@@ -105,7 +105,7 @@ class InfluencerListingPageAPIView(ListAPIView):
         limit = self.request.query_params.get("limit")
         queryset = self.get_queryset().all()
         if is_paginate:
-            paginator = Pagination()
+            paginator = InfluPagination()
             page = paginator.paginate_queryset(queryset, request, view=self)
 
             total_pages = (paginator.page.paginator.count // paginator.page_size) + (
@@ -113,14 +113,14 @@ class InfluencerListingPageAPIView(ListAPIView):
 
             response_data = paginator.get_paginated_response(self.get_serializer(page, many=True).data).data
             response_data['total_pages'] = total_pages
-            return Response(response_data)
+            return Response(response_data, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
         if limit:
             response_data = serializer.data[:int(limit)]
         else:
             response_data = serializer.data
-        return Response(response_data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class RestaurantListingPageAPIView(ListAPIView):
@@ -135,14 +135,17 @@ class RestaurantListingPageAPIView(ListAPIView):
         q = self.request.query_params.get("q")
         is_featured = self.request.query_params.get("is_featured")
         is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
-        if id:
-            city_id = self.queryset.get(id=id).city.id
-            queryset = self.queryset.filter(city_id=city_id).exclude(id=id)
-        elif city:
-            queryset = self.queryset.filter(city__slug=city)
-        else:
-            city = City.objects.first()
-            queryset = self.queryset.filter(city__slug=city.slug)
+        is_influencer = self.request.query_params.get("is_influencer") == 'true'
+        queryset = self.queryset.all()
+        if not is_influencer:
+            if id:
+                city_id = self.queryset.get(id=id).city.id
+                queryset = self.queryset.filter(city_id=city_id).exclude(id=id)
+            elif city:
+                queryset = self.queryset.filter(city__slug=city)
+            else:
+                city = City.objects.first()
+                queryset = self.queryset.filter(city__slug=city.slug)
 
         filters = {
             "city__state__slug": self.request.query_params.get("state"),
@@ -221,7 +224,7 @@ class UpdateInfluencerPageAPIView(APIView):
             serializer = UpdateInfluencerSerializer(queryset)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Influencer.DoesNotExist:
-            return Response({"message": "Influencer not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Influencer not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, *args, **kwargs):
         queryset = self.queryset.get(user=request.user)
@@ -250,7 +253,7 @@ class RestaurantReviewsAPIView(APIView):
         extra_info = dict(no_of_reviews=queryset.count(), page_size=Pagination.page_size)
 
         if not queryset:
-            return Response({"message": "No reviews Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "No reviews Found"}, status=status.HTTP_404_NOT_FOUND)
 
         if q:
             query = Q(content__icontains=q) | Q(posted_by__first_name__icontains=q) | Q(
@@ -316,7 +319,7 @@ class RestaurantRecommendationAPIView(APIView):
             return Response(data, status=status.HTTP_200_OK)
 
         except Restaurant.DoesNotExist:
-            return Response({"message": "No Recommendation Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "No Recommendation Found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class RestaurantDetailsAPIView(APIView):
@@ -333,7 +336,7 @@ class RestaurantDetailsAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Restaurant.DoesNotExist:
-            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, *args, **kwargs):
         restaurant_id = request.query_params.get("restaurant_id")
@@ -344,7 +347,7 @@ class RestaurantDetailsAPIView(APIView):
                 serializer.save()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except:
-            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class RestaurantDetailAPIView(APIView):
@@ -362,12 +365,12 @@ class RestaurantDetailAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Restaurant.DoesNotExist:
-            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, *args, **kwargs):
 
         if not request.data.get('data'):
-            return Response({"message": "Provide restaurant data"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Provide restaurant data"}, status=status.HTTP_404_NOT_FOUND)
         try:
             queryset = self.queryset.get(id=kwargs.get("pk"))
             serializer = self.serializer_class(queryset, data=request.data, partial=True, context={'request': request})
@@ -375,7 +378,7 @@ class RestaurantDetailAPIView(APIView):
                 serializer.save()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except:
-            return Response({"message": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Restaurant not Found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class RestaurantCreateAPIView(APIView):
@@ -385,7 +388,7 @@ class RestaurantCreateAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         if not request.data.get('data'):
-            return Response({"message": "Provide restaurant data"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Provide restaurant data"}, status=status.HTTP_404_NOT_FOUND)
 
         data = json.loads(request.data.get('data'))
         menus = request.data.getlist('menus[]')
@@ -393,13 +396,13 @@ class RestaurantCreateAPIView(APIView):
         profile = request.data.get('profile[]')
 
         if not profile:
-            return Response({"message": "Provide profile picture"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Provide profile picture"}, status=status.HTTP_404_NOT_FOUND)
 
         if not menus:
-            return Response({"message": "Provide Menus picture"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Provide Menus picture"}, status=status.HTTP_404_NOT_FOUND)
 
         if not photos:
-            return Response({"message": "Provide photos picture"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Provide photos picture"}, status=status.HTTP_404_NOT_FOUND)
         id = uuid.uuid4()
         parent_page = Page.objects.all().order_by('first_published_at').first()
         restaurant = parent_page.add_child(
@@ -470,7 +473,7 @@ class RestaurantInviteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-            res = Invitation.objects.filter(invite_to=request.user.email)
-            if res:
-                return Response({'message': 'success'}, status=status.HTTP_200_OK)
-            return Response({'message': 'Fail'}, status=status.HTTP_404_NOT_FOUND)
+        res = Invitation.objects.filter(invite_to=request.user.email)
+        if res:
+            return Response({'message': 'success'}, status=status.HTTP_200_OK)
+        return Response({'error': 'Fail'}, status=status.HTTP_404_NOT_FOUND)
