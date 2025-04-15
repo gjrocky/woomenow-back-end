@@ -72,10 +72,10 @@ class UserSerializer(ModelSerializer):
 
         if old_password and new_password and confirm_password:
             if not check_password(old_password, instance.password):
-                raise serializers.ValidationError({"old_password": "Old password is incorrect."})
+                raise serializers.ValidationError({"error": "Old password is incorrect."})
 
             if new_password != confirm_password:
-                raise serializers.ValidationError({"confirm_password": "New passwords do not match."})
+                raise serializers.ValidationError({"error": "New Password and Confirm New password do not match."})
 
             password, is_not_valid_pass = password_checker(new_password)
 

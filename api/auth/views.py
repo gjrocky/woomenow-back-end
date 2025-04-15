@@ -67,18 +67,20 @@ class UserView(APIView):
     def put(self, request, *args, **kwargs):
         data = request.data.copy()
         date_str = request.data.get('date_of_birth')
-
-        try:
-            # Try parsing full ISO format first
-            dt_object = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError:
+        if date_str is  None or date_str == '':
+            data['date_of_birth'] = None
+        else:
             try:
-                # If that fails, try parsing only YYYY-MM-DD
-                dt_object = datetime.strptime(date_str, "%Y-%m-%d")
+                # Try parsing full ISO format first
+                dt_object = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%fZ")
             except ValueError:
-                raise ValueError(f"Invalid date format: {date_str}")
-        formatted_date = dt_object.date()
-        data['date_of_birth'] = formatted_date
+                try:
+                    # If that fails, try parsing only YYYY-MM-DD
+                    dt_object = datetime.strptime(date_str, "%Y-%m-%d")
+                except ValueError:
+                    raise ValueError(f"Invalid date format: {date_str}")
+            formatted_date = dt_object.date()
+            data['date_of_birth'] = formatted_date
         serializer = UserSerializer(request.user, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             print('saving')
@@ -195,7 +197,8 @@ class ResetPasswordAPIView(APIView):
             return Response({"message": "OTP resent"}, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            return Response({"error": "Your Provided email is not registered. Please use registered email address."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Your Provided email is not registered. Please use registered email address."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangePasswordAPIView(APIView):
