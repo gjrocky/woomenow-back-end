@@ -365,11 +365,14 @@ class BecomeAnInfluencerAPIView(APIView):
         if not insta and not tiktok and not other:
             return Response({'error': 'Provide social media link'}, status=status.HTTP_400_BAD_REQUEST)
 
-        becomeAnInfluencer = BecomeInfluencer(user=user, insta_link=insta, tiktok_link=tiktok, other_link=other)
-        becomeAnInfluencer.save()
+        try:
+            becomeAnInfluencer = BecomeInfluencer(user=user, insta_link=insta, tiktok_link=tiktok, other_link=other)
+            becomeAnInfluencer.save()
 
-        return Response({'message': 'Your Become An Influencer request has been submitted.'},
-                        status=status.HTTP_201_CREATED)
+            return Response({'message': 'Your request to become an influencer has been submitted.'},
+                            status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({'error': 'you already requested'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RestaurantInvitationAPIView(APIView):
