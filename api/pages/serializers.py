@@ -310,7 +310,7 @@ class UpdateInfluencerSerializer(serializers.ModelSerializer):
 
         if profile_picture:
             wagtail_image = Image.objects.create(title=profile_picture.name, file=profile_picture)
-            instance.profile_picture = wagtail_image  # Fix wrong field reference
+            instance.profile = wagtail_image  # Fix wrong field reference
 
         # 🔹 **APPEND NEW IMAGES**
         if res_files:
