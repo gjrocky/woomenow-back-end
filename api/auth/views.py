@@ -128,6 +128,10 @@ class SignupAPIView(APIView):
 
             user.first_name = first_name
             user.last_name = last_name
+            try:
+                OTPVerification.objects.get(user=user).delete()
+            except:
+                pass
             self.create_or_update_user(user, password, email)
 
             return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
