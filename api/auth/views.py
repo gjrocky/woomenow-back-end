@@ -67,7 +67,7 @@ class UserView(APIView):
     def put(self, request, *args, **kwargs):
         data = request.data.copy()
         date_str = request.data.get('date_of_birth')
-        if date_str is  None or date_str == '':
+        if date_str is None or date_str == '':
             data['date_of_birth'] = None
         else:
             try:
@@ -89,25 +89,9 @@ class UserView(APIView):
 
 
 class SignupAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
-        first_name = request.data.get("first_name")
-        last_name = request.data.get("last_name")
-        password = request.data.get("password")
-        confirm_password = request.data.get("confirm_password")
 
-        if User.objects.filter(email=email).exists():
-            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+    def create_or_update_user(self, user, password, email):
 
-        if password != confirm_password:
-            return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
-
-        password, is_not_valid_pass = password_checker(password)
-
-        if is_not_valid_pass:
-            return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
-
-        user = User.objects.create(first_name=first_name, last_name=last_name, email=email)
         user.set_password(password)
         user.is_active = False
         user.save()
@@ -122,7 +106,44 @@ class SignupAPIView(APIView):
         subject_context = dict(subject='Confirm your email address.')
         send_email(e, body, context, subject_context)
 
-        return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email")
+        first_name = request.data.get("first_name")
+        last_name = request.data.get("last_name")
+        password = request.data.get("password")
+        confirm_password = request.data.get("confirm_password")
+
+        try:
+            user = User.objects.get(email=email)
+            if user.is_active:
+                return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if password != confirm_password:
+                return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
+
+            password, is_not_valid_pass = password_checker(password)
+
+            if is_not_valid_pass:
+                return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.first_name = first_name
+            user.last_name = last_name
+            self.create_or_update_user(user, password, email)
+
+            return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            if password != confirm_password:
+                return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
+
+            password, is_not_valid_pass = password_checker(password)
+
+            if is_not_valid_pass:
+                return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = User.objects.create(first_name=first_name, last_name=last_name, email=email)
+            self.create_or_update_user(user, password, email)
+
+            return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
 
 
 class VerifyOTPAPIView(APIView):
