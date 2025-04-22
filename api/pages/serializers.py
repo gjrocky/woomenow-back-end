@@ -4,7 +4,7 @@ from rest_framework import serializers
 from wagtail.blocks import StreamValue
 from wagtail.images.models import Image
 
-from api.helper import StreamFieldSerializer, city
+from api.helper import StreamFieldSerializer, city, OrderedStreamFieldSerializer
 from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import (
     FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review,
@@ -271,7 +271,7 @@ class UpdateInfluencerSerializer(serializers.ModelSerializer):
     profile = serializers.SerializerMethodField(source='profile')
     name = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    restaurant_images = StreamFieldSerializer()
+    restaurant_images = OrderedStreamFieldSerializer()
 
     def get_name(self, obj):
         return get_text(obj.name)
@@ -404,12 +404,16 @@ class RestaurantRecommendationSerializer(serializers.ModelSerializer):
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     menus = serializers.SerializerMethodField()
-    restaurant_images = StreamFieldSerializer()
+    restaurant_images = OrderedStreamFieldSerializer()
 
     def get_menus(self, obj):
         if not obj.menus:
             return []
-        return [dict(id=img.value.id, type='image', url=img.value.file.url) for img in obj.menus]
+
+        return list(reversed([
+            dict(id=img.value.id, type='image', url=img.value.file.url)
+            for img in obj.menus
+        ]))
 
     class Meta:
         model = Restaurant

@@ -51,6 +51,44 @@ class StreamFieldSerializer(serializers.Field):
         return data  # Assumes data is already in correct format
 
 
+class OrderedStreamFieldSerializer(serializers.Field):
+    def to_representation(self, value):
+        """Convert StreamField value to a JSON-serializable format."""
+        if not value:
+            return []
+
+        result = []
+        for block in value:  # StreamField behaves like a list
+            if block.block_type == 'image':
+                image_id = block.value.id
+                try:
+                    image = Image.objects.get(id=image_id)
+                    result.append({
+                        "type": "image",
+                        "id": image.id,
+                        "url": image.file.url,
+                    })
+                except Image.DoesNotExist:
+                    result.append({
+                        "type": "image",
+                        "id": image_id,
+                        "url": None,
+                    })
+            else:
+                result.append({
+                    "type": block.block_type,
+                    "value": block.value,
+                    "id": block.id,
+                })
+
+        # ✅ Sort image blocks by ID, keep non-image blocks at the end
+        sorted_result = sorted(
+            result,
+            key=lambda x: (0, x["id"]) if x["type"] == "image" else (1, 0)
+        )
+        return sorted_result
+
+
 def city(obj):
     return dict(
         name=obj.city.name,
