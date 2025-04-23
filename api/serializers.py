@@ -161,6 +161,8 @@ class AmbienceSerializer(serializers.ModelSerializer):
 
 
 def get_text(text):
+    if not text:
+        return ""
     return BeautifulSoup(text, "html.parser").get_text()
 
 

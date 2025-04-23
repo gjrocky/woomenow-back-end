@@ -1,7 +1,8 @@
-from woo_me_now_backend.validator import CustomPasswordValidator
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from wagtail.images.models import Image
+
+from woo_me_now_backend.validator import CustomPasswordValidator
 
 
 def password_checker(password):
@@ -84,7 +85,8 @@ class OrderedStreamFieldSerializer(serializers.Field):
         # ✅ Sort image blocks by ID, keep non-image blocks at the end
         sorted_result = sorted(
             result,
-            key=lambda x: (0, x["id"]) if x["type"] == "image" else (1, 0)
+            key=lambda x: (0, x["id"]) if x["type"] == "image" else (1, 0),
+            reverse=True
         )
         return sorted_result
 

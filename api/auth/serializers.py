@@ -41,7 +41,7 @@ class UserSerializer(ModelSerializer):
                          'city': dict(name=obj.city.name,
                                       state=dict(
                                           name=obj.city.state.name,
-                                          ISO_code=obj.city.state.ISO_code))
+                                          ISO_code=obj.city.state.ISO_code)) if obj.city else None,
                          }
                         )
         return data
