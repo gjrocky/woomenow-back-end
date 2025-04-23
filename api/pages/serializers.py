@@ -156,7 +156,7 @@ class InfluencerListSerializer(serializers.ModelSerializer):
 
     def get_recommendations(self, obj):
         return [{"id": res.id, "name": get_text(res.name), "image": res.restaurant_images[0].value.file.url,
-                 'city': res.city.name, 'state': res.city.state.ISO_code} for res in
+                 'city': res.city.name, 'state': res.city.state.ISO_code, "slug": res.slug} for res in
                 obj.user.Restaurants.all()[:6]]
 
     def get_profile_image(self, obj):
@@ -240,7 +240,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         for r in recommended_by:
             try:
                 influencer = dict(id=r.influencer.id, name=r.influencer.name,
-                                  image=r.influencer.profile.file.url)
+                                  image=r.influencer.profile.file.url, slug=r.influencer.slug)
             except:
                 influencer = None
             r_obj = dict(
@@ -342,30 +342,33 @@ class RestaurantReviewSerializer(serializers.ModelSerializer):
             return dict(
                 id=obj.approved_by.id,
                 name=get_text(obj.approved_by.name),
+                slug=obj.approved_by.slug,
             )
         except:
             return None
 
     def get_posted_by(self, obj):
-        influencer = obj.posted_by.influencer
-        if influencer:
-            return dict(
-                id=influencer.id,
-                name=get_text(influencer.name),
-                image=influencer.profile.file.url,
-                email=obj.posted_by.email,
-            )
         try:
-            profile = obj.posted_by.wagtail_userprofile.avatar.url
+            influencer = obj.posted_by.influencer
+            if influencer:
+                return dict(
+                    id=influencer.id,
+                    name=get_text(influencer.name),
+                    image=influencer.profile.file.url,
+                    email=obj.posted_by.email,
+                )
         except:
-            profile = None
+            try:
+                profile = obj.posted_by.wagtail_userprofile.avatar.url
+            except:
+                profile = None
 
-        return dict(
-            id=obj.posted_by.id,
-            name=f'{obj.posted_by.first_name} {obj.posted_by.last_name}',
-            email=obj.posted_by.email,
-            image=profile,
-        )
+            return dict(
+                id=obj.posted_by.id,
+                name=f'{obj.posted_by.first_name} {obj.posted_by.last_name}',
+                email=obj.posted_by.email,
+                image=profile,
+            )
 
     def get_created_at(self, obj):
         return obj.created_at.strftime("%b %d, %Y")

@@ -211,13 +211,13 @@ class ReviewAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         filter_query = Q()
-        restaurant_id = self.request.query_params.get(
+        restaurant_slug = self.request.query_params.get(
             QUERY_PARAMS["restaurant"]
         )
         sort = self.request.query_params.get('sort', 'Newest')
         is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
 
-        reviews = Review.objects.filter(restaurant_id=restaurant_id, is_published=True)
+        reviews = Review.objects.filter(restaurant__slug=restaurant_slug, is_published=True)
         thumb_up = 0
         heart = 0
         diamond = 0

@@ -14,7 +14,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from wagtail.blocks import StreamValue
 from wagtail.images.models import Image
-from wagtail.models import Page
 
 from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSerializer, PricingSerializer, \
     JoinTheWooSerializer, InfluencerSerializer, InfluencerListSerializer, RestaurantListSerializer, \
@@ -68,10 +67,21 @@ class PricingPageAPIView(RetrieveAPIView):
         return self.get_queryset().first()
 
 
-class InfluencerPageAPIView(RetrieveAPIView):
+class InfluencerPageAPIView(APIView):
     queryset = Influencer.objects.live()
     serializer_class = InfluencerSerializer
-    lookup_field = 'pk'
+    lookup_field = 'slug'
+
+    def get(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        if not slug:
+            return Response({'error': 'Influencer does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            influencer = self.queryset.get(slug=slug)
+            serializer = self.serializer_class(influencer).data
+            return Response(serializer, status=status.HTTP_200_OK)
+        except Restaurant.DoesNotExist:
+            return Response({'error': 'Influencer does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class InfluencerListingPageAPIView(ListAPIView):
@@ -130,7 +140,7 @@ class RestaurantListingPageAPIView(ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        id = self.request.query_params.get("id")
+        slug = self.request.query_params.get("slug")
         limit = self.request.query_params.get("limit")
         city = self.request.query_params.get("city")
         q = self.request.query_params.get("q")
@@ -139,9 +149,9 @@ class RestaurantListingPageAPIView(ListAPIView):
         is_influencer = self.request.query_params.get("is_influencer") == 'true'
         queryset = self.queryset.all()
         if not is_influencer:
-            if id:
-                city_id = self.queryset.get(id=id).city.id
-                queryset = self.queryset.filter(city_id=city_id).exclude(id=id)
+            if slug:
+                city_id = self.queryset.get(slug=slug).city.id
+                queryset = self.queryset.filter(city_id=city_id).exclude(slug=slug)
             elif city:
                 queryset = self.queryset.filter(city__slug=city)
             else:
@@ -158,7 +168,7 @@ class RestaurantListingPageAPIView(ListAPIView):
                 "budget-type[]"),
             "ambience__id__in": self.request.query_params.getlist("ambience") or self.request.query_params.getlist(
                 "ambience[]"),
-            "recommended_by__influencer__id__in": self.request.query_params.getlist(
+            "recommended_by__influencer__slug__in": self.request.query_params.getlist(
                 "recommended-by") or self.request.query_params.getlist(
                 "recommended-by[]"),
         }
@@ -206,10 +216,21 @@ class RestaurantListingPageAPIView(ListAPIView):
         return q
 
 
-class RestaurantPageAPIView(RetrieveAPIView):
+class RestaurantPageAPIView(APIView):
     queryset = Restaurant.objects.live()
     serializer_class = RestaurantSerializer
-    lookup_field = 'pk'
+    lookup_field = 'slug'
+
+    def get(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        if not slug:
+            return Response({'error': 'Restaurant does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            restaurant = self.queryset.get(slug=slug)
+            serializer = self.serializer_class(restaurant).data
+            return Response(serializer, status=status.HTTP_200_OK)
+        except Restaurant.DoesNotExist:
+            return Response({'error': 'Restaurant does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class UpdateInfluencerPageAPIView(APIView):
