@@ -6,7 +6,8 @@ from django.core.files import File
 from wagtail.images.models import Image
 from wagtail.models import Page
 
-from apps.main.models import About, Business, FAQs, Pricing, JoinTheWoo, Influencer, Restaurant
+from apps.main.models import About, Business, FAQs, Pricing, JoinTheWoo, Influencer, Restaurant, RestaurantListing, \
+    InfluencerListing
 from apps.snippet.models import State, City, Category, Ambience, Contact, IPLocation
 from apps.users.models import User
 
@@ -228,6 +229,13 @@ def create_pricing():
 
 def create_influencer():
     root_page = Page.get_first_root_node()
+    il = InfluencerListing()
+    il.title = "Influencer Listing"
+    il.slug = "influencer-listing"
+    root_page.add_child(instance=il)
+    il.save_revision().publish()
+    root_page.save()
+
     for influencer in influencers:
         city = City.objects.get(name__icontains=influencer['influencer']['city'].lower())
         user = User.objects.create_user(
@@ -252,10 +260,10 @@ def create_influencer():
                                  "value": link
                                  })
         i.social_links = social_links
-        root_page.add_child(instance=i)
-        root_page.save()
+        il.add_child(instance=i)
         i.save()
         i.save_revision().publish()
+
 
 
 def create_superuser():
@@ -274,6 +282,11 @@ def create_superuser():
 def create_res():
     user = User.objects.get(email='anthony.untaran@gmail.com')
     root_page = Page.get_first_root_node()
+    rl = RestaurantListing(title="Restaurant Listing", slug="restaurant-listing")
+    root_page.add_child(instance=rl)
+    rl.save_revision().publish()
+    root_page.save()
+
     for res in restaurants:
         r = Restaurant()
         r.title = res['title']
@@ -300,8 +313,7 @@ def create_res():
                            "value": get_image(img)
                            })
         r.restaurant_images = images
-        root_page.add_child(instance=r)
-        root_page.save()
+        rl.add_child(instance=r)
         r.save()
         r.save_revision().publish()
 

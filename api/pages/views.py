@@ -22,7 +22,8 @@ from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSeria
     RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer
 from api.serializers import Pagination, get_text, InfluPagination
 from apps.main.helper import email_dict
-from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation
+from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
+    RestaurantListing
 from apps.snippet.models import City, Category, Ambience
 from send_email import send_email
 
@@ -404,7 +405,7 @@ class RestaurantCreateAPIView(APIView):
         if not photos:
             return Response({"error": "Provide photos picture"}, status=status.HTTP_404_NOT_FOUND)
         id = uuid.uuid4()
-        parent_page = Page.objects.all().order_by('first_published_at').first()
+        parent_page = RestaurantListing.objects.first()
         restaurant = parent_page.add_child(
             instance=Restaurant(title=id,
                                 slug=id,

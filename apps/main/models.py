@@ -234,6 +234,15 @@ class Pricing(Page):
         verbose_name_plural = "Pricing"
 
 
+class InfluencerListing(Page):
+    max_count = 1
+    subpage_types = ['influencer']
+
+    class Meta:
+        verbose_name = "Influencer Listing"
+        verbose_name_plural = "Influencer Listing"
+
+
 class Influencer(Page):
     profile = models.ForeignKey(
         "wagtailimages.Image",
@@ -249,6 +258,7 @@ class Influencer(Page):
     city = models.ForeignKey('snippet.City', on_delete=models.SET_NULL, null=True, blank=True,
                              related_name="influencers")
     restaurant_images = StreamField([('image', ImageChooserBlock())], null=True, blank=True, use_json_field=True)
+    parent_page_types = ['InfluencerListing']
 
     content_panels = Page.content_panels + [
         MultiFieldPanel(
@@ -405,6 +415,15 @@ def default_reservation_time():
     return {"reservation": {}}
 
 
+class RestaurantListing(Page):
+    max_count = 1
+    subpage_types = ['Restaurant']
+
+    class Meta:
+        verbose_name = "Restaurant Listing"
+        verbose_name_plural = "Restaurant Listing"
+
+
 class Restaurant(Page):
     name = RichTextField(_("Name"), max_length=500)
     short_description = RichTextField(_("Short Description"), max_length=2000)
@@ -478,6 +497,7 @@ class Restaurant(Page):
             "Additional Information",
         ),
     ]
+    parent_page_types = ['RestaurantListing']
 
     def __str__(self):
         return self.name
