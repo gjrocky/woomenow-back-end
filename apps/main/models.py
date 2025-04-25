@@ -554,7 +554,7 @@ class BecomeInfluencer(BaseModel):
 class OTPVerification(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
-    expires_at = models.DateTimeField(default=now())
+    expires_at = models.DateTimeField(default=now)
 
     def is_valid(self):
         return now() < self.expires_at
