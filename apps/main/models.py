@@ -334,7 +334,7 @@ class JoinTheWoo(Page):
 class Invitation(BaseModel):
     restaurant_name = models.TextField(_("Restaurant Name"), max_length=500)
     location = models.CharField(_("Location"), max_length=255)
-    invited_by = models.ForeignKey('Influencer', on_delete=models.CASCADE)
+    invited_by = models.ForeignKey('Influencer', on_delete=models.SET_NULL, null=True, blank=True )
     invite_to = models.EmailField(_("Invite To"), max_length=255)
     type = models.CharField('Restaurant Type', choices=RestaurantType.choices, max_length=255)
     google_link = models.URLField(_("Google Link"), max_length=255, blank=True, null=True)

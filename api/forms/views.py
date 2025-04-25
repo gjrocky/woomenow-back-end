@@ -381,26 +381,44 @@ class RestaurantInvitationAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        if not user.influencer:
-            return Response({"error": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
-        queryset = Invitation.objects.filter(invited_by=user.influencer)
-        serializer = InvitationSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            influ = user.influencer
+            queryset = Invitation.objects.filter(invited_by=influ)
+            serializer = InvitationSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            if user.is_superuser:
+                queryset = Invitation.objects.filter(invited_by=None)
+                serializer = InvitationSerializer(queryset, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'You are not authorized to view this data'}, status=status.HTTP_401_UNAUTHORIZED)
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        if not user.influencer:
-            return Response({"error": 'influencer not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = InvitationSerializer(data={'influ_id': user.influencer.id, **request.data})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            e = [request.data.get('invite_to')]
-            body = 'emails/exp-get-an-email-to-onboard.html'
-            context = dict(name=request.data.get('restaurant_name'), **email_dict)
-            subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
-            send_email(e, body, context, subject_context)
-            return Response({'message': 'Our team will the check & verify the restaurant/experience'},
-                            status=status.HTTP_201_CREATED)
+        try:
+            influ = user.influencer
+            serializer = InvitationSerializer(data={'influ_id': influ.id, **request.data})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                e = [request.data.get('invite_to')]
+                body = 'emails/exp-get-an-email-to-onboard.html'
+                context = dict(name=request.data.get('restaurant_name'), **email_dict)
+                subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
+                send_email(e, body, context, subject_context)
+                return Response({'message': 'Our team will the check & verify the restaurant/experience'},
+                                status=status.HTTP_201_CREATED)
+        except Exception as e:
+            serializer = InvitationSerializer(data={**request.data})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                e = [request.data.get('invite_to')]
+                body = 'emails/exp-get-an-email-to-onboard.html'
+                context = dict(name=request.data.get('restaurant_name'), **email_dict)
+                subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
+                send_email(e, body, context, subject_context)
+                return Response({'message': 'Our team will the check & verify the restaurant/experience'},
+                                status=status.HTTP_201_CREATED)
 
 
 class CampaignAPIView(APIView):

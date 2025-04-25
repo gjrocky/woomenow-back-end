@@ -28,7 +28,10 @@ class InvitationSerializer(serializers.ModelSerializer):
         fields = ['id', 'restaurant_name', 'created_at', 'location', 'invite_to', 'type', 'google_link']
 
     def create(self, validated_data):
-        invitation = Invitation.objects.create(**validated_data,invited_by=Influencer.objects.get(id=self.initial_data.get('influ_id')))
+        invited_by = Influencer.objects.filter(id=self.initial_data.get('influ_id')).first()
+        invitation = Invitation(**validated_data)
+        if invited_by:
+            invitation.invited_by = invited_by
         invitation.phone = self.initial_data.get('phone', None)
         invitation.save()
         return invitation
