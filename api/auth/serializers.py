@@ -11,6 +11,19 @@ class UserSerializer(ModelSerializer):
     restaurants = SerializerMethodField()
     city = SerializerMethodField()
     is_influencer = SerializerMethodField()
+    is_admin = SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = self.instance
+
+        # Only include 'is_admin' if the user is a superuser
+        if not (user and user.is_superuser):
+            self.fields.pop('is_admin', None)  # Remove if not superuser
+
+    def get_is_admin(self, obj):
+        return obj.is_superuser
+
 
     def get_city(self, obj):
         if obj.city:
@@ -49,7 +62,7 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'profile_picture', 'point', 'restaurants', 'city',
-                  'is_influencer', 'phone', 'date_of_birth']
+                  'is_influencer', 'phone', 'date_of_birth', 'is_admin']
 
     def update(self, instance, validated_data):
         profile_picture = self.initial_data.get('file[]', None)
