@@ -32,6 +32,8 @@ class InvitationSerializer(serializers.ModelSerializer):
         invitation = Invitation(**validated_data)
         if invited_by:
             invitation.invited_by = invited_by
+        if self.initial_data.get('user'):
+            invitation.super_user = self.initial_data.get('user')
         invitation.phone = self.initial_data.get('phone', None)
         invitation.save()
         return invitation

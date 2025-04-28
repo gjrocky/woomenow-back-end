@@ -339,6 +339,7 @@ class Invitation(BaseModel):
     type = models.CharField('Restaurant Type', choices=RestaurantType.choices, max_length=255)
     google_link = models.URLField(_("Google Link"), max_length=255, blank=True, null=True)
     phone = models.CharField(_("Phone Number"), max_length=255)
+    super_user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
 
     panels = [
         FieldPanel("restaurant_name"),

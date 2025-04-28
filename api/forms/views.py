@@ -388,11 +388,12 @@ class RestaurantInvitationAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             if user.is_superuser:
-                queryset = Invitation.objects.filter(invited_by=None)
+                queryset = Invitation.objects.filter(super_user=user)
                 serializer = InvitationSerializer(queryset, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'You are not authorized to view this data'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'error': 'You are not authorized to view this data'},
+                                status=status.HTTP_401_UNAUTHORIZED)
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -409,7 +410,7 @@ class RestaurantInvitationAPIView(APIView):
                 return Response({'message': 'Our team will the check & verify the restaurant/experience'},
                                 status=status.HTTP_201_CREATED)
         except Exception as e:
-            serializer = InvitationSerializer(data={**request.data})
+            serializer = InvitationSerializer(data={**request.data, "user": user})
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 e = [request.data.get('invite_to')]
