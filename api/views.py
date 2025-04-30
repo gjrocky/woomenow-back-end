@@ -1,13 +1,14 @@
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.pages.serializers import RestaurantListSerializer
 from api.serializers import CategorySerializer, StatesSerializer, FranchiseSerializer, StatesInfluencerSerializer, \
-    CitiesSerializer, AmbienceSerializer, ReviewSerializer, CustomTokenObtainPairSerializer
-from apps.main.models import Franchise, Restaurant, Review
+    CitiesSerializer, AmbienceSerializer, ReviewSerializer
+from apps.main.models import Franchise, Restaurant, Review, NotificationPermission
 from apps.snippet.models import Category, State, City, Ambience
 
 
@@ -95,3 +96,19 @@ class ReviewAPIView(ListAPIView):
         user = self.request.user
         queryset = self.queryset.filter(posted_by=user)
         return queryset
+
+
+class NotificationAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        endpoint = data.get('endpoint')
+        p256dh = data.get('keys', {}).get('p256dh')
+        auth = data.get('keys', {}).get('auth')
+        permission = NotificationPermission(user=request.user, endpoint=endpoint, p256dh=p256dh, auth=auth)
+        permission.save()
+        return Response({'success': 'Notification Permission Created'}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        NotificationPermission.objects.filter(user=request.user).delete()
+        return Response({'success': 'Notification Permission Deleted'}, status=status.HTTP_200_OK)
+

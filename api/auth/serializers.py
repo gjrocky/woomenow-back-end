@@ -12,6 +12,7 @@ class UserSerializer(ModelSerializer):
     city = SerializerMethodField()
     is_influencer = SerializerMethodField()
     is_admin = SerializerMethodField()
+    is_notification_enabled = SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,6 +25,11 @@ class UserSerializer(ModelSerializer):
     def get_is_admin(self, obj):
         return obj.is_superuser
 
+    def get_is_notification_enabled(self, obj):
+        try:
+            return True if obj.notification_permission else False
+        except:
+            return False
 
     def get_city(self, obj):
         if obj.city:
@@ -62,7 +68,7 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'profile_picture', 'point', 'restaurants', 'city',
-                  'is_influencer', 'phone', 'date_of_birth', 'is_admin']
+                  'is_influencer', 'phone', 'date_of_birth', 'is_admin', 'is_notification_enabled']
 
     def update(self, instance, validated_data):
         profile_picture = self.initial_data.get('file[]', None)

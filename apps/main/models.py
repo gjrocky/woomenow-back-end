@@ -1,10 +1,14 @@
+import json
+
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
+from pywebpush import webpush, WebPushException
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.blocks import URLBlock
@@ -334,7 +338,7 @@ class JoinTheWoo(Page):
 class Invitation(BaseModel):
     restaurant_name = models.TextField(_("Restaurant Name"), max_length=500)
     location = models.CharField(_("Location"), max_length=255)
-    invited_by = models.ForeignKey('Influencer', on_delete=models.SET_NULL, null=True, blank=True )
+    invited_by = models.ForeignKey('Influencer', on_delete=models.SET_NULL, null=True, blank=True)
     invite_to = models.EmailField(_("Invite To"), max_length=255)
     type = models.CharField('Restaurant Type', choices=RestaurantType.choices, max_length=255)
     google_link = models.URLField(_("Google Link"), max_length=255, blank=True, null=True)
@@ -559,3 +563,73 @@ class OTPVerification(models.Model):
 
     def is_valid(self):
         return now() < self.expires_at
+
+
+class NotificationPermission(BaseModel):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='notification_permission')
+    endpoint = models.TextField(_('Endpoint'), max_length=255, null=True, blank=True)
+    p256dh = models.CharField(max_length=255, null=True, blank=True)
+    auth = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.user.first_name
+
+    class Meta:
+        verbose_name = "Notification Permission"
+        verbose_name_plural = "Notification Permissions"
+
+
+class Notification(BaseModel):
+    title = models.CharField(_("Title"), max_length=255)
+    description = RichTextField(_("Description"), max_length=2000)
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("description"),
+    ]
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            send_push_notification(
+                title=self.title,
+                message=self.description,
+            )
+        else:
+            old_instance = Notification.objects.get(pk=self.pk)
+            if old_instance.description != self.description:  # Check if content has changed
+                send_push_notification(
+                    title=self.title,
+                    message=self.description,
+                )
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
+
+
+def send_push_notification(title, message):
+    subscriptions = NotificationPermission.objects.all()
+    for subscription in subscriptions:
+        try:
+            # Send the push notification using pywebpush
+            response = webpush(
+                subscription_info={
+                    'endpoint': subscription.endpoint,  # The URL of the push service
+                    'keys': {
+                        'p256dh': subscription.p256dh,  # The encryption key
+                        'auth': subscription.auth  # The authentication key
+                    }
+                },
+                data=json.dumps({
+                    'head': title,
+                    'body': BeautifulSoup(message, "html.parser").get_text()
+                }),
+                vapid_private_key=settings.VAPID_PRIVATE_KEY,  # Your VAPID private key here
+                vapid_claims={'sub': f'mailto:{settings.ADMIN_EMAIL}'}
+            )
+        except WebPushException as e:
+            print(f"Error sending push notification: {e}")
