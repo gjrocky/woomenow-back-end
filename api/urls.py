@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from api.views import StateAPIView, CategoryAPIView, FranchiseAPIView, StateInfluencerAPIView, CityAPIView, \
-    AmbienceAPIView, RecommendationAPIView, ReviewAPIView, NotificationAPIView
+    AmbienceAPIView, RecommendationAPIView, ReviewAPIView, NotificationAPIView, SendNotificationAPIView
 
 app_name = "api"
 
@@ -24,6 +24,7 @@ urlpatterns = [
     path("recommendation/", RecommendationAPIView.as_view(), name="recommendation"),
     path("reviews/", ReviewAPIView.as_view(), name="reviews"),
     path('notification/', NotificationAPIView.as_view(), name='notification'),
+    path('send-notification/', SendNotificationAPIView.as_view(), name='send-notification'),
     path("auth/", obtain_auth_token),
 
     path('authetication/', include('dj_rest_auth.urls')),
