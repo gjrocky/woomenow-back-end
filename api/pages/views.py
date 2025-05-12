@@ -164,13 +164,11 @@ class RestaurantListingPageAPIView(ListAPIView):
             "categories__id__in": self.request.query_params.getlist("categories") or self.request.query_params.getlist(
                 "categories[]"),
             "budget_friendly__in": self.request.query_params.getlist(
-                "budget-type") or self.request.query_params.getlist(
-                "budget-type[]"),
+                "budget-type") or self.request.query_params.getlist("budget-type[]"),
             "ambience__id__in": self.request.query_params.getlist("ambience") or self.request.query_params.getlist(
                 "ambience[]"),
             "recommended_by__influencer__slug__in": self.request.query_params.getlist(
-                "recommended-by") or self.request.query_params.getlist(
-                "recommended-by[]"),
+                "recommended-by") or self.request.query_params.getlist("recommended-by[]"),
         }
         filters = {k: v for k, v in filters.items() if v}
 
@@ -179,8 +177,13 @@ class RestaurantListingPageAPIView(ListAPIView):
             q_objects &= Q(**{key: value})
         if q:
             q_objects = q_objects & (
-                    Q(categories__name__icontains=q) | Q(name__icontains=q) | Q(
-                recommended_by__influencer__name__icontains=q))
+                    Q(categories__name__icontains=q)
+                    | Q(name__icontains=q)
+                    | Q(slug__icontains=q)
+                    | Q(recommended_by__influencer__name__icontains=q)
+                    | Q(recommended_by__influencer__slug__icontains=q)
+            )
+
         if is_featured:
             q_objects &= Q(is_featured=True)
 
