@@ -33,16 +33,18 @@ class CategoryAPIView(ListAPIView):
 
     def get_queryset(self):
         categories = Category.objects.all()
-        city = self.request.query_params.get('city')
-        type = self.request.query_params.get('type')
-        if city:
-            categories = categories.filter(Restaurants__city__slug=city).distinct()
+        city_slug = self.request.query_params.get('city')
+        category_type = self.request.query_params.get('type')
+        q = Q()
+        if city_slug:
+            q &= Q(Restaurants__city__slug=city_slug)
         else:
             city = City.objects.first()
-            categories = categories.filter(Restaurants__city__slug=city.slug).distinct()
+            q &= Q(Restaurants__city__slug=city.slug)
+        if category_type:
+            q &= Q(Restaurants__type=category_type)
+        categories = categories.filter(q).distinct()
 
-        if type:
-            categories = categories.filter(Restaurants__type=type).distinct()
         return categories
 
 
