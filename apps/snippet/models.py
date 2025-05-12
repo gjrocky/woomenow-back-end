@@ -5,7 +5,6 @@ from django.db import models
 from django.db.models import OneToOneField, TextField
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel
 from wagtail.search import index
 
@@ -240,3 +239,23 @@ class Ambience(BaseModel):
     class Meta:
         verbose_name = "Ambience"
         verbose_name_plural = "Ambiences"
+
+
+class SiteVisit(models.Model):
+    user_identifier = models.CharField(max_length=255, unique=True)
+    user_agent = models.CharField(max_length=500, blank=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    first_visit = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user_identifier
+
+
+class PwaInstall(models.Model):
+    user_identifier = models.CharField(max_length=255, unique=True)  # User ID or email
+    user_agent = models.TextField(blank=True, null=True)  # Store the user agent
+    ip_address = models.GenericIPAddressField(blank=True, null=True)  # Store the IP address
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user_identifier

@@ -16,7 +16,16 @@ from api.pages.serializers import RestaurantListSerializer
 from api.serializers import CategorySerializer, StatesSerializer, FranchiseSerializer, StatesInfluencerSerializer, \
     CitiesSerializer, AmbienceSerializer, ReviewSerializer
 from apps.main.models import Franchise, Restaurant, Review, NotificationPermission, NotificationHistory
-from apps.snippet.models import Category, State, City, Ambience
+from apps.snippet.models import Category, State, City, Ambience, SiteVisit, PwaInstall
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 
 class CategoryAPIView(ListAPIView):
@@ -146,6 +155,52 @@ class SendNotificationAPIView(APIView):
         notification_history.save()
         send_push_notification(title, description, send_to, notification_history)
         return Response({'success': 'Notification Sent'}, status=status.HTTP_200_OK)
+
+
+class TrackVisitView(APIView):
+    def post(self, request):
+        user_identifier = request.data.get('user_identifier')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        ip_address = get_client_ip(request)
+
+        if not user_identifier:
+            return Response({'error': 'Missing identifier'}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj, created = SiteVisit.objects.get_or_create(
+            user_identifier=user_identifier,
+            defaults={
+                'user_agent': user_agent,
+                'ip_address': ip_address,
+            }
+        )
+
+        return Response(
+            {'status': 'created' if created else 'already_exists'},
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
+
+
+class PwaInstallView(APIView):
+    def post(self, request):
+        user_identifier = request.data.get('user_identifier')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        ip_address = get_client_ip(request)
+
+        if not user_identifier:
+            return Response({'error': 'Missing identifier'}, status=status.HTTP_400_BAD_REQUEST)
+
+        obj, created = PwaInstall.objects.get_or_create(
+            user_identifier=user_identifier,
+            defaults={
+                'user_agent': user_agent,
+                'ip_address': ip_address,
+            }
+        )
+
+        return Response(
+            {'status': 'created' if created else 'already_exists'},
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
 
 
 def send_push_notification(title, message, send_to, notification_history):

@@ -6,7 +6,7 @@ from .models import (
     City,
     State,
     Category,
-    IPLocation, Contact, JoinTheWooForm, Ambience, CampaignTracker, Campaign,
+    IPLocation, Contact, JoinTheWooForm, Ambience, CampaignTracker, Campaign, SiteVisit, PwaInstall,
 )
 
 
@@ -29,3 +29,5 @@ register_snippet(JoinTheWooForm)
 register_snippet(Ambience)
 register_snippet(Campaign)
 register_snippet(CampaignTracker)
+register_snippet(SiteVisit)
+register_snippet(PwaInstall)
