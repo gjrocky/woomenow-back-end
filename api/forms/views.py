@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.db.models import Q, Avg
+from django.http.request import QueryDict
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import permissions
@@ -269,7 +270,10 @@ class ReviewPostAPIView(APIView):
     parser_classes = (MultiPartParser,)
 
     def post(self, request, *args, **kwargs):
-        data = request.data.copy()
+        data = QueryDict('', mutable=True)
+        for key, value_list in request.data.lists():
+            for value in value_list:
+                data.update({key: value})
         bill = request.data.get('file[]', None)
 
         if not request.data.get('res_id'):
