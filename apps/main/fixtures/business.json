@@ -1,7 +1,7 @@
 {
-  "heading": "Does your business need to produce more content & attract more customers?",
-  "description": "Schedule your FREE Video shoot at your business with one of our Local Influencers with zero obligation!",
-  "CTA_btn": "Schedule your FREE video shoot",
+  "heading": "Let One of Our Local Influencers Shine a Spotlight on Your Business",
+  "description": "We deliver high-quality, ready-to-post reels — starting with a free influencer video shoot at your location. You only pay if you love it!",
+  "CTA_btn": "Book a discovery call to qualify for your free influencer video shoot ",
   "key_point": [
     {
       "value": "25+",
@@ -17,42 +17,52 @@
     }
   ],
   "choose_heading": "Why Choose Us?",
-  "choose_description": "Say goodbye to the old ways of content creation and embrace the future with our game-changing strategy. Here's what you no longer have to worry about:",
+  "choose_description": "Real Recommendations. Real Growth. No Upfront Cost.",
   "why_choose_us_cards": [
     {
-      "heading": "Budget Constraints, No More!",
-      "description": "Most businesses struggle with the enormous costs of quality content and video production. Not with us! We've mastered the art of delivering top-notch content at a fraction of the cost you'd expect."
+      "heading": "Curated by Locals & Influencers",
+      "description": "Every business on WooMeNow is recommended by someone who truly loves it—never paid to be listed."
     },
     {
-      "heading": "Creativity Made Effortless!",
-      "description": "Struggling with creative concepts and execution? Leave that to our dedicated creative team who will be with you every step of the way, crafting content that captivates and converts."
+      "heading": "Growth-Focused Reviews",
+      "description": "We protect your reputation by sharing negative reviews privately first. If you don’t respond in a timely manner, the review goes public. But when you do respond, we showcase how you handled it."
     },
     {
-      "heading": "Risk-Free Content, Guaranteed!",
-      "description": "We understand that you want content that truly represents your brand. We take the risk for you - if the initial content we produce doesn't meet your expectations, you won't pay a dime."
+      "heading": "Risk-Free Content Creation",
+      "description": "You only pay for content if you love it. We handle the shoot, editing, and influencer coordination—no upfront costs, no pressure."
     },
     {
-      "heading": "Influencer Headaches, Begone!",
-      "description": "Finding the right influencer and managing campaign expectations can be overwhelming. Relax! Our extensive network of Local Influencers is at your service, making sure your brand's message reaches the right audience."
+      "heading": "Community-Driven Discovery",
+      "description": "We help people plan better date nights and family outings, bringing thoughtful customers to businesses like yours."
     }
   ],
   "win_plan_heading": "The Winning Plan",
   "win_plan_description": "Our content creation process is as simple as it is effective",
   "win_plan_cards": [
     {
-      "heading": "Discovery Call",
-      "description": "Discovery Call In just 10-15 minutes, we'll uncover your unique needs and goals, paving the way for a personalized content strategy.",
+      "heading": "Get Recommended",
+      "description": "Influencers and locals nominate the best spots in the city—like yours.",
       "img": "apps/main/fixtures/images/business/Rectangle 3464918.png"
     },
     {
-      "heading": "Lights, Camera, Action",
-      "description": "We'll schedule a video shoot at your business, partnering with a Local Influencer, and our talented videographer to create stunning visual content.",
+      "heading": "Get Filmed (For Free)",
+      "description": "We create a professional reel featuring your business and a real experience. You only pay if you approve the final product.",
       "img": "apps/main/fixtures/images/business/Rectangle 3464918-2.png"
     },
     {
-      "heading": "Ready, Set, Post",
-      "description": "Within a lightning-fast 48 hours after the video shoot, you'll receive a fully edited 20-30 second reel, ready to dazzle your social media audience. At this point, you get to decide if you're ready to kickstart your campaign.",
+      "heading": "Get Featured",
+      "description": "Approved content gets shared across WooMeNow’s platform, social media, and influencer channels.",
       "img": "apps/main/fixtures/images/business/Rectangle 3464918-1.png"
+    },
+    {
+      "heading": "Get Feedback, Privately First",
+      "description": "Negative reviews are shared privately with you first. No response? It becomes public. Respond well? We highlight how you made it right.",
+      "img": "apps/main/fixtures/images/business//Rectangle 3464918.png"
+    },
+    {
+      "heading": "Get Results",
+      "description": "Our content packages drive new customers to your door—and keep them coming back.",
+      "img": "apps/main/fixtures/images/business/Rectangle 3464918-2.png"
     }
   ],
   "price_heading": "Get Started <b>Now</b>!",
@@ -60,24 +70,44 @@
   "price_btn": "",
   "faqs": [
     {
-      "que": "What exactly does \"Risk Free\" content creation mean?",
-      "ans": "There are no upfront costs and you pay nothing for the initial content we create until it meets your expectations and approve for us to post it."
+      "que": "What is WooMeNow?",
+      "ans": "WooMeNow is a collaborative platform powered by our community and trusted local influencers. We help people discover the best restaurants and experiences for date nights and family outings—while offering businesses risk-free, influencer-driven content and growth-focused reviews."
     },
     {
-      "que": "How does our approach to content creation help small businesses?",
-      "ans": "Your content strategy will be put on auto-pilot with your own dedicated creative team. We will simplify the content creation process for your business and take the worry away so you can focus on running your business."
+      "que": "How is WooMeNow different from traditional review sites?",
+      "ans": "We’re not here to tear businesses down—we lift them up.<ul><li>Positive feedback gets featured and celebrated.</li><li>Negative feedback is first sent privately to the business.</li><li>If unresolved, it’s made public—but if the business responds, we can also spotlight how it was handled. It's all about accountability with empathy.</li></ul>"
     },
     {
-      "que": "What problems are we helping small businesses solve?",
-      "ans": "We help clients save time and money plus get good engagement on their posts. We accomplish this by creating professional content at a fraction of the cost with very fast turnaround times in collaboration with local influencers to help ensure good engagement."
+      "que": "What are “Growth-Focused Reviews”?",
+      "ans": "Our review system creates space for improvement, not punishment.<ul><li>We highlight positive feedback! </li><li>For all negative feedback, we alert businesses privately first to respond and resolve the issue.</li><li>If ignored, we make the review public—but we’ll also highlight any resolution they provide afterward.</li></ul>"
     },
     {
-      "que": "Are there specific industries we specialize in working with?",
-      "ans": "Yes, we mainly work with all types of restaurants + businesses who provide fun experiences for date nights & family/friends outings."
+      "que": "What does “Risk-Free Content Creation” mean?",
+      "ans": "There’s no upfront cost for the video shoot. No obligation to pay until you're 100% happy.\nIf you love the reel we create for you, you can choose one of our content packages. If not, no worries—you owe nothing and  WooMeNow keeps the content rights."
     },
     {
-      "que": "What is the WooMeNow platform and how does it help our community?",
-      "ans": "The WooMeNow platform is a Curated Experience Platform that will help people save time in their search for cool date night experiences and fun things to do with family/friends in different cities! All of the Recommendations are from Locals in their respective city! Our Mission is aimed at bettering Families & Relationships, Inspire Connection & Community while creating engaging content for small businesses. We want to bring people together to help create lasting memories through community and content."
+      "que": "Who creates the content?",
+      "ans": "Our creative team works alongside vetted local influencers to create engaging, story-driven video reels that feel authentic and connect with the audience you want to reach."
+    },
+    {
+      "que": "Can I use the video even if I don’t move forward?",
+      "ans": "No. If you don’t approve the video or move forward with a paid campaign, WooMeNow retains all rights to the content. You’ll only gain usage rights once you invest in a content package."
+    },
+    {
+      "que": "What types of businesses does WooMeNow work with?",
+      "ans": "Restaurants, entertainment venues, and experience-based businesses—especially those that care about community, relationships, and building something memorable."
+    },
+    {
+      "que": "What’s included in the Local Spotlight content package?",
+      "ans": "<ul><li>Professionally filmed and edited video reels</li><li>A personalized date night shoot</li><li>Influencer collaboration</li><li>Featured placement in WooMeNow’s “Featured Partners” section.</li></ul>"
+    },
+    {
+      "que": "How do I join WooMeNow as a business?",
+      "ans": "Contact us directly or get recommended by a local influencer. We’ll qualify you for a free video shoot —with no payment due unless you love it."
+    },
+    {
+      "que": "How do I become an influencer with WooMeNow?",
+      "ans": "We love partnering with trusted voices in the community. If you’re passionate about recommending your favorite local spots, DM us on Instagram or apply via our website!"
     }
   ]
 }

@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "Closes the specified poll for voting and creates a Wagtail root page and default site"
 
     def handle(self, *args, **options):
-        call_command('flush', interactive=False)
+        # call_command('flush', interactive=False)
         logger.info('Flushed Database')
         logger.info(
             '---------------------------------------------------------------------------------------------------')

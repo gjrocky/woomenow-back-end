@@ -45,7 +45,7 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.053Z",
       "modified_at": "2023-10-12T06:00:10.053Z",
-      "name": "Romantic Date Night",
+      "name": "Woo-Worthy Nights",
       "image": "apps/main/fixtures/images/categories/Romantic Date Night.png"
     }
   },
@@ -85,7 +85,7 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.108Z",
       "modified_at": "2023-10-12T06:00:10.108Z",
-      "name": "Beach/Waterfront",
+      "name": "Sunset & Shoreline Spots",
       "image": "apps/main/fixtures/images/categories/Beach-Waterfront.png"
     }
   },
@@ -105,7 +105,7 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.130Z",
       "modified_at": "2023-10-12T06:00:10.130Z",
-      "name": "Rooftop",
+      "name": "Sky-High Views",
       "image": "apps/main/fixtures/images/categories/Rooftop.png"
     }
   },
@@ -115,7 +115,7 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.148Z",
       "modified_at": "2023-10-12T06:00:10.148Z",
-      "name": "Outdoors/Adventurous",
+      "name": "The Great Date Outdoors",
       "image": "apps/main/fixtures/images/categories/Adventurous.png"
     }
   },
@@ -125,7 +125,7 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.163Z",
       "modified_at": "2023-10-12T06:00:10.163Z",
-      "name": "Self-Care",
+      "name": "Relax & Recharge",
       "image": "apps/main/fixtures/images/categories/Self-Care.png"
     }
   },
@@ -145,7 +145,7 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.187Z",
       "modified_at": "2023-10-12T06:00:10.187Z",
-      "name": "Live Music",
+      "name": "Sounds Like a Vibe",
       "image": "apps/main/fixtures/images/categories/Live Music.png"
     }
   },
@@ -246,6 +246,26 @@
       "created_at": "2023-10-12T06:00:10.333Z",
       "modified_at": "2023-10-12T06:00:10.333Z",
       "name": "Casual Dining",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 26,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Photo-Worthy Spots",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 27,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Late Night Vibes",
       "image": "apps/main/fixtures/images/categories/Casual Dining.png"
     }
   }
