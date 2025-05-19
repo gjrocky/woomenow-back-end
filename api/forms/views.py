@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime
 
 import requests
@@ -269,6 +270,22 @@ class ReviewPostAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = (MultiPartParser,)
 
+    def send_influencer_emails(self, review, res, email_dict):
+        influencers = Influencer.objects.filter(city=res.city)
+        for i in influencers:
+            e = [i.user.email]
+            body = 'emails/receive-review-for-approval-influencer.html'
+            context = dict(
+                name=get_text(i.name),
+                res_name=get_text(res.name),
+                date=review.created_at.strftime("%b %d, %Y"),
+                rating=review.rating,
+                summary=review.content,
+                **email_dict
+            )
+            subject_context = dict(subject='New Review Awaiting Your Approval.')
+            send_email(e, body, context, subject_context)
+
     def post(self, request, *args, **kwargs):
         data = QueryDict('', mutable=True)
         for key, value_list in request.data.lists():
@@ -293,21 +310,7 @@ class ReviewPostAPIView(APIView):
         review.save()
         try:
             res = Restaurant.objects.get(id=request.data.get('res_id'))
-            influencers = Influencer.objects.filter(city=res.city)
-
-            for i in influencers:
-                e = [i.user.email]
-                body = 'emails/receive-review-for-approval-influencer.html'
-                context = dict(
-                    name=get_text(i.name),
-                    res_name=get_text(res.name),
-                    date=review.created_at.strftime("%b %d, %Y"),
-                    rating=review.rating,
-                    summary=review.content,
-                    **email_dict
-                )
-                subject_context = dict(subject='New Review Awaiting Your Approval.')
-                send_email(e, body, context, subject_context)
+            threading.Thread(target=self.send_influencer_emails, args=(review, res, email_dict)).start()
 
             return Response({'message': 'Your review has been published after verification.'},
                             status=status.HTTP_201_CREATED)
