@@ -530,7 +530,7 @@ class RestaurantDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = ['id', 'slug', 'title', 'name', 'short_description', 'about_restaurant', 'email', 'phone_number',
-                  'reservation_time', 'budget_friendly', 'categories', 'ambience', 'profile_pic', 'type']
+                  'reservation_time', 'budget_friendly', 'categories', 'ambience', 'profile_pic', 'type', 'is_franchise']
 
     def update(self, instance, validated_data):
         data = json.loads(self.initial_data.get('data'))

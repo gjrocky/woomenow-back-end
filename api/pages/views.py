@@ -22,7 +22,7 @@ from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSeria
 from api.serializers import Pagination, get_text, InfluPagination
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
-    RestaurantListing
+    RestaurantListing, Franchise
 from apps.snippet.models import City, Category, Ambience
 from send_email import send_email
 
@@ -419,7 +419,10 @@ class RestaurantCreateAPIView(APIView):
         menus = request.data.getlist('menus[]')
         photos = request.data.getlist('photos[]')
         profile = request.data.get('profile[]')
-
+        if data.get('franchise'):
+            franchise = Franchise.objects.filter(id=data.get('franchise')).first()
+        else:
+            franchise = None
         if not profile:
             return Response({"error": "Provide profile picture"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -433,7 +436,7 @@ class RestaurantCreateAPIView(APIView):
         restaurant = parent_page.add_child(
             instance=Restaurant(title=id,
                                 slug=id,
-                                name=data.get('name'),
+                                name=franchise.name if franchise else data.get('name') ,
                                 short_description=data.get('short_description'),
                                 about_restaurant=data.get('about_restaurant'),
                                 email=data.get('email'),
@@ -444,6 +447,9 @@ class RestaurantCreateAPIView(APIView):
                                 budget_friendly=data.get('budget_friendly'),
                                 )
         )
+        if franchise:
+            restaurant.franchise = franchise
+            restaurant.is_franchise = True
 
         restaurant.categories.set(Category.objects.filter(id__in=data.get('categories', [])))
         restaurant.ambience.set(Ambience.objects.filter(id__in=data.get('ambience', [])))

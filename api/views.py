@@ -81,13 +81,11 @@ class AmbienceAPIView(ListAPIView):
         if r_id:
             return queryset.filter(Restaurants__id=r_id).distinct()
 
-        if city:
-            queryset = queryset.filter(Restaurants__city__slug=city).distinct()
-        else:
-            city = City.objects.first()
-            queryset = queryset.filter(Restaurants__city=city).distinct()
         if type:
             queryset = queryset.filter(Restaurants__type=type).distinct()
+
+        if city:
+            queryset = queryset.filter(Restaurants__city__slug=city).distinct()
 
         return queryset
 
