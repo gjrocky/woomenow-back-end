@@ -458,6 +458,7 @@ class Restaurant(Page):
                                        default=BudgetType.INEXPENSIVE)
     ambience = ParentalManyToManyField("snippet.Ambience", blank=True, related_name="Restaurants")
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='restaurants')
+    address = models.TextField(_("Address"), max_length=2000, blank=True, null=True)
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
@@ -469,6 +470,7 @@ class Restaurant(Page):
                 FieldPanel("email"),
                 FieldPanel("phone_number"),
                 FieldPanel("location"),
+                FieldPanel("address"),
             ],
             "Restaurant Details",
         ),

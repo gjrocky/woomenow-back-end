@@ -264,7 +264,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'name', 'slug', 'short_description', 'about_restaurant', 'email', 'phone_number',
                   'location', 'menus', 'type', 'is_featured', 'is_home_featured', 'rating', 'website_url',
                   'budget_friendly', 'city', 'profile_pic', 'recommended_by', 'restaurant_images', 'categories',
-                  'ambience', 'reservation_time']
+                  'ambience', 'reservation_time', 'address']
 
 
 class UpdateInfluencerSerializer(serializers.ModelSerializer):
@@ -530,11 +530,13 @@ class RestaurantDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = ['id', 'slug', 'title', 'name', 'short_description', 'about_restaurant', 'email', 'phone_number',
-                  'reservation_time', 'budget_friendly', 'categories', 'ambience', 'profile_pic', 'type', 'is_franchise']
+                  'reservation_time', 'budget_friendly', 'categories', 'ambience', 'profile_pic', 'type',
+                  'is_franchise', 'address']
 
     def update(self, instance, validated_data):
         data = json.loads(self.initial_data.get('data'))
         instance.name = data.get('name', instance.name)
+        instance.address = data.get('address', instance.address)
         instance.short_description = data.get('short_description', instance.short_description)
         instance.about_restaurant = data.get('about_restaurant', instance.about_restaurant)
         instance.email = data.get('email', instance.email)

@@ -451,6 +451,9 @@ class RestaurantCreateAPIView(APIView):
             restaurant.franchise = franchise
             restaurant.is_franchise = True
 
+        address = data.get('address')
+        if address:
+            restaurant.address = address
         restaurant.categories.set(Category.objects.filter(id__in=data.get('categories', [])))
         restaurant.ambience.set(Ambience.objects.filter(id__in=data.get('ambience', [])))
         restaurant.city = City.objects.get(id=data.get('city', ''))
