@@ -29,6 +29,7 @@ from apps.snippet.models import IPLocation, Contact, JoinTheWooForm, City, Campa
 from send_email import send_email
 
 api_counter = 0
+send_email_counter = {}
 
 
 def get_text(text):
@@ -137,43 +138,6 @@ class InvitationAPIView(ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-# @extend_schema(
-#     parameters=[
-#         OpenApiParameter(
-#             name="user", description="User ID", required=False, type=int
-#         ),
-#         OpenApiParameter(
-#             name="restaurant", description="Restaurant ID", required=False, type=int
-#         )
-#     ]
-# )
-# class ReviewAPIView(ListCreateAPIView):
-#     queryset = Review.objects.all()
-#     serializer_class = ReviewSerializer
-#
-#     def get_queryset(self):
-#         queryset = super(ReviewAPIView, self).get_queryset()
-#         filter_query = Q()
-#         query_params = dict(
-#             posted_by_id=self.request.query_params.get(QUERY_PARAMS["user"]),
-#             restaurant_id=self.request.query_params.get(
-#                 QUERY_PARAMS["restaurant"]
-#             ),
-#         )
-#         for key, value in query_params.items():
-#             if value:
-#                 filter_query &= Q(**{key: value})
-#
-#         queryset = queryset.filter(filter_query)
-#         return queryset
-#
-#     def perform_create(self, serializer):
-#         if serializer.is_valid(raise_exception=True):
-#             return Response(
-#                 {"message": "Form submitted successfully"}, status=status.HTTP_200_OK
-#             )
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class BookmarkAPIView(APIView):
     authentication_classes = [SessionAuthentication, JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -271,20 +235,32 @@ class ReviewPostAPIView(APIView):
     parser_classes = (MultiPartParser,)
 
     def send_influencer_emails(self, review, res, email_dict):
+        global send_email_counter
+        cities = City.objects.values_list('name', flat=True)
+
+        for city in cities:
+            if not send_email_counter.get(city):
+                send_email_counter[city] = 0
+
         influencers = Influencer.objects.filter(city=res.city)
-        for i in influencers:
-            e = [i.user.email]
-            body = 'emails/receive-review-for-approval-influencer.html'
-            context = dict(
-                name=get_text(i.name),
-                res_name=get_text(res.name),
-                date=review.created_at.strftime("%b %d, %Y"),
-                rating=review.rating,
-                summary=review.content,
-                **email_dict
-            )
-            subject_context = dict(subject='New Review Awaiting Your Approval.')
-            send_email(e, body, context, subject_context)
+
+        if not influencers.exists():
+            return
+
+        influencer = influencers[send_email_counter[res.city.name] % influencers.count()]
+        e = [influencer.user.email]
+        body = 'emails/receive-review-for-approval-influencer.html'
+        context = dict(
+            name=get_text(influencer.name),
+            res_name=get_text(res.name),
+            date=review.created_at.strftime("%b %d, %Y"),
+            rating=review.rating,
+            summary=review.content,
+            **email_dict
+        )
+        subject_context = dict(subject='New Review Awaiting Your Approval.')
+        send_email_counter[res.city.name] = send_email_counter[res.city.name] + 1
+        send_email(e, body, context, subject_context)
 
     def post(self, request, *args, **kwargs):
         data = QueryDict('', mutable=True)
