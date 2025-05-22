@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from django.db.models import Q
+from django.db.models import Q, Count
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
@@ -141,6 +141,7 @@ class RestaurantListingPageAPIView(ListAPIView):
 
     def get_queryset(self):
         slug = self.request.query_params.get("slug")
+        is_desktop = self.request.query_params.get("is_desktop") == 'true'
         limit = self.request.query_params.get("limit")
         city = self.request.query_params.get("city")
         q = self.request.query_params.get("q")
@@ -161,8 +162,6 @@ class RestaurantListingPageAPIView(ListAPIView):
         filters = {
             "city__state__slug": self.request.query_params.get("state"),
             "type": self.request.query_params.get("type"),
-            "categories__id__in": self.request.query_params.getlist("categories") or self.request.query_params.getlist(
-                "categories[]"),
             "budget_friendly__in": self.request.query_params.getlist(
                 "budget-type") or self.request.query_params.getlist("budget-type[]"),
             "ambience__id__in": self.request.query_params.getlist("ambience") or self.request.query_params.getlist(
@@ -171,6 +170,8 @@ class RestaurantListingPageAPIView(ListAPIView):
                 "recommended-by") or self.request.query_params.getlist("recommended-by[]"),
         }
         filters = {k: v for k, v in filters.items() if v}
+        categories = self.request.query_params.getlist("categories") or self.request.query_params.getlist(
+            "categories[]")
 
         q_objects = Q()
         for key, value in filters.items():
@@ -195,11 +196,26 @@ class RestaurantListingPageAPIView(ListAPIView):
         order_by = 'first_published_at' if sort == 'oldest' else '-first_published_at'
         queryset = queryset.filter(q_objects).distinct().order_by(order_by)
 
+        if categories:
+            categories = list(set(categories))
+            queryset = (
+                queryset.filter(categories__id__in=categories)
+                .annotate(match_count=Count(
+                    'categories__id',
+                    filter=Q(categories__id__in=categories),
+                    distinct=True
+                ))
+                .filter(match_count=len(categories))
+            )
+
         if is_paginate:
             paginator = Pagination()
             page = paginator.paginate_queryset(queryset, self.request, view=self)
 
             response_data = paginator.get_paginated_response(page).data
+
+            if is_desktop:
+                return response_data
             return response_data.get('results')
 
         if limit:
@@ -211,12 +227,28 @@ class RestaurantListingPageAPIView(ListAPIView):
         q = Q()
         for r in rating:
             if r == filter_type['diamond']:
-                q |= Q(rating__gt=4)
+                q |= Q(rating__gte=4)
             elif r == filter_type['heart']:
-                q |= Q(rating__range=(2.5, 4))
+                q |= (Q(rating__gte=3.5) & Q(rating__lt=4))
             elif r == filter_type['thumb_up']:
-                q |= Q(rating__lt=2.5)
+                q |= Q(rating__lt=3.5)
         return q
+
+    def list(self, request, *args, **kwargs):
+        is_desktop = request.query_params.get("is_desktop") == "true"
+        queryset = self.get_queryset()
+
+        if is_desktop:
+            serializer = self.get_serializer(queryset.get('results'), many=True)
+            data = serializer.data
+            return Response({
+                "results": data,
+                "total_restaurant": queryset.get('count', 0)
+            }, status=status.HTTP_200_OK)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            data = serializer.data
+            return Response(data, status=status.HTTP_200_OK)
 
 
 class RestaurantPageAPIView(APIView):
@@ -436,7 +468,7 @@ class RestaurantCreateAPIView(APIView):
         restaurant = parent_page.add_child(
             instance=Restaurant(title=id,
                                 slug=id,
-                                name=franchise.name if franchise else data.get('name') ,
+                                name=franchise.name if franchise else data.get('name'),
                                 short_description=data.get('short_description'),
                                 about_restaurant=data.get('about_restaurant'),
                                 email=data.get('email'),

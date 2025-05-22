@@ -177,6 +177,10 @@ class RestaurantListSerializer(serializers.ModelSerializer):
     recommended_by = serializers.SerializerMethodField(source='recommended_by')
     restaurant_image = serializers.SerializerMethodField(source='restaurant_images')
     description = serializers.SerializerMethodField(source='short_description')
+    no_of_rating = serializers.SerializerMethodField()
+
+    def get_no_of_rating(self, obj):
+        return obj.reviews.filter(is_published=True).count()
 
     def get_city(self, obj):
         return city(obj)
@@ -218,7 +222,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         model = Restaurant
 
         fields = ['id', 'title', 'slug', 'name', 'is_featured', 'is_home_featured', 'rating', 'recommended_by',
-                  'categories', 'city', 'description', 'restaurant_image', 'type', 'budget_friendly']
+                  'categories', 'city', 'description', 'restaurant_image', 'type', 'budget_friendly', 'no_of_rating']
 
 
 class RestaurantSerializer(serializers.ModelSerializer):

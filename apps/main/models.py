@@ -361,7 +361,7 @@ class Invitation(BaseModel):
 
 class Review(BaseModel):
     content = models.TextField(_("Content"), max_length=5000, null=True, blank=True)
-    rating = models.IntegerField(_("Rating"), default=5)
+    rating = models.DecimalField(_("Rating"), blank=True, null=True, max_digits=5, decimal_places=4)
     more_info = models.JSONField(_('More Information'), null=True, blank=True)
     is_verified = models.BooleanField(_("Is Verified"), default=False)
     is_published = models.BooleanField(_("Is Published"), default=False)
@@ -388,6 +388,11 @@ class Review(BaseModel):
         FieldPanel("images"),
         FieldPanel("restaurant"),
     ]
+
+    def save(self, *args, **kwargs):
+        if not self.is_verified and int(self.rating) >= 3:
+            self.is_published = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.posted_by.first_name
@@ -592,7 +597,7 @@ class NotificationHistory(BaseModel):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         verbose_name = "Notification History"
         verbose_name_plural = "Notification Histories"

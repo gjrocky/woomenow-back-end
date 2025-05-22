@@ -62,16 +62,17 @@ class ReviewSerializer(serializers.ModelSerializer):
                     image=influencer.profile.file.url,
                     email=obj.posted_by.email,
                 )
+            return None
         except:
             try:
-                profile = obj.posted_by.wagtail_userprofile.avatar.url
+                profile = obj.posted_by.profile_picture.url or obj.posted_by.wagtail_userprofile.avatar.url
             except:
                 profile = None
             return dict(
                 id=obj.posted_by.id,
                 name=f'{obj.posted_by.first_name} {obj.posted_by.last_name}',
                 email=obj.posted_by.email,
-                profile=profile,
+                image=profile,
             )
 
     def get_bill(self, obj):

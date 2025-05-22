@@ -1,10 +1,9 @@
-import threading
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.db.models import Q, Avg
+from django.db.models import Q
 from django.http.request import QueryDict
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -190,7 +189,7 @@ class ReviewAPIView(APIView):
         for review in reviews:
             if review.rating >= 4:
                 diamond += 1
-            elif review.rating < 2.5:
+            elif review.rating < 3.5:
                 thumb_up += 1
             else:
                 heart += 1
@@ -201,11 +200,11 @@ class ReviewAPIView(APIView):
         filter = self.request.query_params.get('filter')
         limit = self.request.query_params.get('limit', None)
         if filter and filter == filter_type['diamond']:
-            filter_query &= Q(rating__gt=4)
+            filter_query &= Q(rating__gte=4)
         elif filter and filter == filter_type['heart']:
-            filter_query &= (Q(rating__lte=4) & Q(rating__gte=2.5))
+            filter_query &= (Q(rating__gte=3.5) & Q(rating__lt=4))
         elif filter and filter == filter_type['thumb_up']:
-            filter_query &= Q(rating__lt=2.5)
+            filter_query &= Q(rating__lt=3.5)
 
         reviews = reviews.filter(filter_query).order_by('-created_at' if sort == 'Newest' else 'created_at')
         if limit:
@@ -269,24 +268,43 @@ class ReviewPostAPIView(APIView):
                 data.update({key: value})
         bill = request.data.get('file[]', None)
 
+        rating_data = dict(
+            recommended=data.get('recommended'),
+            dish=data.get('dish'),
+            cleanliness=data.get('cleanliness'),
+            service=data.get('service'),
+            food=data.get('food'),
+            ambience=data.get('ambience')
+        )
+        count = 0
+
         if not request.data.get('res_id'):
             return Response({'error': 'Provide the restaurant ID'}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not bill:
-            return Response({'error': 'Provide the receipt'}, status=status.HTTP_400_BAD_REQUEST)
-
-        wagtail_image = Image.objects.create(title=bill.name, file=bill)
 
         json_data = dict(vibe=data.get('aura[]'), dish=data.get('dish'), cleanliness=data.get('cleanliness'),
                          service=data.get('service'), food=data.get('food'), ambience=data.get('ambience'))
 
-        review = Review(posted_by=request.user, bill=wagtail_image, content=data.get('message'),
-                        rating=data.get('recommended'),
+        total_rating = 0
+        for key, value in rating_data.items():
+            if value:
+                count += 1
+                total_rating += int(value) or 0
+
+        if total_rating > 0:
+            total_rating = round(total_rating / count, 2)
+
+        review = Review(posted_by=request.user, content=data.get('message'),
+                        rating=total_rating,
                         restaurant_id=request.data.get('res_id'), more_info=json_data, created_at=datetime.now())
+
+        if bill:
+            wagtail_image = Image.objects.create(title=bill.name, file=bill)
+            review.bill = wagtail_image
+
         review.save()
         try:
             res = Restaurant.objects.get(id=request.data.get('res_id'))
-            threading.Thread(target=self.send_influencer_emails, args=(review, res, email_dict)).start()
+            # threading.Thread(target=self.send_influencer_emails, args=(review, res, email_dict)).start()
 
             return Response({'message': 'Your review has been published after verification.'},
                             status=status.HTTP_201_CREATED)
@@ -317,16 +335,7 @@ class PendingReviewAPIView(APIView):
 
         try:
             queryset = self.queryset.get(id=id)
-            res = queryset.restaurant
             queryset.is_published = is_approved
-            if is_approved:
-                queryset.posted_by.point = queryset.posted_by.point + 20
-                queryset.posted_by.save()
-                average_rating = res.reviews.filter(is_published=True).aggregate(avg_rating=Avg('rating'))['avg_rating']
-                if average_rating is not None:
-                    average_rating = round(average_rating, 2)
-                res.rating = average_rating
-                res.save()
             queryset.is_verified = True
             queryset.save()
             return Response({'message': 'Review is Updated'}, status=status.HTTP_200_OK)

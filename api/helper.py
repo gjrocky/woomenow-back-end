@@ -92,12 +92,15 @@ class OrderedStreamFieldSerializer(serializers.Field):
 
 
 def city(obj):
-    return dict(
-        name=obj.city.name,
-        slug=obj.city.slug,
-        state=dict(
-            name=obj.city.state.name,
-            slug=obj.city.state.slug,
-            ISO_code=obj.city.state.ISO_code,
+    try:
+        return dict(
+            name=obj.city.name,
+            slug=obj.city.slug,
+            state=dict(
+                name=obj.city.state.name,
+                slug=obj.city.state.slug,
+                ISO_code=obj.city.state.ISO_code,
+            )
         )
-    )
+    except:
+        return None
