@@ -121,8 +121,9 @@ class ContactAPIView(CreateAPIView):
                 email=serializer.initial_data.get('email'),
                 phone=serializer.initial_data.get('phone'),
                 message=serializer.initial_data.get('message'),
+                **email_dict
             )
-            subject_context = dict(subject=f'Contact - {serializer.initial_data.get("subject")}')
+            subject_context = dict(subject=f'Contact Query - {serializer.initial_data.get("subject")}')
             send_email(email, body, context, subject_context)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -141,6 +142,7 @@ class JoinTheWooAPIView(CreateAPIView):
                 email=serializer.initial_data.get('email'),
                 phone=serializer.initial_data.get('phone'),
                 city=serializer.initial_data.get('city'),
+                **email_dict
             )
             subject_context = dict(subject="New Join the Woo Submission")
             send_email(email, body, context, subject_context)
