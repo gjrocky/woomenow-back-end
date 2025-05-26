@@ -16,6 +16,10 @@ from apps.users.models import User
 
 class CategorySerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField(source="image")
+    parent_category = serializers.SerializerMethodField()
+
+    def get_parent_category(self, obj):
+        return obj.parent_category.name if obj.parent_category else None
 
     def get_image(self, obj):
         try:
@@ -29,7 +33,8 @@ class CategorySerializer(serializers.ModelSerializer):
             "id",
             "name",
             "slug",
-            "image"
+            "image",
+            'parent_category'
         ]
 
 
@@ -144,6 +149,7 @@ class Pagination(PageNumberPagination):
 class InfluPagination(PageNumberPagination):
     page_size = 12
     page_size_query_param = 'page_size'
+
 
 class ImageSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="value.id")

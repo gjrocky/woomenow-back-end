@@ -6,7 +6,8 @@
       "created_at": "2023-10-12T06:00:09.995Z",
       "modified_at": "2023-10-12T06:00:09.995Z",
       "name": "Uncategorized",
-      "image": "apps/main/fixtures/images/categories/Uncategorized.png"
+      "image": "apps/main/fixtures/images/categories/Uncategorized.png",
+      "parent": "PURPOSE"
     }
   },
   {
@@ -16,7 +17,8 @@
       "created_at": "2023-10-12T06:00:10.010Z",
       "modified_at": "2023-10-12T06:00:10.010Z",
       "name": "Featured",
-      "image": "apps/main/fixtures/images/categories/Featured.png"
+      "image": "apps/main/fixtures/images/categories/Featured.png",
+      "parent": "PURPOSE"
     }
   },
   {
@@ -26,7 +28,8 @@
       "created_at": "2023-10-12T06:00:10.025Z",
       "modified_at": "2023-10-12T06:00:10.025Z",
       "name": "WooMe Wednesday",
-      "image": "apps/main/fixtures/images/categories/WooMe Wednesday.png"
+      "image": "apps/main/fixtures/images/categories/WooMe Wednesday.png",
+      "parent": "PURPOSE"
     }
   },
   {
@@ -35,8 +38,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.035Z",
       "modified_at": "2023-10-12T06:00:10.035Z",
-      "name": "Steakhouse",
-      "image": "apps/main/fixtures/images/categories/Steakhouse.png"
+      "name": "The Perfect Cut",
+      "image": "apps/main/fixtures/images/categories/Steakhouse.png",
+      "parent": "EATS"
     }
   },
   {
@@ -46,7 +50,8 @@
       "created_at": "2023-10-12T06:00:10.053Z",
       "modified_at": "2023-10-12T06:00:10.053Z",
       "name": "Woo-Worthy Nights",
-      "image": "apps/main/fixtures/images/categories/Romantic Date Night.png"
+      "image": "apps/main/fixtures/images/categories/Romantic Date Night.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -55,8 +60,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.067Z",
       "modified_at": "2023-10-12T06:00:10.067Z",
-      "name": "Latin",
-      "image": "apps/main/fixtures/images/categories/Latin.png"
+      "name": "Latin Flavors",
+      "image": "apps/main/fixtures/images/categories/Latin.png",
+      "parent": "EATS"
     }
   },
   {
@@ -65,8 +71,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.078Z",
       "modified_at": "2023-10-12T06:00:10.078Z",
-      "name": "Italian",
-      "image": "apps/main/fixtures/images/categories/Italian.png"
+      "name": "Italian Table",
+      "image": "apps/main/fixtures/images/categories/Italian.png",
+      "parent": "EATS"
     }
   },
   {
@@ -75,8 +82,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.093Z",
       "modified_at": "2023-10-12T06:00:10.095Z",
-      "name": "Local Flavor",
-      "image": "apps/main/fixtures/images/categories/Local Flavor.png"
+      "name": "Local Legends",
+      "image": "apps/main/fixtures/images/categories/Local Flavor.png",
+      "parent": "EATS"
     }
   },
   {
@@ -86,7 +94,8 @@
       "created_at": "2023-10-12T06:00:10.108Z",
       "modified_at": "2023-10-12T06:00:10.108Z",
       "name": "Sunset & Shoreline Spots",
-      "image": "apps/main/fixtures/images/categories/Beach-Waterfront.png"
+      "image": "apps/main/fixtures/images/categories/Beach-Waterfront.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -95,8 +104,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.122Z",
       "modified_at": "2023-10-12T06:00:10.122Z",
-      "name": "Asian",
-      "image": "apps/main/fixtures/images/categories/Asian.png"
+      "name": "Asian Eats",
+      "image": "apps/main/fixtures/images/categories/Asian.png",
+      "parent": "EATS"
     }
   },
   {
@@ -106,7 +116,8 @@
       "created_at": "2023-10-12T06:00:10.130Z",
       "modified_at": "2023-10-12T06:00:10.130Z",
       "name": "Sky-High Views",
-      "image": "apps/main/fixtures/images/categories/Rooftop.png"
+      "image": "apps/main/fixtures/images/categories/Rooftop.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -116,7 +127,8 @@
       "created_at": "2023-10-12T06:00:10.148Z",
       "modified_at": "2023-10-12T06:00:10.148Z",
       "name": "The Great Date Outdoors",
-      "image": "apps/main/fixtures/images/categories/Adventurous.png"
+      "image": "apps/main/fixtures/images/categories/Adventurous.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -126,7 +138,8 @@
       "created_at": "2023-10-12T06:00:10.163Z",
       "modified_at": "2023-10-12T06:00:10.163Z",
       "name": "Relax & Recharge",
-      "image": "apps/main/fixtures/images/categories/Self-Care.png"
+      "image": "apps/main/fixtures/images/categories/Self-Care.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -135,8 +148,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.176Z",
       "modified_at": "2023-10-12T06:00:10.176Z",
-      "name": "Arts and Culture",
-      "image": "apps/main/fixtures/images/categories/Arts and Culture.png"
+      "name": "Culture & Creativity",
+      "image": "apps/main/fixtures/images/categories/Arts and Culture.png",
+      "parent": "EXPERIENCES"
     }
   },
   {
@@ -146,7 +160,8 @@
       "created_at": "2023-10-12T06:00:10.187Z",
       "modified_at": "2023-10-12T06:00:10.187Z",
       "name": "Sounds Like a Vibe",
-      "image": "apps/main/fixtures/images/categories/Live Music.png"
+      "image": "apps/main/fixtures/images/categories/Live Music.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -155,8 +170,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.204Z",
       "modified_at": "2023-10-12T06:00:10.204Z",
-      "name": "Unique",
-      "image": "apps/main/fixtures/images/categories/Unique.png"
+      "name": "Only Here",
+      "image": "apps/main/fixtures/images/categories/Unique.png",
+      "parent": "EATS"
     }
   },
   {
@@ -165,8 +181,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.212Z",
       "modified_at": "2023-10-12T06:00:10.212Z",
-      "name": "Hands-On Classes",
-      "image": "apps/main/fixtures/images/categories/Hands-On Classes.png"
+      "name": "Learn & Do Together",
+      "image": "apps/main/fixtures/images/categories/Hands-On Classes.png",
+      "parent": "EXPERIENCES"
     }
   },
   {
@@ -175,8 +192,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.231Z",
       "modified_at": "2023-10-12T06:00:10.231Z",
-      "name": "Dessert",
-      "image": "apps/main/fixtures/images/categories/Dessert.png"
+      "name": "Sweet Stops",
+      "image": "apps/main/fixtures/images/categories/Dessert.png",
+      "parent": "EATS"
     }
   },
   {
@@ -185,8 +203,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.246Z",
       "modified_at": "2023-10-12T06:00:10.246Z",
-      "name": "Adrenaline Rush",
-      "image": "apps/main/fixtures/images/categories/Adrenaline Rush.png"
+      "name": "Thrill & Chill",
+      "image": "apps/main/fixtures/images/categories/Adrenaline Rush.png",
+      "parent": "EXPERIENCES"
     }
   },
   {
@@ -195,8 +214,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.260Z",
       "modified_at": "2023-10-12T06:00:10.260Z",
-      "name": "Coffee House",
-      "image": "apps/main/fixtures/images/categories/Coffee House.png"
+      "name": "Sip & Stay Awhile",
+      "image": "apps/main/fixtures/images/categories/Coffee House.png",
+      "parent": "EATS"
     }
   },
   {
@@ -205,8 +225,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.273Z",
       "modified_at": "2023-10-12T06:00:10.273Z",
-      "name": "Vegan/Healthy",
-      "image": "apps/main/fixtures/images/categories/Vegan-Healthy.png"
+      "name": "Clean & Green",
+      "image": "apps/main/fixtures/images/categories/Vegan-Healthy.png",
+      "parent": "EATS"
     }
   },
   {
@@ -215,8 +236,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.290Z",
       "modified_at": "2023-10-12T06:00:10.292Z",
-      "name": "Brunch",
-      "image": "apps/main/fixtures/images/categories/Brunch.png"
+      "name": "Brunch & Bubbles",
+      "image": "apps/main/fixtures/images/categories/Brunch.png",
+      "parent": "EATS"
     }
   },
   {
@@ -225,8 +247,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.305Z",
       "modified_at": "2023-10-12T06:00:10.305Z",
-      "name": "Breweries/Cigar Bars",
-      "image": "apps/main/fixtures/images/categories/Breweries-Cigar Bars.png"
+      "name": "Sips & Socials",
+      "image": "apps/main/fixtures/images/categories/Breweries-Cigar Bars.png",
+      "parent": "EXPERIENCES"
     }
   },
   {
@@ -235,8 +258,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.318Z",
       "modified_at": "2023-10-12T06:00:10.318Z",
-      "name": "Seafood",
-      "image": "apps/main/fixtures/images/categories/Seafood.png"
+      "name": "Ocean on the Plate",
+      "image": "apps/main/fixtures/images/categories/Seafood.png",
+      "parent": "EATS"
     }
   },
   {
@@ -245,8 +269,9 @@
     "fields": {
       "created_at": "2023-10-12T06:00:10.333Z",
       "modified_at": "2023-10-12T06:00:10.333Z",
-      "name": "Casual Dining",
-      "image": "apps/main/fixtures/images/categories/Casual Dining.png"
+      "name": "Everyday Eats",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "EATS"
     }
   },
   {
@@ -256,7 +281,8 @@
       "created_at": "2023-10-12T06:00:10.333Z",
       "modified_at": "2023-10-12T06:00:10.333Z",
       "name": "Photo-Worthy Spots",
-      "image": "apps/main/fixtures/images/categories/Casual Dining.png"
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "VIBE"
     }
   },
   {
@@ -266,7 +292,129 @@
       "created_at": "2023-10-12T06:00:10.333Z",
       "modified_at": "2023-10-12T06:00:10.333Z",
       "name": "Late Night Vibes",
-      "image": "apps/main/fixtures/images/categories/Casual Dining.png"
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "VIBE"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 28,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Foodie Favorites",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "EATS"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 29,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Budget-Friendly Finds",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "EATS"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 30,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Game Night Spots",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "EXPERIENCES"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 31,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "First Date Friendly",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "EXPERIENCES"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 32,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Pet-Friendly Picks",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "EXPERIENCES"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 33,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Reconnect & Recharge",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "PURPOSE"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 34,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Family Favorites",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "PURPOSE"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 35,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Date Night Goals",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "PURPOSE"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 36,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Just Vibes",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "PURPOSE"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 37,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "Locals Love It",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "PURPOSE"
+    }
+  },
+  {
+    "model": "home.category",
+    "pk": 38,
+    "fields": {
+      "created_at": "2023-10-12T06:00:10.333Z",
+      "modified_at": "2023-10-12T06:00:10.333Z",
+      "name": "WooNow Exclusives",
+      "image": "apps/main/fixtures/images/categories/Casual Dining.png",
+      "parent": "PURPOSE"
     }
   }
 ]

@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="color-scheme" content="light dark"/>
+    <meta name="supported-color-schemes" content="light dark"/>
+    <title>When rest/exp get an email to onboard</title>
+    <style type="text/css" rel="stylesheet" media="all">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #cccccc;
+            margin: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        td {
+            padding: 0;
+        }
+
+        img {
+            border: 0;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        @media (max-width: 576px) {
+            body, table, td, a {
+                -webkit-text-size-adjust: none !important;
+            }
+
+            .main-heading {
+                font-size: 18px !important;
+                padding: 24px 0 !important;
+                line-height: 22px !important;
+            }
+
+            .main-content {
+                padding: 16px !important;
+            }
+
+            .main-sub-content {
+                padding: 16px 0 0 !important;
+            }
+
+            .sub-content {
+                padding: 20px !important;
+            }
+
+            .sub-info {
+                font-size: 14px !important;
+                padding-bottom: 16px !important;
+                line-height: 20px !important;
+            }
+
+            .btn-info {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: max-content !important;
+            }
+
+            .main-sub-info {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            a {
+
+                word-wrap: break-word !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                display: block !important;
+            }
+
+            .content-wrapper {
+                padding-bottom: 16px !important;
+
+            }
+
+            .mobile-card-wrapper {
+                width: 100% !important;
+                border-spacing: unset !important;
+                margin-left: unset !important;
+                border-collapse: unset !important;
+                margin-bottom: unset !important;
+            }
+
+            .mobile-card {
+                width: unset !important;
+                display: block;
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-content" style="background-color: #0F172A; padding: 32px; table-layout: fixed;">
+    <table style="background: transparent; margin: 0 auto;border-spacing: 0;font-family:manrope,sans-serif;"
+           align="center">
+        <tbody>
+        <tr>
+            <td>
+                <table class="main-sub-info" align="center" style="width: 100%; max-width: 592px;">
+                    <tbody>
+                    <tr>
+                        <td class="sub-content"
+                            style="background-color: #1E293B; box-shadow: 0 4px 8px 0 #00000029; padding: 40px">
+                            <table align="left">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="{{ front_end_link }}" style="display: inline-block;"><img
+                                                style="width: 100%; max-width: 98px; height: auto; display: block;"
+                                                src="{{ logo }}" alt="woomenow logo"/></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="main-heading"
+                                        style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
+                                        You've Received a New Contact Request from {{ name }}.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                        Phone Number : {{ phone }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                        Email : {{ email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="content-wrapper">
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                            <tr>
+                                                <td class="sub-info"
+                                                    style="padding-bottom: 8px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                    Message:
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="sub-info"
+                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                        {{ message }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

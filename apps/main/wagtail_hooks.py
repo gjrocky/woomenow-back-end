@@ -1,7 +1,7 @@
 from wagtail.snippets.models import register_snippet
 
 from .models import (Invitation, Review, Franchise, BecomeInfluencer, OTPVerification,
-                     NotificationPermission, NotificationHistory)
+                     NotificationPermission, NotificationHistory, RestaurantMedia)
 
 register_snippet(Invitation)
 register_snippet(Review)
@@ -10,3 +10,4 @@ register_snippet(BecomeInfluencer)
 register_snippet(OTPVerification)
 register_snippet(NotificationPermission)
 register_snippet(NotificationHistory)
+register_snippet(RestaurantMedia)

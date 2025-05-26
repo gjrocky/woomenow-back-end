@@ -7,7 +7,7 @@ from wagtail.images.models import Image
 from api.helper import StreamFieldSerializer, city, OrderedStreamFieldSerializer
 from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import (
-    FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review,
+    FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, RestaurantMedia,
 )
 from apps.snippet.models import Category, Ambience
 
@@ -563,4 +563,10 @@ class RestaurantDetailsSerializer(serializers.ModelSerializer):
 class RestaurantCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
+        fields = '__all__'
+
+
+class ReelsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestaurantMedia
         fields = '__all__'

@@ -508,7 +508,7 @@ class Restaurant(Page):
     parent_page_types = ['RestaurantListing']
 
     def __str__(self):
-        return self.name
+        return get_text(self.name)
 
     class Meta:
         verbose_name = "Restaurant"
@@ -601,3 +601,21 @@ class NotificationHistory(BaseModel):
     class Meta:
         verbose_name = "Notification History"
         verbose_name_plural = "Notification Histories"
+
+
+class RestaurantMedia(BaseModel):
+    file = models.FileField(upload_to='media/')
+    restaurants = models.ManyToManyField('Restaurant', related_name='media')
+
+    def __str__(self):
+        return self.file.name
+
+    class Meta:
+        verbose_name = "Restaurant Media"
+        verbose_name_plural = "Restaurant Media"
+
+
+def get_text(text):
+    if not text:
+        return ""
+    return BeautifulSoup(text, "html.parser").get_text()

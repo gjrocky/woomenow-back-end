@@ -107,6 +107,26 @@ class Locality(BaseModel):
         verbose_name_plural = "Localities"
 
 
+class ParentCategory(BaseModel):
+    name = models.TextField(_("Name"), max_length=50)
+    slug = models.TextField(_("Slug"), max_length=100, unique=True)
+
+    panels = [
+        FieldPanel("name"),
+    ]
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Parent Category"
+        verbose_name_plural = "Parent Categories"
+
+
 class Category(BaseModel):
     name = models.TextField(_("Name"), max_length=50)
     image = models.ForeignKey(
@@ -116,10 +136,12 @@ class Category(BaseModel):
         null=True,
         related_name="+")
     slug = models.TextField(_("Slug"), max_length=100, unique=True)
+    parent_category = models.ForeignKey("ParentCategory", on_delete=models.CASCADE, related_name="categories")
 
     panels = [
         FieldPanel("name"),
         FieldPanel("image"),
+        FieldPanel('parent_category')
     ]
 
     def save(self, *args, **kwargs):

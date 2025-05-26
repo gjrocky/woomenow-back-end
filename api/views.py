@@ -6,16 +6,17 @@ from django.db.models import Q
 from pywebpush import webpush, WebPushException
 from rest_framework import permissions, status
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from wagtail.images.models import Image
 
-from api.pages.serializers import RestaurantListSerializer
+from api.pages.serializers import RestaurantListSerializer, ReelsSerializer
 from api.serializers import CategorySerializer, StatesSerializer, FranchiseSerializer, StatesInfluencerSerializer, \
     CitiesSerializer, AmbienceSerializer, ReviewSerializer
-from apps.main.models import Franchise, Restaurant, Review, NotificationPermission, NotificationHistory
+from apps.main.models import Franchise, Restaurant, Review, NotificationPermission, NotificationHistory, RestaurantMedia
 from apps.snippet.models import Category, State, City, Ambience, SiteVisit, PwaInstall
 
 
@@ -26,6 +27,20 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+class ReelsAPIView(ListAPIView):
+    serializer_class = ReelsSerializer
+    queryset = RestaurantMedia.objects.all()
+
+    def get_queryset(self):
+        res_id = self.request.query_params.get('id')
+
+        if not res_id:
+            raise ValidationError({"detail": "Missing required query parameter: id"})
+
+        queryset = self.queryset.filter(restaurants__id=res_id).order_by('-created_at').distinct()
+        return queryset
 
 
 class CategoryAPIView(ListAPIView):

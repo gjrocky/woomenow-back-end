@@ -114,6 +114,16 @@ class ContactAPIView(CreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            email = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
+            body = 'emails/contact-us.html'
+            context = dict(
+                name=serializer.initial_data.get('name'),
+                email=serializer.initial_data.get('email'),
+                phone=serializer.initial_data.get('phone'),
+                message=serializer.initial_data.get('message'),
+            )
+            subject_context = dict(subject=f'Contact - {serializer.initial_data.get("subject")}')
+            send_email(email, body, context, subject_context)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -124,6 +134,16 @@ class JoinTheWooAPIView(CreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            email = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
+            body = 'emails/jointhewoo.html'
+            context = dict(
+                name=serializer.initial_data.get('name'),
+                email=serializer.initial_data.get('email'),
+                phone=serializer.initial_data.get('phone'),
+                city=serializer.initial_data.get('city'),
+            )
+            subject_context = dict(subject="New Join the Woo Submission")
+            send_email(email, body, context, subject_context)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

@@ -8,7 +8,7 @@ from wagtail.models import Page
 
 from apps.main.models import About, Business, FAQs, Pricing, JoinTheWoo, Influencer, Restaurant, RestaurantListing, \
     InfluencerListing
-from apps.snippet.models import State, City, Category, Ambience, Contact, IPLocation
+from apps.snippet.models import State, City, Category, Ambience, Contact, IPLocation, ParentCategory
 from apps.users.models import User
 
 with open('apps/main/fixtures/state.json', 'r', encoding='utf-8') as f:
@@ -37,6 +37,8 @@ with open('apps/main/fixtures/contact-form.json', 'r', encoding='utf-8') as f:
     contact_form = json.loads(f.read())
 with open('apps/main/fixtures/iplocation.json', 'r', encoding='utf-8') as f:
     iplocation = json.loads(f.read())
+with open('apps/main/fixtures/parent-categories.json', 'r', encoding='utf-8') as f:
+    parent_categories = json.loads(f.read())
 
 
 def get_image(img, id=None):
@@ -62,11 +64,19 @@ def create_states():
             city.save()
 
 
+def create_parent_categories():
+    for pc in parent_categories:
+        parent_category = ParentCategory()
+        parent_category.name = pc['name']
+        parent_category.save()
+
+
 def create_categories():
     for c in categories:
         category = Category()
         category.name = c['fields']['name']
         category.image = get_image(c['fields']['image'], id=True)
+        category.parent_category = ParentCategory.objects.get(name=c['fields']['parent'])
         category.save()
 
 
@@ -265,7 +275,6 @@ def create_influencer():
         i.save_revision().publish()
 
 
-
 def create_superuser():
     user = User.objects.create_superuser(
         email=settings.ADMIN_EMAIL,
@@ -350,6 +359,7 @@ def create_iplocation():
 def create_data():
     create_superuser()
     create_states()
+    create_parent_categories()
     create_categories()
     create_ambience()
     create_about()

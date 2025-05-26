@@ -1,1 +1,1 @@
-default_app_config = 'apps.snippet.apps.UsersConfig'
+default_app_config = 'apps.snippet.apps.SnippetConfig'
