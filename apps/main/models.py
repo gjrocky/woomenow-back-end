@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import JSONField
+from django.db.models import JSONField, SET_NULL
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
@@ -605,7 +605,7 @@ class NotificationHistory(BaseModel):
 
 class RestaurantMedia(BaseModel):
     file = models.FileField(upload_to='media/')
-    restaurants = models.ManyToManyField('Restaurant', related_name='media')
+    restaurants = models.ForeignKey('Restaurant', on_delete=SET_NULL, null=True, blank=True, related_name='media')
 
     def __str__(self):
         return self.file.name
