@@ -38,7 +38,8 @@ class PricingCard(blocks.StructBlock):
     description = blocks.TextBlock(required=True, max_length=255, help_text='Description')
     price = blocks.TextBlock(required=False, max_length=50, help_text='Price')
     extra = blocks.TextBlock(required=False, max_length=500, help_text='Extra Description')
-    saving = blocks.TextBlock(required=False, max_length=500, help_text='Savings Description')
+    saving = blocks.RichTextBlock(required=False, max_length=500, help_text='Savings Description')
+    strike_through = blocks.RichTextBlock(required=False, max_length=500, help_text='Strike through')
     points = blocks.StreamBlock([
         ("points", blocks.RichTextBlock(required=True, max_length=500)),
     ])
