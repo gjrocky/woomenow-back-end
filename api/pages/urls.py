@@ -4,12 +4,13 @@ from rest_framework.authtoken.views import obtain_auth_token
 from api.pages.views import FAQsPageAPIViews, BusinessPageAPIView, AboutPageAPIView, PricingPageAPIView, \
     JoinTheWooPageAPIView, InfluencerPageAPIView, InfluencerListingPageAPIView, RestaurantListingPageAPIView, \
     RestaurantPageAPIView, UpdateInfluencerPageAPIView, RestaurantReviewsAPIView, RestaurantRecommendationAPIView, \
-    RestaurantDetailsAPIView, RestaurantDetailAPIView, RestaurantCreateAPIView, RestaurantInviteAPIView
+    RestaurantDetailsAPIView, RestaurantDetailAPIView, RestaurantCreateAPIView, RestaurantInviteAPIView, HomePageAPIView
 
 app_name = "pages"
 
 urlpatterns = [
     path("auth/", obtain_auth_token),
+    path("home/", HomePageAPIView.as_view(), name="home"),
     path("faqs/", FAQsPageAPIViews.as_view(), name="faqs"),
     path("business/", BusinessPageAPIView.as_view(), name="business"),
     path("about/", AboutPageAPIView.as_view(), name="about"),

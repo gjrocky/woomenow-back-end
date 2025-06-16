@@ -44,5 +44,10 @@ class PricingCard(blocks.StructBlock):
         ("points", blocks.RichTextBlock(required=True, max_length=500)),
     ])
 
-
+class ReadyToElevateBlock(blocks.StructBlock):
+    heading = blocks.RichTextBlock(required=True, max_length=500, help_text='Heading')
+    description = blocks.RichTextBlock(required=True, max_length=2000, help_text='Description')
+    cta_button = blocks.RichTextBlock(required=True, max_length=200, help_text='Cta Button')
+    cta_button_link = blocks.URLBlock(required=True, max_length=2000, help_text='Cta Button Link')
+    section_image = ImageChooserBlock(required=True, help_text="Section Image")
 

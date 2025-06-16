@@ -18,14 +18,21 @@ from wagtail.images.models import Image
 from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSerializer, PricingSerializer, \
     JoinTheWooSerializer, InfluencerSerializer, InfluencerListSerializer, RestaurantListSerializer, \
     RestaurantSerializer, UpdateInfluencerSerializer, RestaurantReviewSerializer, RestaurantRecommendationSerializer, \
-    RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer
+    RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer, HomePageSerializer
 from api.serializers import Pagination, get_text, InfluPagination
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
-    RestaurantListing, Franchise
+    RestaurantListing, Franchise, HomePage
 from apps.snippet.models import City, Category, Ambience
 from send_email import send_email
 
+
+class HomePageAPIView(RetrieveAPIView):
+    queryset = HomePage.objects.live()
+    serializer_class = HomePageSerializer
+
+    def get_object(self):
+        return self.get_queryset().first()
 
 class FAQsPageAPIViews(RetrieveAPIView):
     queryset = FAQs.objects.live()

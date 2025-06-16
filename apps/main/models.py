@@ -12,13 +12,47 @@ from wagtail.fields import StreamField, RichTextField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
-from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard
+from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard, \
+    ReadyToElevateBlock
 from apps.main.choices import RestaurantType, BudgetType
 from apps.main.helper import email_dict
 from apps.snippet.models import BaseModel
 from send_email import send_email
 
 CustomUser = get_user_model()
+
+
+class HomePage(Page):
+    max_count = 1
+    hero_heading = RichTextField(_("Main Heading"), max_length=500, help_text="Hero Heading")
+    hero_description = RichTextField(_("Main Description"), max_length=1000, help_text="Hero Description")
+
+    dining_heading = RichTextField(_("Dining Heading"), max_length=500, help_text="Dining Heading")
+    dining_info = RichTextField(_("Dining Information"), max_length=1000, help_text="Dining Info")
+
+    experience_heading = RichTextField(_("Experience Heading"), max_length=500, help_text="Experience Heading")
+    experience_info = RichTextField(_("Experience Information"), max_length=1000, help_text="Experience Info")
+
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            FieldPanel("hero_heading"),
+            FieldPanel("hero_description"),
+        ], heading="Hero Section", classname="collapsible collapsed"),
+
+        MultiFieldPanel([
+            FieldPanel("dining_heading"),
+            FieldPanel("dining_info"),
+        ], heading="Dining Section", classname="collapsible collapsed"),
+
+        MultiFieldPanel([
+            FieldPanel("experience_heading"),
+            FieldPanel("experience_info"),
+        ], heading="Experience Section", classname="collapsible collapsed"),
+    ]
+
+    class Meta:
+        verbose_name = "Home Page"
+        verbose_name_plural = "Home Pages"
 
 
 class FAQs(Page):
@@ -87,6 +121,11 @@ class Business(Page):
 
     faq = StreamField([("que_and_ans", FAQS())], min_num=3, use_json_field=True)
 
+    ready_to_elevate_section = StreamField(
+        [("ready_to_elevate", ReadyToElevateBlock())],
+        use_json_field=True,
+    )
+
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
@@ -141,6 +180,13 @@ class Business(Page):
             heading="FAQs Section",
             classname="collapsible collapsed",
         ),
+        MultiFieldPanel(
+            [
+                FieldPanel("ready_to_elevate_section"),
+            ],
+            heading="Ready To Elevate Section",
+            classname="collapsible collapsed",
+        ),
     ]
     subpage_types = []
 
@@ -174,6 +220,12 @@ class About(Page):
         _("Heading"), blank=True, null=True, max_length=2000, help_text="Main Heading"
     )
     vision_title = RichTextField(_("Title"), max_length=500)
+
+    ready_to_elevate_section = StreamField(
+        [("ready_to_elevate", ReadyToElevateBlock())],
+        use_json_field=True,
+    )
+
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
@@ -189,6 +241,13 @@ class About(Page):
                 FieldPanel("vision_points"),
             ],
             "Vision Points Section",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("ready_to_elevate_section"),
+            ],
+            heading="Ready To Elevate Section",
+            classname="collapsible collapsed",
         ),
     ]
     subpage_types = []

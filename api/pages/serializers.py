@@ -7,9 +7,16 @@ from wagtail.images.models import Image
 from api.helper import StreamFieldSerializer, city, OrderedStreamFieldSerializer
 from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import (
-    FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, RestaurantMedia,
+    FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, RestaurantMedia, HomePage,
 )
 from apps.snippet.models import Category, Ambience
+
+
+class HomePageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HomePage
+        fields = ["id", "title", "slug", "hero_heading", "hero_description", "dining_heading", "dining_info",
+                  "experience_heading", "experience_info", ]
 
 
 class FAQsSerializer(serializers.ModelSerializer):
@@ -25,6 +32,7 @@ class BusinessSerializer(serializers.ModelSerializer):
     why_choose_us_cards = StreamFieldBlockSerializer()
     win_plan_cards = StreamFieldBlockSerializer()
     faq = StreamFieldBlockSerializer()
+    ready_to_elevate_section = StreamFieldBlockSerializer()
     choose_image = serializers.SerializerMethodField(source="choose_image")
     CTA_btn = serializers.SerializerMethodField(source="CTA_btn")
     price_button = serializers.SerializerMethodField(source="price_btn")
@@ -72,12 +80,14 @@ class BusinessSerializer(serializers.ModelSerializer):
             "price_button",
             "CTA_btn_icon",
             "faq",
+            "ready_to_elevate_section",
             "key_point",
         ]
 
 
 class AboutSerializer(serializers.ModelSerializer):
     cards = StreamFieldBlockSerializer(source="vision_points")
+    ready_to_elevate_section = StreamFieldBlockSerializer()
 
     class Meta:
         model = About
@@ -90,6 +100,7 @@ class AboutSerializer(serializers.ModelSerializer):
             "vision_title",
             "image",
             "cards",
+            "ready_to_elevate_section",
         ]
 
 
