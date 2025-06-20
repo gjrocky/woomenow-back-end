@@ -292,6 +292,7 @@ class ReviewPostAPIView(APIView):
 
         # Extract question-ratings as dictionary
         describe_restaurant_ratings = {}
+        question_ratings = []
         i = 0
         while True:
             question_key = f'describe_restaurant_ratings[{i}][question]'
@@ -303,43 +304,24 @@ class ReviewPostAPIView(APIView):
                 except (TypeError, ValueError):
                     rating = 0
                 describe_restaurant_ratings[question] = rating
+                if rating > 0:
+                    question_ratings.append(rating)
                 i += 1
             else:
                 break
 
-        rating_data = dict(
-            recommended=data.get('recommended'),
-            dish=data.get('dish'),
-            cleanliness=data.get('cleanliness'),
-            service=data.get('service'),
-            food=data.get('food'),
-            ambience=data.get('ambience')
-        )
+        # New average rating based on Q1–Q5 only
+        if question_ratings:
+            total_rating = round(sum(question_ratings) / len(question_ratings), 2)
+        else:
+            total_rating = 0
 
         if not request.data.get('res_id'):
             return Response({'error': 'Provide the restaurant ID'}, status=status.HTTP_400_BAD_REQUEST)
 
-        count = 0
-        total_rating = 0
-        for key, value in rating_data.items():
-            if value:
-                try:
-                    total_rating += int(value)
-                    count += 1
-                except ValueError:
-                    continue
-
-        if count > 0:
-            total_rating = round(total_rating / count, 2)
-
         # more_info JSON
         json_data = dict(
             describe_restaurant_ratings=describe_restaurant_ratings,
-            dish=data.get('dish'),
-            cleanliness=data.get('cleanliness'),
-            service=data.get('service'),
-            food=data.get('food'),
-            ambience=data.get('ambience'),
         )
 
         # Create review object
