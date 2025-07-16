@@ -252,4 +252,8 @@ def send_push_notification(title, message, send_to, notification_history):
                 vapid_claims={'sub': f'mailto:{settings.ADMIN_EMAIL}'}
             )
         except WebPushException as e:
+            error_message = str(e)
+            # If the subscription is expired or not found, remove it from the database
+            if '410' in error_message or '404' in error_message or 'expired' in error_message or 'not found' in error_message.lower():
+                subscription.delete()
             print(f"Error sending push notification: {e}")

@@ -440,7 +440,7 @@ class RestaurantInvitationAPIView(APIView):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 e = [request.data.get('invite_to')]
-                body = 'emails/exp-get-an-email-to-onboard.html'
+                body = 'emails/experience-get-an-email-to-onboard.html'
                 context = dict(name=request.data.get('restaurant_name'), **email_dict)
                 subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
                 send_email(e, body, context, subject_context)
@@ -451,7 +451,7 @@ class RestaurantInvitationAPIView(APIView):
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 e = [request.data.get('invite_to')]
-                body = 'emails/exp-get-an-email-to-onboard.html'
+                body = 'emails/experience-get-an-email-to-onboard.html'
                 context = dict(name=request.data.get('restaurant_name'), **email_dict)
                 subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
                 send_email(e, body, context, subject_context)

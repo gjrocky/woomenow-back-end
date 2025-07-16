@@ -533,7 +533,7 @@ class RestaurantCreateAPIView(APIView):
         restaurant.save_revision().publish()
 
         e = [restaurant.user.email]
-        body = 'emails/welcome-for-rest.html'
+        body = 'emails/welcome-for-restaurant-experience.html'
         context = dict(name=get_text(restaurant.name), **email_dict)
         subject_context = dict(subject='Welcome to WooMeNow!')
         send_email(e, body, context, subject_context)
