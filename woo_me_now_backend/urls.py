@@ -10,8 +10,13 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
+from apps.main.views import SendEmailAdminView
+
 urlpatterns = [
     path("django-admin/", admin.site.urls),
+
+    path("admin/send-email/", SendEmailAdminView.as_view(), name="send_email_admin"),
+
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("api/", include("api.urls")),

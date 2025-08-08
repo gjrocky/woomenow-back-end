@@ -6,7 +6,10 @@ from django.db.models import OneToOneField, TextField
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
+from wagtail.fields import RichTextField
 from wagtail.search import index
+
+from apps.snippet.choices import EMAIL_TEMPLATE_CATEGORIES
 
 CustomUser = get_user_model()
 
@@ -281,3 +284,30 @@ class PwaInstall(models.Model):
 
     def __str__(self):
         return self.user_identifier
+
+
+class EmailTemplate(models.Model):
+    template = models.CharField('Email Template', choices=EMAIL_TEMPLATE_CATEGORIES, max_length=255, unique=True,
+                                help_text="Please select an Email Template.")
+    name = models.CharField(max_length=255, unique=True, help_text="Enter a unique name for your Email Template.")
+    subject = models.CharField(max_length=255, help_text="Enter the subject of your Email Template.")
+    body = TextField()
+    rich_body = RichTextField(
+        features=['h1', 'h2', 'h3', 'bold', 'italic', 'ol', 'ul', 'hr', 'link', 'document-link', 'image', 'embed',
+                  'code'], default='', help_text="Enter content of your Email Template.")
+    rich_lower_body = RichTextField(
+        features=['h1', 'h2', 'h3', 'bold', 'italic', 'ol', 'ul', 'hr', 'link', 'document-link', 'image', 'embed',
+                  'code'], default='', blank=True,
+        help_text="Only use this if Email has a hardcoded section, add content after hardcoded section here.")
+
+    panels = [
+        FieldPanel("template"),
+        FieldPanel("name"),
+        FieldPanel("subject"),
+        FieldPanel("body"),
+        FieldPanel("rich_body"),
+        FieldPanel("rich_lower_body"),
+    ]
+
+    def __str__(self):
+        return self.name

@@ -1,7 +1,10 @@
+import html
+
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField, SET_NULL
+from django.utils.html import strip_tags
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalManyToManyField
@@ -351,6 +354,11 @@ class Influencer(Page):
             send_email(e, body, context, subject_context)
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        plain_name = self.get_text(self.name)
+        email = self.user.email or ""
+        return f"{html.unescape(plain_name)} ({email})"
+
 
 class JoinTheWoo(Page):
     max_count = 1
@@ -567,7 +575,9 @@ class Restaurant(Page):
     parent_page_types = ['RestaurantListing']
 
     def __str__(self):
-        return get_text(self.name)
+        clean_name = strip_tags(self.name)
+        unescaped_name = html.unescape(clean_name)
+        return f"{unescaped_name}"
 
     class Meta:
         verbose_name = "Restaurant"

@@ -131,46 +131,36 @@
                                 <tbody>
                                 <tr>
                                     <td>
-                                       <a href='{{ front_end_link }}' style="display: inline-block;"><img
+                                        <a href='{{ front_end_link }}' style="display: inline-block;"><img
                                                 style="width: 100%; max-width: 98px; height: auto; display: block;"
                                                 src="{{ logo }}" alt="woomenow logo"/></a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="main-heading"
-                                        style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
-                                        Confirm your email address.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="sub-info"
-                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF; text-transform: capitalize;">
-                                        Hi {{ username }},
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="sub-info"
-                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        Ready to get started with WooMeNow account? Just enter verification code
-                                        below:
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="content-wrapper" style="padding-bottom: 24px;">
-                                        <table>
-                                            <tr>
-                                                <td class="code-wrapper"
-                                                    style="display:flex; gap: 12px; font-weight: 700; font-size: 28px; line-height: 34px; color: #FFFFFF; letter-spacing: 14px">
-                                                    {{ otp }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="sub-info"
-                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        For security reasons, this verification code will expire in 10 minutes.
+                                    <td>
+                                        <h1 class="main-heading"
+                                            style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
+                                            Confirm your email address.
+                                        </h1>
+                                        <p class="sub-info"
+                                           style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF; text-transform: capitalize;">
+                                            Hi {{ username }},
+                                        </p>
+                                        <p class="sub-info"
+                                           style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                            Ready to get started with WooMeNow account? Just enter verification code
+                                            below:
+                                        </p>
+                                        <div class="content-wrapper" style="padding-bottom: 24px;">
+                                            <p class="code-wrapper"
+                                               style="display:flex; gap: 12px; font-weight: 700; font-size: 28px; line-height: 34px; color: #FFFFFF; letter-spacing: 14px">
+                                                {{ otp }}
+                                            </p>
+                                        </div>
+                                        <p class="sub-info"
+                                           style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                            For security reasons, this verification code will expire in 10 minutes.
+                                        </p>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -182,21 +172,25 @@
                             <table align="center">
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
-                                        Questions or concerns? Get in touch with us at <a href="mailto:{{ contact_email }}" style="color:#9A4AFF;">contact@woomenow.com</a>
-                                        or <a href="tel:{{ contact_phone_number }}" style="color:#9A4AFF;">123-456-7890</a>.
+                                        Questions or concerns? Get in touch with us at <a
+                                            href="mailto:{{ contact_email }}" style="color:#9A4AFF;">contact@woomenow.com</a>
+                                        or <a href="tel:{{ contact_phone_number }}"
+                                              style="color:#9A4AFF;">123-456-7890</a>.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
                                         Never miss a beat! Follow us on <a href="{{ fb_link }}"
-                                            style="color:#9A4AFF;">Facebook</a> and <a href="{{ ig_link }}"
+                                                                           style="color:#9A4AFF;">Facebook</a> and <a
+                                            href="{{ ig_link }}"
                                             style="color:#9A4AFF;"> Instagram</a>.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="main-sub-content"
                                         style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
-                                        Don’t want any more emails from WooMeNow? <a href="{{ unsubscribe }}" style="color:#9A4AFF;">Unsubscribe</a>.
+                                        Don’t want any more emails from WooMeNow? <a href="{{ unsubscribe }}"
+                                                                                     style="color:#9A4AFF;">Unsubscribe</a>.
                                     </td>
                                 </tr>
                             </table>

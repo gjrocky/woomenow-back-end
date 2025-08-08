@@ -142,131 +142,94 @@
                                 <tbody>
                                 <tr>
                                     <td>
-                                       <a href='{{ front_end_link }}' style="display: inline-block;"><img
+                                        <a href='{{ front_end_link }}' style="display: inline-block;"><img
                                                 style="width: 100%; max-width: 98px; height: auto; display: block;"
                                                 src="{{ logo }}" alt="woomenow logo"/></a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="main-heading"
-                                        style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
-                                        New Review Awaiting Your Approval.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="sub-info"
-                                        style="text-transform: capitalize; padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        Hi {{ name }}, We Need Your Expertise!
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="sub-info"
-                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        As a WooMeNow Influencer, your insights and judgment play a key role in ensuring
-                                        our community has access to authentic and valuable reviews. A new review has
-                                        been posted that requires your attention.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="sub-info"
-                                        style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                        We’d love your help in reviewing it to either approve or decline based on its
-                                        relevance and accuracy.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="content-wrapper" style="padding-bottom: 24px;">
-                                        <table style="width: 100%;">
-                                            <tbody>
-                                            <tr>
-                                                <td class="content"
-                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                                    Review Summary for Your Approval:
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <table class="mobile-card-wrapper"
-                                                           style="width: calc(100% + 32px); border-collapse:separate; border-spacing:16px 0; margin-left: -16px;">
-                                                        <tbody>
-                                                        <tr>
-                                                            <td class="mobile-card" colspan="2"
-                                                                style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
-                                                                <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">Restaurant Name</span>
-                                                                <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ res_name }}</span>
-                                                            </td>
-                                                            <td class="mobile-card"
-                                                                style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
-                                                                <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">Review Date</span>
-                                                                <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ date }}</span>
-                                                            </td>
-                                                            <td class="mobile-card"
-                                                                style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
-                                                                <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">User’s Rating</span>
-                                                                <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ rating }} out of 5</span>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <table class="mobile-single-card"
-                                                           style="width:100%; border-collapse:separate; border-spacing:0 16px;">
-                                                        <tbody>
-                                                        <tr>
-                                                            <td colspan="4"
-                                                                style="border: 1px solid #334155; background:#64748B14; padding: 12px;">
-                                                                <span style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">Review Summary</span>
-                                                                <span class="content"
-                                                                      style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ summary }}</span>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="content-wrapper" style="padding-bottom: 24px;">
-                                        <table>
-                                            <tbody>
-                                            <tr>
-                                                <td class="content"
-                                                    style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                                    How to Approve or Decline
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
-                                                    <ul style="margin: 0; padding-left: 28px;">
-                                                        <li class="content"
-                                                            style="padding-bottom:16px; font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
-                                                            <strong>Read the Full Review</strong> – Ensure it aligns
-                                                            with WooMeNow’s guidelines and provides genuine, helpful
-                                                            feedback.
-                                                        </li>
-                                                        <li class="content"
-                                                            style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
-                                                            <strong>Approve or Decline</strong> – Based on its quality
-                                                            and relevance, choose to approve or decline the review.
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td>
+                                        <h1 class="main-heading"
+                                            style="padding: 40px 0; font-size: 23px; font-weight: bold; line-height: 28px; color: #FFFFFF;">
+                                            New Review Awaiting Your Approval.
+                                        </h1>
+                                        <p class="sub-info"
+                                           style="text-transform: capitalize; padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                            Hi {{ name }}, We Need Your Expertise!
+                                        </p>
+                                        <p class="sub-info"
+                                           style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                            As a WooMeNow Influencer, your insights and judgment play a key role in
+                                            ensuring
+                                            our community has access to authentic and valuable reviews. A new review has
+                                            been posted that requires your attention.
+                                        </p>
+                                        <p class="sub-info"
+                                           style="padding-bottom: 24px; font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                            We’d love your help in reviewing it to either approve or decline based on
+                                            its
+                                            relevance and accuracy.
+                                        </p>
+                                        <!-- Container -->
+                                        <div style="display: block; padding-bottom: 24px;">
+
+                                            <!-- Heading -->
+                                            <p style="font-weight: bold; font-size: 16px; color: #FFFFFF; padding-bottom: 16px;">
+                                                Review Summary for Your Approval:
+                                            </p>
+
+                                            <!-- Row with 3 columns -->
+                                            <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+
+                                                <!-- Restaurant Name -->
+                                                <div style="flex: 1; min-width: 150px; border: 1px solid #334155; background: #64748B14; padding: 12px;">
+                                                    <p style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8">
+                                                        Restaurant Name</p>
+                                                    <p style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ res_name }}</p>
+                                                </div>
+
+                                                <!-- Review Date -->
+                                                <div style="flex: 1; min-width: 150px; border: 1px solid #334155; background: #64748B14; padding: 12px;">
+                                                    <p style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8">
+                                                        Review Date</p>
+                                                    <p style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ date }}</p>
+                                                </div>
+
+                                                <!-- User's Rating -->
+                                                <div style="flex: 1; min-width: 150px; border: 1px solid #334155; background: #64748B14; padding: 12px;">
+                                                    <p style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8">
+                                                        User’s Rating</p>
+                                                    <p style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ rating }}
+                                                        out of 5</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Summary (Full Width) -->
+                                            <div style="margin-top: 16px; border: 1px solid #334155; background: #64748B14; padding: 12px;">
+                                                <p style="padding-bottom:4px; font-weight: 400; font-size: 16px; display: block; line-height: 24px; color: #94A3B8;">
+                                                    Review Summary</p>
+                                                <p style="font-weight: 400; font-size: 16px; line-height: 24px; display: block; color: #FFFFFF;">{{ summary }}</p>
+                                            </div>
+
+                                        </div>
+                                        <div style="padding-bottom: 24px;">
+                                            <div style="padding-bottom: 16px; font-weight: 700; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                How to Approve or Decline
+                                            </div>
+
+                                            <div style="font-weight: 400; font-size: 16px; line-height: 24px; color: #FFFFFF;">
+                                                <ul style="margin: 0; padding-left: 28px;">
+                                                    <li style="padding-bottom:16px; font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
+                                                        <strong>Read the Full Review</strong> – Ensure it aligns with
+                                                        WooMeNow’s guidelines and provides genuine, helpful feedback.
+                                                    </li>
+                                                    <li style="font-weight: 400; color: #FFFFFF; font-size: 16px; line-height: 24px;">
+                                                        <strong>Approve or Decline</strong> – Based on its quality and
+                                                        relevance, choose to approve or decline the review.
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                         <a class="btn-info" href="{{ front_end_link }}dashboard/user/reviews"
                                            style="padding: 12px 16px;
                                            background: linear-gradient(45deg, #FC33FF 0%, #6B00F5 100%);
@@ -288,21 +251,25 @@
                             <table align="center">
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
-                                        Questions or concerns? Get in touch with us at <a href="mailto:{{ contact_email }}" style="color:#9A4AFF;">contact@woomenow.com</a>
-                                        or <a href="tel:{{ contact_phone_number }}" style="color:#9A4AFF;">123-456-7890</a>.
+                                        Questions or concerns? Get in touch with us at <a
+                                            href="mailto:{{ contact_email }}" style="color:#9A4AFF;">contact@woomenow.com</a>
+                                        or <a href="tel:{{ contact_phone_number }}"
+                                              style="color:#9A4AFF;">123-456-7890</a>.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; ">
                                         Never miss a beat! Follow us on <a href="{{ fb_link }}"
-                                            style="color:#9A4AFF;">Facebook</a> and <a href="{{ ig_link }}"
+                                                                           style="color:#9A4AFF;">Facebook</a> and <a
+                                            href="{{ ig_link }}"
                                             style="color:#9A4AFF;"> Instagram</a>.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="main-sub-content"
                                         style="color: #94A3B8; font-weight: 400; font-size: 12px; line-height: 18px; padding-top: 24px; ">
-                                        Don’t want any more emails from WooMeNow? <a href="{{ unsubscribe }}" style="color:#9A4AFF;">Unsubscribe</a>.
+                                        Don’t want any more emails from WooMeNow? <a href="{{ unsubscribe }}"
+                                                                                     style="color:#9A4AFF;">Unsubscribe</a>.
                                     </td>
                                 </tr>
                             </table>
