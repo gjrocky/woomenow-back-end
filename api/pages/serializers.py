@@ -85,7 +85,21 @@ class BusinessSerializer(serializers.ModelSerializer):
         ]
 
 
+class ImageSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Image
+        fields = ['id', 'title', 'url']
+
+    def get_url(self, obj):
+        if obj.file:
+            return obj.file.url
+        return None
+
+
 class AboutSerializer(serializers.ModelSerializer):
+    image = ImageSerializer(read_only=True)
     cards = StreamFieldBlockSerializer(source="vision_points")
     ready_to_elevate_section = StreamFieldBlockSerializer()
 
