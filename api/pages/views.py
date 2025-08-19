@@ -18,11 +18,12 @@ from wagtail.images.models import Image
 from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSerializer, PricingSerializer, \
     JoinTheWooSerializer, InfluencerSerializer, InfluencerListSerializer, RestaurantListSerializer, \
     RestaurantSerializer, UpdateInfluencerSerializer, RestaurantReviewSerializer, RestaurantRecommendationSerializer, \
-    RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer, HomePageSerializer
-from api.serializers import Pagination, get_text, InfluPagination
+    RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer, HomePageSerializer, \
+    TermsOfServiceSerializer, PrivacyPolicySerializer, DiamondStatusSerializer, ReviewSystemSerializer
+from api.serializers import Pagination, InfluPagination, get_text
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
-    RestaurantListing, Franchise, HomePage
+    RestaurantListing, Franchise, HomePage, TermsOfService, PrivacyPolicy, ReviewSystem, DiamondStatus
 from apps.snippet.models import City, Category, Ambience
 from send_email import send_email
 
@@ -33,6 +34,7 @@ class HomePageAPIView(RetrieveAPIView):
 
     def get_object(self):
         return self.get_queryset().first()
+
 
 class FAQsPageAPIViews(RetrieveAPIView):
     queryset = FAQs.objects.live()
@@ -550,3 +552,35 @@ class RestaurantInviteAPIView(APIView):
         if res:
             return Response({'message': 'success'}, status=status.HTTP_200_OK)
         return Response({'error': 'Fail'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class TermsOfServiceAPIView(RetrieveAPIView):
+    queryset = TermsOfService.objects.live()
+    serializer_class = TermsOfServiceSerializer
+
+    def get_object(self):
+        return self.get_queryset().first()
+
+
+class PrivacyPolicyAPIView(RetrieveAPIView):
+    queryset = PrivacyPolicy.objects.live()
+    serializer_class = PrivacyPolicySerializer
+
+    def get_object(self):
+        return self.get_queryset().first()
+
+
+class DiamondStatusAPIView(RetrieveAPIView):
+    queryset = DiamondStatus.objects.live()
+    serializer_class = DiamondStatusSerializer
+
+    def get_object(self):
+        return self.get_queryset().first()
+
+
+class ReviewSystemAPIView(RetrieveAPIView):
+    queryset = ReviewSystem.objects.live()
+    serializer_class = ReviewSystemSerializer
+
+    def get_object(self):
+        return self.get_queryset().first()

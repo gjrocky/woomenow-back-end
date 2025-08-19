@@ -44,6 +44,7 @@ class PricingCard(blocks.StructBlock):
         ("points", blocks.RichTextBlock(required=True, max_length=500)),
     ])
 
+
 class ReadyToElevateBlock(blocks.StructBlock):
     heading = blocks.RichTextBlock(required=True, max_length=500, help_text='Heading')
     description = blocks.RichTextBlock(required=True, max_length=2000, help_text='Description')
@@ -51,3 +52,24 @@ class ReadyToElevateBlock(blocks.StructBlock):
     cta_button_link = blocks.URLBlock(required=True, max_length=2000, help_text='Cta Button Link')
     section_image = ImageChooserBlock(required=True, help_text="Section Image")
 
+
+class TermsOfServiceBlock(blocks.StructBlock):
+    id = blocks.IntegerBlock(required=True, help_text='Condition Number')
+    heading = blocks.RichTextBlock(required=True, help_text='Heading')
+    content = blocks.RichTextBlock(required=True, help_text='Content')
+
+
+class PrivacyPolicyBlock(blocks.StructBlock):
+    id = blocks.IntegerBlock(required=True, help_text='Policy Number')
+    heading = blocks.RichTextBlock(required=True, help_text='Heading')
+    content = blocks.RichTextBlock(required=True, help_text='Content')
+
+
+class DiamondStatusBlock(blocks.StructBlock):
+    title = blocks.RichTextBlock(required=True, help_text='Title')
+    description = blocks.RichTextBlock(required=True, help_text='Description')
+
+
+class ReviewSystemBlock(blocks.StructBlock):
+    title = blocks.RichTextBlock(required=True, help_text='Title')
+    description = blocks.RichTextBlock(required=True, help_text='Description')

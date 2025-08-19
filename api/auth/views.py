@@ -110,6 +110,7 @@ class SignupAPIView(APIView):
         email = request.data.get("email")
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
+        phone = request.data.get("phone")
         password = request.data.get("password")
         confirm_password = request.data.get("confirm_password")
 
@@ -128,6 +129,7 @@ class SignupAPIView(APIView):
 
             user.first_name = first_name
             user.last_name = last_name
+            user.phone = phone
             try:
                 OTPVerification.objects.get(user=user).delete()
             except:
@@ -144,7 +146,7 @@ class SignupAPIView(APIView):
             if is_not_valid_pass:
                 return Response({"error": password}, status=status.HTTP_400_BAD_REQUEST)
 
-            user = User.objects.create(first_name=first_name, last_name=last_name, email=email)
+            user = User.objects.create(first_name=first_name, last_name=last_name, email=email, phone=phone)
             self.create_or_update_user(user, password, email)
 
             return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)

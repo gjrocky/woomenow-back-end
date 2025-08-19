@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField, SET_NULL
+from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
@@ -16,7 +17,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard, \
-    ReadyToElevateBlock
+    ReadyToElevateBlock, TermsOfServiceBlock, PrivacyPolicyBlock, DiamondStatusBlock, ReviewSystemBlock
 from apps.main.choices import RestaurantType, BudgetType
 from apps.main.helper import email_dict
 from apps.snippet.models import BaseModel
@@ -688,3 +689,87 @@ def get_text(text):
     if not text:
         return ""
     return BeautifulSoup(text, "html.parser").get_text()
+
+
+class TermsOfService(Page):
+    max_count = 1
+    effective_date = models.DateField(_("Effective Date"), null=True, blank=True)
+    page_title = RichTextField(_("Title"))
+    description = RichTextField(_("Description"), null=True, blank=True)
+    terms_section = StreamField([("terms_section", TermsOfServiceBlock())], min_num=1, use_json_field=True)
+    contact_us = RichTextField(_("Contact Us"), blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("effective_date"),
+        FieldPanel("page_title"),
+        FieldPanel("description"),
+        FieldPanel("terms_section"),
+        FieldPanel("contact_us"),
+    ]
+
+    class Meta:
+        verbose_name = "Terms of Service Page"
+
+
+class PrivacyPolicy(Page):
+    max_count = 1
+    effective_date = models.DateField(_("Effective Date"), null=True, blank=True)
+    page_title = RichTextField(_("Title"))
+    description = RichTextField(_("Description"), null=True, blank=True)
+    policy_section = StreamField([("policy_section", PrivacyPolicyBlock())], min_num=1, use_json_field=True)
+    contact_us = RichTextField(_("Contact Us"), blank=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("effective_date"),
+        FieldPanel("page_title"),
+        FieldPanel("description"),
+        FieldPanel("policy_section"),
+        FieldPanel("contact_us"),
+    ]
+
+    class Meta:
+        verbose_name = "Privacy Policy Page"
+
+
+class DiamondStatus(Page):
+    max_count = 1
+    page_title = RichTextField(_("Title"))
+    description = RichTextField(_("Description"), null=True, blank=True)
+    diamond_status_section = StreamField([("diamond_section", DiamondStatusBlock())], min_num=1, use_json_field=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("page_title"),
+        FieldPanel("description"),
+        FieldPanel("diamond_status_section"),
+    ]
+
+    class Meta:
+        verbose_name = "Diamond Status Page"
+
+
+class ReviewSystem(Page):
+    max_count = 1
+    page_title = RichTextField(_("Title"))
+    description = RichTextField(_("Description"), null=True, blank=True)
+    review_section = StreamField([("review_section", ReviewSystemBlock())], min_num=1, use_json_field=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("page_title"),
+        FieldPanel("description"),
+        FieldPanel("review_section"),
+    ]
+
+    class Meta:
+        verbose_name = "Review System Page"
+
+
+# Email Automation Model
+class EmailExecution(models.Model):
+    recipient_email = models.EmailField()
+    recipient_name = models.CharField(max_length=255)
+    started_at = models.DateTimeField(default=timezone.now)
+    current_step = models.PositiveIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.recipient_email} - Step {self.current_step}"

@@ -8,6 +8,7 @@ from api.helper import StreamFieldSerializer, city, OrderedStreamFieldSerializer
 from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import (
     FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, RestaurantMedia, HomePage,
+    TermsOfService, PrivacyPolicy, DiamondStatus, ReviewSystem,
 )
 from apps.snippet.models import Category, Ambience
 
@@ -595,3 +596,99 @@ class ReelsSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantMedia
         fields = '__all__'
+
+
+class TermsOfServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TermsOfService
+        fields = ['effective_date', 'page_title', 'description', 'terms_section', 'contact_us']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        # Convert RichTextField content to HTML strings
+        data['page_title'] = str(instance.page_title)
+        data['description'] = str(instance.description) if instance.description else ""
+        data['contact_us'] = str(instance.contact_us)
+
+        # Handle StreamField serialization
+        terms_sections = []
+        for block in instance.terms_section:
+            terms_sections.append({
+                'id': block.value['id'],
+                'heading': str(block.value['heading']),
+                'content': str(block.value['content'])
+            })
+        data['terms_section'] = terms_sections
+
+        return data
+
+
+class PrivacyPolicySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrivacyPolicy
+        fields = ['effective_date', 'page_title', 'description', 'policy_section', 'contact_us']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        # Convert RichTextField content to HTML strings
+        data['page_title'] = str(instance.page_title)
+        data['description'] = str(instance.description) if instance.description else ""
+        data['contact_us'] = str(instance.contact_us)
+
+        # Handle StreamField serialization
+        policy_section = []
+        for block in instance.policy_section:
+            policy_section.append({
+                'id': block.value['id'],
+                'heading': str(block.value['heading']),
+                'content': str(block.value['content'])
+            })
+        data['policy_section'] = policy_section
+
+        return data
+
+
+class DiamondStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DiamondStatus
+        fields = ['page_title', 'description', 'diamond_status_section']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data['page_title'] = str(instance.page_title)
+        data['description'] = str(instance.description) if instance.description else ""
+
+        diamond_status_section = []
+        for block in instance.diamond_status_section:
+            diamond_status_section.append({
+                'title': str(block.value['title']),
+                'description': str(block.value['description']),
+            })
+        data['diamond_status_section'] = diamond_status_section
+
+        return data
+
+
+class ReviewSystemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewSystem
+        fields = ['page_title', 'description', 'review_section']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data['page_title'] = str(instance.page_title)
+        data['description'] = str(instance.description) if instance.description else ""
+
+        review_section = []
+        for block in instance.review_section:
+            review_section.append({
+                'title': str(block.value['title']),
+                'description': str(block.value['description']),
+            })
+        data['review_section'] = review_section
+
+        return data

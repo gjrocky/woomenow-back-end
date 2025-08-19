@@ -4,7 +4,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 from api.pages.views import FAQsPageAPIViews, BusinessPageAPIView, AboutPageAPIView, PricingPageAPIView, \
     JoinTheWooPageAPIView, InfluencerPageAPIView, InfluencerListingPageAPIView, RestaurantListingPageAPIView, \
     RestaurantPageAPIView, UpdateInfluencerPageAPIView, RestaurantReviewsAPIView, RestaurantRecommendationAPIView, \
-    RestaurantDetailsAPIView, RestaurantDetailAPIView, RestaurantCreateAPIView, RestaurantInviteAPIView, HomePageAPIView
+    RestaurantDetailsAPIView, RestaurantDetailAPIView, RestaurantCreateAPIView, RestaurantInviteAPIView, \
+    HomePageAPIView, TermsOfServiceAPIView, PrivacyPolicyAPIView, DiamondStatusAPIView, ReviewSystemAPIView
 
 app_name = "pages"
 
@@ -29,4 +30,8 @@ urlpatterns = [
     path("restaurant-images/", RestaurantDetailsAPIView.as_view(), name="restaurant-images"),
     path("restaurant-create/", RestaurantCreateAPIView.as_view(), name="restaurant-create"),
     path("restaurant-invite/", RestaurantInviteAPIView.as_view(), name="restaurant-invite"),
+    path("terms-of-service/", TermsOfServiceAPIView.as_view(), name="terms-of-service"),
+    path("privacy-policy/", PrivacyPolicyAPIView.as_view(), name="privacy-policy"),
+    path("diamond-status/", DiamondStatusAPIView.as_view(), name="diamond-status"),
+    path("review-system/", ReviewSystemAPIView.as_view(), name="review-system"),
 ]
