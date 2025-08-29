@@ -21,6 +21,7 @@ from api.pages.serializers import FAQsSerializer, BusinessSerializer, AboutSeria
     RestaurantDetailSerializer, RestaurantDetailsSerializer, RestaurantCreateSerializer, HomePageSerializer, \
     TermsOfServiceSerializer, PrivacyPolicySerializer, DiamondStatusSerializer, ReviewSystemSerializer
 from api.serializers import Pagination, InfluPagination, get_text
+from apps.main.choices import BudgetType
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
     RestaurantListing, Franchise, HomePage, TermsOfService, PrivacyPolicy, ReviewSystem, DiamondStatus
@@ -148,16 +149,19 @@ class RestaurantListingPageAPIView(ListAPIView):
     serializer_class = RestaurantListSerializer
     pagination_class = None
 
-    def get_queryset(self):
+    def build_filtered_queryset(self):
+        """
+        Build the filtered queryset ONCE.
+        This will be reused for results + facets.
+        """
         slug = self.request.query_params.get("slug")
-        is_desktop = self.request.query_params.get("is_desktop") == 'true'
-        limit = self.request.query_params.get("limit")
+        is_influencer = self.request.query_params.get("is_influencer") == 'true'
         city = self.request.query_params.get("city")
         q = self.request.query_params.get("q")
         is_featured = self.request.query_params.get("is_featured")
-        is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
-        is_influencer = self.request.query_params.get("is_influencer") == 'true'
+
         queryset = self.queryset.all()
+
         if not is_influencer:
             if slug:
                 city_id = self.queryset.get(slug=slug).city.id
@@ -179,14 +183,16 @@ class RestaurantListingPageAPIView(ListAPIView):
                 "recommended-by") or self.request.query_params.getlist("recommended-by[]"),
         }
         filters = {k: v for k, v in filters.items() if v}
+
         categories = self.request.query_params.getlist("categories") or self.request.query_params.getlist(
             "categories[]")
 
         q_objects = Q()
         for key, value in filters.items():
             q_objects &= Q(**{key: value})
+
         if q:
-            q_objects = q_objects & (
+            q_objects &= (
                     Q(categories__name__icontains=q)
                     | Q(name__icontains=q)
                     | Q(slug__icontains=q)
@@ -199,65 +205,128 @@ class RestaurantListingPageAPIView(ListAPIView):
 
         rating = self.request.query_params.getlist("rating") or self.request.query_params.getlist("rating[]")
         if rating:
-            q_objects &= self.filter(rating)
+            q_objects &= self.filter_rating(rating)
 
         sort = self.request.query_params.get("sort")
         order_by = 'first_published_at' if sort == 'oldest' else '-first_published_at'
         queryset = queryset.filter(q_objects).distinct().order_by(order_by)
 
+        #Category intersection (must contain *all* selected categories)
         if categories:
             categories = list(set(categories))
             queryset = (
                 queryset.filter(categories__id__in=categories)
-                .annotate(match_count=Count(
-                    'categories__id',
-                    filter=Q(categories__id__in=categories),
-                    distinct=True
-                ))
+                .annotate(
+                    match_count=Count(
+                        'categories__id',
+                        filter=Q(categories__id__in=categories),
+                        distinct=True
+                    )
+                )
                 .filter(match_count=len(categories))
             )
 
-        if is_paginate:
-            paginator = Pagination()
-            page = paginator.paginate_queryset(queryset, self.request, view=self)
-
-            response_data = paginator.get_paginated_response(page).data
-
-            if is_desktop:
-                return response_data
-            return response_data.get('results')
-
-        if limit:
-            queryset = queryset[:int(limit)]
         return queryset
 
-    def filter(self, rating):
+    def filter_rating(self, rating):
         filter_type = dict(heart='heart', diamond='diamond', thumb_up='thumb_up')
         q = Q()
         for r in rating:
             if r == filter_type['diamond']:
                 q |= Q(rating__gte=4)
             elif r == filter_type['heart']:
-                q |= (Q(rating__gte=3.5) & Q(rating__lt=4))
+                q |= Q(rating__gte=3.5, rating__lt=4)
             elif r == filter_type['thumb_up']:
                 q |= Q(rating__lt=3.5)
         return q
 
-    def list(self, request, *args, **kwargs):
-        is_desktop = request.query_params.get("is_desktop") == "true"
-        queryset = self.get_queryset()
+    def get_facets(self, queryset):
+        facets = {}
 
-        if is_desktop:
-            serializer = self.get_serializer(queryset.get('results'), many=True)
-            data = serializer.data
-            return Response({
-                "results": data,
-                "total_restaurant": queryset.get('count', 0)
-            }, status=status.HTTP_200_OK)
+        # Categories
+        category_counts = (
+            Restaurant.objects.filter(id__in=queryset.values("id"))  # restrict to same restaurants
+            .values("categories__id", "categories__name")
+            .annotate(count=Count("id", distinct=True))
+            .order_by("categories__id")
+        )
+        facets["categories"] = [
+            {"id": c["categories__id"], "label": c["categories__name"], "count": c["count"]}
+            for c in category_counts
+        ]
+
+        # Budget
+        budget_counts = (
+            Restaurant.objects.filter(id__in=queryset.values("id"))  # restrict to same restaurants
+            .values("budget_friendly")
+            .annotate(count=Count("id", distinct=True))
+            .order_by("budget_friendly")
+        )
+        facets["budget"] = [
+            {"id": b["budget_friendly"], "label": BudgetType(b["budget_friendly"]).label, "count": b["count"]}
+            for b in budget_counts
+        ]
+
+        # Influencers
+        influencer_counts = (
+            Restaurant.objects.filter(id__in=queryset.values("id"))
+            .values("recommended_by__influencer__id", "recommended_by__influencer__name")
+            .annotate(count=Count("recommended_by", filter=Q(recommended_by__influencer__id__isnull=False)))
+            .order_by("-count")
+        )
+
+        facets["influencers"] = [
+            {
+                "id": i["recommended_by__influencer__id"],
+                "label": i["recommended_by__influencer__name"],
+                "count": i["count"],
+            }
+            for i in influencer_counts
+            if i["recommended_by__influencer__id"] is not None
+        ]
+
+        # Rating
+        rating_map = {
+            "diamond": {"label": "4★ and above", "filter": {"rating__gte": 4}},
+            "heart": {"label": "3.5★ - 3.9★", "filter": {"rating__gte": 3.5, "rating__lt": 4}},
+            "thumb_up": {"label": "Below 3.5★", "filter": {"rating__lt": 3.5}},
+        }
+        rating_facets = []
+        for key, val in rating_map.items():
+            count = queryset.filter(**val["filter"]).count()
+            rating_facets.append({"id": key, "label": val["label"], "count": count})
+        facets["rating"] = rating_facets
+
+        return facets
+
+    def list(self, request, *args, **kwargs):
+        is_paginate = request.query_params.get("is_pagination", "false") == "true"
+        limit = request.query_params.get("limit")
+
+        full_queryset = self.build_filtered_queryset()
+
+        if is_paginate:
+            paginator = Pagination()
+            page = paginator.paginate_queryset(full_queryset, request, view=self)
+            serializer = self.get_serializer(page, many=True)
+            results = paginator.get_paginated_response(serializer.data).data
         else:
-            serializer = self.get_serializer(queryset, many=True)
-            data = serializer.data
-            return Response(data, status=status.HTTP_200_OK)
+            if limit:
+                result_queryset = full_queryset[:int(limit)]
+            else:
+                result_queryset = full_queryset
+            serializer = self.get_serializer(result_queryset, many=True)
+            results = serializer.data
+
+        facets = self.get_facets(full_queryset)
+
+        x = Response({
+            "results": results if not is_paginate else results.get("results"),
+            "total_restaurant": full_queryset.count(),
+            "facets": facets,
+        }, status=status.HTTP_200_OK)
+
+        return x
 
 
 class RestaurantPageAPIView(APIView):
@@ -315,7 +384,7 @@ class RestaurantReviewsAPIView(APIView):
         q = request.query_params.get("q")
         is_paginate = request.query_params.get("is_pagination", 'false') == 'true'
 
-        queryset = self.queryset.filter(restaurant_id=restaurant_id, is_published=True)
+        queryset = self.queryset.filter(restaurant_id=restaurant_id)
         extra_info = dict(no_of_reviews=queryset.count(), page_size=Pagination.page_size)
 
         if not queryset:
