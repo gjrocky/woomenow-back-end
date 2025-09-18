@@ -10,7 +10,7 @@ from apps.main.models import (
     FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, RestaurantMedia, HomePage,
     TermsOfService, PrivacyPolicy, DiamondStatus, ReviewSystem,
 )
-from apps.snippet.models import Category, Ambience
+from apps.snippet.models import Category, Ambience, GiveOffer
 
 
 class HomePageSerializer(serializers.ModelSerializer):
@@ -366,6 +366,8 @@ class RestaurantReviewSerializer(serializers.ModelSerializer):
     posted_by = serializers.SerializerMethodField(source='posted_by')
     created_at = serializers.SerializerMethodField()
     approved_by = serializers.SerializerMethodField()
+    receipt_url = serializers.SerializerMethodField()
+    has_offer = serializers.BooleanField(read_only=True)
 
     def get_approved_by(self, obj):
         try:
@@ -403,10 +405,18 @@ class RestaurantReviewSerializer(serializers.ModelSerializer):
     def get_created_at(self, obj):
         return obj.created_at.strftime("%b %d, %Y")
 
+    def get_receipt_url(self, obj):
+        request = self.context.get("request")
+        if obj.bill and hasattr(obj.bill, 'file') and obj.bill.file:
+            if request:
+                return request.build_absolute_uri(obj.bill.file.url)
+            return obj.bill.file.url
+        return None
+
     class Meta:
         model = Review
         fields = ['id', 'content', 'rating', 'approved_by', 'posted_by',
-                  'more_info', 'created_at']
+                  'more_info', 'created_at', 'receipt_url', 'is_verified', 'is_published', 'has_offer']
 
 
 class RestaurantRecommendationSerializer(serializers.ModelSerializer):

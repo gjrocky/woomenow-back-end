@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Exists, OuterRef
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
@@ -25,7 +25,7 @@ from apps.main.choices import BudgetType
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
     RestaurantListing, Franchise, HomePage, TermsOfService, PrivacyPolicy, ReviewSystem, DiamondStatus
-from apps.snippet.models import City, Category, Ambience
+from apps.snippet.models import City, Category, Ambience, GiveOffer
 from send_email import send_email
 
 
@@ -211,7 +211,7 @@ class RestaurantListingPageAPIView(ListAPIView):
         order_by = 'first_published_at' if sort == 'oldest' else '-first_published_at'
         queryset = queryset.filter(q_objects).distinct().order_by(order_by)
 
-        #Category intersection (must contain *all* selected categories)
+        # Category intersection (must contain *all* selected categories)
         if categories:
             categories = list(set(categories))
             queryset = (
@@ -385,6 +385,9 @@ class RestaurantReviewsAPIView(APIView):
         is_paginate = request.query_params.get("is_pagination", 'false') == 'true'
 
         queryset = self.queryset.filter(restaurant_id=restaurant_id)
+        queryset = queryset.annotate(
+            has_offer=Exists(GiveOffer.objects.filter(review=OuterRef("pk")))
+        )
         extra_info = dict(no_of_reviews=queryset.count(), page_size=Pagination.page_size)
 
         if not queryset:
@@ -406,10 +409,10 @@ class RestaurantReviewsAPIView(APIView):
             paginator = Pagination()
             page = paginator.paginate_queryset(queryset, request, view=self)
 
-            serializer = self.serializer_class(page, many=True)
+            serializer = self.serializer_class(page, many=True, context={'request': request})
             response_data['data'] = paginator.get_paginated_response(serializer.data).data
         else:
-            serializer = self.serializer_class(queryset, many=True)
+            serializer = self.serializer_class(queryset, many=True, context={'request': request})
             response_data['data'] = serializer.data
         response_data['pagination'] = extra_info
         return Response(response_data, status=status.HTTP_200_OK)
@@ -544,7 +547,7 @@ class RestaurantCreateAPIView(APIView):
         id = uuid.uuid4()
         parent_page = RestaurantListing.objects.first()
         restaurant = parent_page.add_child(
-            instance=Restaurant(title=id,
+            instance=Restaurant(title=data.get('name'),
                                 slug=id,
                                 name=franchise.name if franchise else data.get('name'),
                                 short_description=data.get('short_description'),
