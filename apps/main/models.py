@@ -1,4 +1,5 @@
 import html
+import uuid
 
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
@@ -20,7 +21,7 @@ from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, Our
     ReadyToElevateBlock, TermsOfServiceBlock, PrivacyPolicyBlock, DiamondStatusBlock, ReviewSystemBlock
 from apps.main.choices import RestaurantType, BudgetType
 from apps.main.helper import email_dict
-from apps.snippet.models import BaseModel
+from apps.snippet.models import BaseModel, EmailCategory
 from send_email import send_email
 
 CustomUser = get_user_model()
@@ -458,7 +459,7 @@ class Review(BaseModel):
     ]
 
     def save(self, *args, **kwargs):
-        if not self.is_verified and int(self.rating) >= 3:
+        if not self.is_verified and int(self.rating) >= 4:
             self.is_published = True
         super().save(*args, **kwargs)
 
@@ -765,11 +766,21 @@ class ReviewSystem(Page):
 
 # Email Automation Model
 class EmailExecution(models.Model):
+    execution_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
     recipient_email = models.EmailField()
     recipient_name = models.CharField(max_length=255)
+
+    execution_flow = models.CharField(max_length=255, null=True, blank=True)
+
     started_at = models.DateTimeField(default=timezone.now)
-    current_step = models.PositiveIntegerField(default=1)
+    last_sent_at = models.DateTimeField(null=True, blank=True)
+    last_sent_template_id = models.IntegerField(null=True, blank=True)
+
     is_active = models.BooleanField(default=True)
+    current_step = models.PositiveIntegerField(default=1)
+
+    is_opened = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.recipient_email} - Step {self.current_step}"
+        return f"{self.recipient_email} - Step {self.current_step} | Execution ID: {self.execution_id}"
