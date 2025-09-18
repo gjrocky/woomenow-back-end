@@ -1,10 +1,16 @@
+import logging
+import uuid
+from datetime import timedelta
+
 import requests
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.db.models import Q
 from django.http.request import QueryDict
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.utils.timezone import now
+from django.utils.html import strip_tags
+from django.utils.timezone import now, localtime
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import permissions
 from rest_framework import status
@@ -18,13 +24,18 @@ from wagtail.images.models import Image
 
 from api.constants import QUERY_PARAMS
 from api.forms.serializers import IPLocationSerializer, ContactSerializer, InvitationSerializer, ReviewSerializer, \
-    JoinTheWooSerializer
+    JoinTheWooSerializer, GiveOfferSerializer
 from api.serializers import Pagination
 from api.serializers import ReviewSerializer as RSerializer
 from apps.main.helper import email_dict
-from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer, Influencer
-from apps.snippet.models import IPLocation, Contact, JoinTheWooForm, City, Campaign, CampaignTracker
+from apps.main.models import Invitation, Review, Restaurant, BecomeInfluencer, Influencer, EmailExecution
+from apps.main.tasks import send_negative_reviews_email_step, send_restaurant_email_step
+from apps.snippet.models import IPLocation, Contact, JoinTheWooForm, City, Campaign, CampaignTracker, EmailTemplate, \
+    EmailTemplateChoice, EmailCategory
+from send_custom_email import send_db_email
 from send_email import send_email
+
+logger = logging.getLogger(__name__)
 
 api_counter = 0
 send_email_counter = {}
@@ -113,18 +124,28 @@ class ContactAPIView(CreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            email = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
-            body = 'emails/contact-us.html'
-            context = dict(
-                name=serializer.initial_data.get('name'),
-                email=serializer.initial_data.get('email'),
-                phone=serializer.initial_data.get('phone'),
-                message=serializer.initial_data.get('message'),
-                **email_dict
+        category = get_object_or_404(EmailCategory, slug='general-flow')
+        template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=1)
+        email_template = EmailTemplate.objects.filter(template=template_choice).first()
+        if not email_template:
+            return Response(
+                {"error": f"No email template found for choice {template_choice.label}"},
+                status=status.HTTP_404_NOT_FOUND,
             )
-            subject_context = dict(subject=f'Contact Query - {serializer.initial_data.get("subject")}')
-            send_email(email, body, context, subject_context)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        context_data = {
+            "name": serializer.initial_data.get('name'),
+            "email": serializer.initial_data.get('email'),
+            "phone": serializer.initial_data.get('phone'),
+            "category": serializer.initial_data.get('category'),
+            "message": serializer.initial_data.get('message'),
+            **email_dict,
+        }
+        email = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
+        # body = 'emails/contact-us.html'
+        # subject_context = dict(subject=f'Contact Query - {serializer.initial_data.get("subject")}')
+        # send_email(email, body, context, subject_context)
+        send_db_email(email, template_choice, context_data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class JoinTheWooAPIView(CreateAPIView):
@@ -134,18 +155,18 @@ class JoinTheWooAPIView(CreateAPIView):
     def perform_create(self, serializer):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            email = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
-            body = 'emails/jointhewoo.html'
-            context = dict(
-                name=serializer.initial_data.get('name'),
-                email=serializer.initial_data.get('email'),
-                phone=serializer.initial_data.get('phone'),
-                city=serializer.initial_data.get('city'),
-                **email_dict
-            )
-            subject_context = dict(subject="New Join the Woo Submission")
-            send_email(email, body, context, subject_context)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        email = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
+        body = 'emails/jointhewoo.html'
+        context = dict(
+            name=serializer.initial_data.get('name'),
+            email=serializer.initial_data.get('email'),
+            phone=serializer.initial_data.get('phone'),
+            city=serializer.initial_data.get('city'),
+            **email_dict
+        )
+        subject_context = dict(subject="New Join the Woo Submission")
+        send_email(email, body, context, subject_context)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class InvitationAPIView(ListCreateAPIView):
@@ -344,6 +365,55 @@ class ReviewPostAPIView(APIView):
         try:
             res = Restaurant.objects.get(id=request.data.get('res_id'))
             # threading.Thread(target=self.send_influencer_emails, args=(review, res, email_dict)).start()
+            if review.rating < 4:
+                category = get_object_or_404(EmailCategory, slug='negative-review-flow')
+                template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=1)
+                email_template = EmailTemplate.objects.filter(template=template_choice).first()
+
+                if email_template:
+                    restaurant_email = [res.email]
+                    name = strip_tags(res.name)
+
+                    # Calculate automation_end_time (final step 5 execution time)
+                    countdown_per_step = 24*60*60  # 60 seconds per step for production 24*60*60 24hrs
+                    total_steps = 5
+                    automation_end_time = timezone.localtime(
+                        timezone.now() + timedelta(seconds=(total_steps - 1) * countdown_per_step)
+                    )
+
+                    context_data = {
+                        "business_name": name,
+                        "restaurant": res.id,
+                        **email_dict,
+                    }
+
+                    execution_id = str(uuid.uuid4())
+
+                    send_db_email(restaurant_email, template_choice, context_data, execution_id)
+                    logger.info(f"[Review] Step 1 email sent to {restaurant_email} "
+                                f"(choice id: {template_choice.choice_id}) for execution_id={execution_id} "
+                                f"at {timezone.localtime(timezone.now()).strftime('%d %b %Y %I:%M %p')}")
+
+                    execution = EmailExecution.objects.create(
+                        execution_id=execution_id,
+                        recipient_email=restaurant_email[0],
+                        recipient_name=name,
+                        current_step=1,
+                        execution_flow=category.slug,
+                        last_sent_at=timezone.now(),
+                        last_sent_template_id=template_choice.choice_id,
+                        is_active=True,
+                    )
+                    logger.info(f"[Review] Created EmailExecution {execution.execution_id} "
+                                f"for {restaurant_email[0]} in flow {category.slug}")
+
+                    # Schedule Step 2
+                    countdown_seconds = 24*60*60  # for production 24*60*60 24hrs
+                    send_negative_reviews_email_step.apply_async(
+                        args=[str(execution.execution_id), 2, res.id, automation_end_time.isoformat()],
+                        countdown=countdown_seconds)
+                    logger.info(f"[Review] Scheduled step 2 for execution_id={execution.execution_id} "
+                                f"in {countdown_seconds}s")
 
             return Response(
                 {'message': 'Your review has been published after verification.'},
@@ -418,45 +488,100 @@ class RestaurantInvitationAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        try:
-            influ = user.influencer
-            queryset = Invitation.objects.filter(invited_by=influ)
+        # Old influencer GET logic commented out
+        # try:
+        #     influ = user.influencer
+        #     queryset = Invitation.objects.filter(invited_by=influ)
+        #     serializer = InvitationSerializer(queryset, many=True)
+        #     return Response(serializer.data, status=status.HTTP_200_OK)
+        # except Exception as e:
+
+        if user.is_superuser:
+            queryset = Invitation.objects.filter(super_user=user)
             serializer = InvitationSerializer(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            if user.is_superuser:
-                queryset = Invitation.objects.filter(super_user=user)
-                serializer = InvitationSerializer(queryset, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'You are not authorized to view this data'},
-                                status=status.HTTP_401_UNAUTHORIZED)
+
+        return Response(
+            {'error': 'You are not authorized to view this data'},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
     def post(self, request, *args, **kwargs):
         user = request.user
+
+        invite_type = request.data.get('type')
+        recommend_by = request.data.get("recommend_by", {})
+        influencer_name = recommend_by.get("label") if recommend_by else None
+
+        type_to_choice_id = {
+            "dining": 1,
+            "experience": 2,
+        }
+        choice_id = type_to_choice_id.get(invite_type)
+
+        if not choice_id:
+            return Response(
+                {"error": f"Invalid type '{invite_type}'. Must be dining/restaurant/experience."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        category = get_object_or_404(EmailCategory, slug="restaurant-and-experience-onboarding-playbook")
+        template_choice = get_object_or_404(
+            EmailTemplateChoice,
+            category=category,
+            choice_id=choice_id
+        )
+
+        email_template = EmailTemplate.objects.filter(template=template_choice).first()
+        if not email_template:
+            return Response(
+                {"error": f"No email template found for choice {template_choice.label}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = InvitationSerializer(data={**request.data, "user": user})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # send email
+        restaurant_email = [request.data.get("invite_to")]
+        restaurant_name = request.data.get("restaurant_name")
+        context_data = {
+            "username": restaurant_name,
+            "influencer_name": influencer_name,
+            **email_dict,
+        }
+        execution_id = str(uuid.uuid4())
+
         try:
-            influ = user.influencer
-            serializer = InvitationSerializer(data={'influ_id': influ.id, **request.data})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                e = [request.data.get('invite_to')]
-                body = 'emails/experience-get-an-email-to-onboard.html'
-                context = dict(name=request.data.get('restaurant_name'), **email_dict)
-                subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
-                send_email(e, body, context, subject_context)
-                return Response({'message': 'Our team will the check & verify the restaurant/experience'},
-                                status=status.HTTP_201_CREATED)
+            send_db_email(restaurant_email, template_choice, context_data, execution_id)
+            logger.info(
+                f"[API] Manual email sent: '{template_choice.label}' "
+                f"(ID: {template_choice.choice_id}) to {restaurant_email}"
+            )
         except Exception as e:
-            serializer = InvitationSerializer(data={**request.data, "user": user})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                e = [request.data.get('invite_to')]
-                body = 'emails/experience-get-an-email-to-onboard.html'
-                context = dict(name=request.data.get('restaurant_name'), **email_dict)
-                subject_context = dict(subject='Congratulations! You’re Now Part of WooMeNow.')
-                send_email(e, body, context, subject_context)
-                return Response({'message': 'Our team will the check & verify the restaurant/experience'},
-                                status=status.HTTP_201_CREATED)
+            logger.error(f"[API] Failed to send manual email: {e}")
+            return Response({"error": f"Failed to send email: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        execution = EmailExecution.objects.create(
+            execution_id=execution_id,
+            recipient_email=restaurant_email[0],
+            recipient_name=restaurant_name,
+            current_step=1,
+            last_sent_at=timezone.now(),
+            last_sent_template_id=template_choice.choice_id,
+            execution_flow=category.slug,
+        )
+        logger.info(f"[API] Created EmailExecution {execution.execution_id} for {restaurant_email[0]}")
+
+        countdown_seconds = 24*60*60  # for production use 24*60*60.
+        send_restaurant_email_step.apply_async(args=[execution_id, 2], countdown=countdown_seconds)
+        logger.info(f"[API] Step 2 scheduled for execution_id={execution.execution_id} in {countdown_seconds}s")
+
+        return Response(
+            {"message": "Our team will check & verify the restaurant/experience"},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class CampaignAPIView(APIView):
@@ -485,3 +610,107 @@ class CampaignAPIView(APIView):
             return Response({"redirect_to": campaign.redirect_to}, status=status.HTTP_200_OK)
         except Campaign.DoesNotExist:
             return Response({"error": "Campaigns not available"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GiveOfferAPIView(APIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = GiveOfferSerializer(data=request.data)
+        if serializer.is_valid():
+            give_offer = serializer.save()
+
+            execution_id = request.data.get('execution_id')
+            is_opened = request.data.get('is_opened')
+
+            # check if is_opened is true in payload
+            if is_opened and execution_id:
+                execution = EmailExecution.objects.filter(
+                    execution_id=execution_id, is_active=True
+                ).first()
+                if execution:
+                    execution.is_opened = True
+                    execution.is_active = False
+                    execution.save()
+
+                    try:
+                        template_choice = EmailTemplateChoice.objects.filter(
+                            category__slug="negative-review-flow",
+                            choice_id=4
+                        ).first()
+                        if template_choice:
+                            restaurant = Restaurant.objects.filter(
+                                email=execution.recipient_email
+                            ).first()
+
+                            if restaurant:
+                                context_data = {
+                                    "business_name": execution.recipient_name,
+                                    **email_dict,
+                                }
+                                send_db_email(
+                                    [restaurant.email],
+                                    template_choice,
+                                    context_data,
+                                    execution.execution_id,
+                                )
+                                logger.info(
+                                    f"[GiveOffer] 4a email sent to {restaurant.email} "
+                                    f"for execution_id={execution.execution_id}"
+                                )
+                    except Exception as e:
+                        logger.error(f"[GiveOffer] Failed to send 4a email: {e}")
+
+            try:
+                if give_offer.review and give_offer.review.restaurant:
+                    review = give_offer.review
+                    restaurant = give_offer.review.restaurant
+                    reviewer_name = review.posted_by.name
+
+                    offer_details = give_offer.get_goodwill_offer_display() or ""
+
+                    if give_offer.goodwill_offer == "custom_offer" and give_offer.custom_offer:
+                        offer_details = f"{offer_details}: {give_offer.custom_offer}"
+
+                    context_data = {
+                        "business_name": strip_tags(restaurant.name),  # restaurant name
+                        "review_id": review.id,  # review id
+                        "reviewer_name": reviewer_name,  # reviewer name
+                        "rating": f"{review.rating:.1f}",  # review rating
+                        "review_date": localtime(review.created_at).strftime(
+                            "%Y-%m-%d"
+                        ),  # review date
+                        "message": give_offer.message,
+                        "offer_details": offer_details,
+                        **email_dict
+                    }
+                    template_choice = EmailTemplateChoice.objects.filter(
+                        category__slug="general-flow",
+                        choice_id=2
+                    ).first()
+
+                    if template_choice:
+                        send_db_email(
+                            [settings.EMAIL_WOO_ME_NOW_REVIEW_EMAIL],
+                            template_choice,
+                            context_data,
+                            execution_id=None,
+                            from_email=settings.EMAIL_WOO_ME_NOW_NO_REPLY_EMAIL,
+                        )
+                        logger.info(
+                            f"[GiveOffer] Review email sent for review_id={review.id} "
+                            f"to {settings.EMAIL_WOO_ME_NOW_REVIEW_EMAIL}"
+                        )
+            except Exception as e:
+                logger.error(f"[GiveOffer] Failed to send review email: {e}")
+
+            return Response(
+                {
+                    "message": "Offer Created Successfully",
+                    "offer": GiveOfferSerializer(give_offer).data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
