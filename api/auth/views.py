@@ -5,6 +5,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django.utils.timezone import now, timedelta
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -19,8 +20,9 @@ from api.auth.serializers import UserSerializer
 from api.helper import password_checker
 from apps.main.helper import email_dict
 from apps.main.models import OTPVerification
+from apps.snippet.models import EmailCategory, EmailTemplateChoice, EmailTemplate
 from apps.users.models import User
-from send_email import send_email
+from send_custom_email import send_db_email
 
 
 class GoogleLoginView(SocialLoginView):
@@ -100,11 +102,20 @@ class SignupAPIView(APIView):
         otp_code = str(random.randint(100000, 999999))
         OTPVerification.objects.create(user=user, otp=otp_code, expires_at=now() + timedelta(minutes=10))
 
+        category = get_object_or_404(EmailCategory, slug='security-flow')
+        template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=1)
+        email_template = EmailTemplate.objects.filter(template=template_choice).first()
+        if not email_template:
+            return Response(
+                {"error": f"No email template found for choice {template_choice.label}"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         e = [email]
-        body = 'emails/confirmation.html'
+        # body = 'emails/confirmation.html'
         context = dict(username=user.first_name, otp=otp_code, **email_dict)
-        subject_context = dict(subject='Confirm your email address.')
-        send_email(e, body, context, subject_context)
+        # subject_context = dict(subject='Confirm your email address.')
+        # send_email(e, body, context, subject_context)
+        send_db_email(e, template_choice, context)
 
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
@@ -163,11 +174,20 @@ class VerifyOTPAPIView(APIView):
 
             if otp_entry.otp == otp_code and otp_entry.is_valid():
                 if not user.is_active:
+                    category = get_object_or_404(EmailCategory, slug='user-onboarding-flow')
+                    template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=1)
+                    email_template = EmailTemplate.objects.filter(template=template_choice).first()
+                    if not email_template:
+                        return Response(
+                            {"error": f"No email template found for choice {template_choice.label}"},
+                            status=status.HTTP_404_NOT_FOUND,
+                        )
                     e = [email]
-                    body = 'emails/welcome-for-users.html'
+                    # body = 'emails/welcome-for-users.html'
                     context = dict(username=user.first_name, **email_dict)
-                    subject_context = dict(subject='Welcome to WooMeNow!')
-                    send_email(e, body, context, subject_context)
+                    # subject_context = dict(subject='Welcome to WooMeNow!')
+                    # send_email(e, body, context, subject_context)
+                    send_db_email(e, template_choice, context)
                 user.is_active = True
                 user.save()
                 otp_entry.delete()  # OTP used, remove entry
@@ -191,12 +211,20 @@ class ResendOTPAPIView(APIView):
             otp_entry.otp = otp
             otp_entry.expires_at = now() + timedelta(minutes=10)
             otp_entry.save()
-
+            category = get_object_or_404(EmailCategory, slug='security-flow')
+            template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=2)
+            email_template = EmailTemplate.objects.filter(template=template_choice).first()
+            if not email_template:
+                return Response(
+                    {"error": f"No email template found for choice {template_choice.label}"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
             e = [email]
-            body = 'emails/resend.html'
+            # body = 'emails/resend.html'
             context = dict(username=user.first_name, otp=otp, **email_dict)
-            subject_context = dict(subject='Your New Verification Code.')
-            send_email(e, body, context, subject_context)
+            # subject_context = dict(subject='Your New Verification Code.')
+            # send_email(e, body, context, subject_context)
+            send_db_email(e, template_choice, context)
 
             return Response({"message": "OTP resent"}, status=status.HTTP_200_OK)
 
@@ -215,11 +243,21 @@ class ResetPasswordAPIView(APIView):
             otp_entry.expires_at = now() + timedelta(minutes=10)
             otp_entry.save()
 
+            category = get_object_or_404(EmailCategory, slug='security-flow')
+            template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=3)
+            email_template = EmailTemplate.objects.filter(template=template_choice).first()
+            if not email_template:
+                return Response(
+                    {"error": f"No email template found for choice {template_choice.label}"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
             e = [email]
-            body = 'emails/reset.html'
+            # body = 'emails/reset.html'
             context = dict(username=user.first_name, otp=otp, **email_dict)
-            subject_context = dict(subject='Reset your password.')
-            send_email(e, body, context, subject_context)
+            # subject_context = dict(subject='Reset your password.')
+            # send_email(e, body, context, subject_context)
+            send_db_email(e, template_choice, context)
 
             return Response({"message": "OTP resent"}, status=status.HTTP_200_OK)
 
