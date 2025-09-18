@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from api.serializers import StreamFieldBlockSerializer, get_text
 from apps.main.models import Invitation, Review, Influencer
-from apps.snippet.models import IPLocation, Contact, JoinTheWooForm
+from apps.snippet.models import IPLocation, Contact, JoinTheWooForm, GiveOffer
 
 
 class IPLocationSerializer(serializers.ModelSerializer):
@@ -28,7 +28,9 @@ class InvitationSerializer(serializers.ModelSerializer):
         fields = ['id', 'restaurant_name', 'created_at', 'location', 'invite_to', 'type', 'google_link']
 
     def create(self, validated_data):
-        invited_by = Influencer.objects.filter(id=self.initial_data.get('influ_id')).first()
+        recommend_by = self.initial_data.get('recommend_by', {})
+        influencer_id = recommend_by.get('value') if isinstance(recommend_by, dict) else None
+        invited_by = Influencer.objects.filter(id=influencer_id).first()
         invitation = Invitation(**validated_data)
         if invited_by:
             invitation.invited_by = invited_by
@@ -98,3 +100,16 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ['id', 'content', 'rating', 'is_verified', 'is_published', 'posted_by', 'bill', 'images', 'restaurant',
                   'more_info', 'created_at']
+
+
+class GiveOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GiveOffer
+        fields = ["id", "review", "message", "goodwill_offer", "custom_offer", "created_at"]
+
+    def validate(self, data):
+        if data.get('goodwill_offer') == 'custom_offer' and not data.get('custom_offer'):
+            raise serializers.ValidationError(
+                {"custom_offer": "Custom offer text is required when goodwill_choice is 'custom'."}
+            )
+        return data
