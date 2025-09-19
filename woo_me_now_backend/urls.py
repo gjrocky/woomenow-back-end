@@ -10,7 +10,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-from apps.main.views import SendEmailAdminView
+from apps.main.views import SendEmailAdminView, track_email_link
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
@@ -32,6 +32,7 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    path("track-email/<str:execution_id>/", track_email_link, name="track_email_link"),
 ]
 
 if settings.DEBUG:
