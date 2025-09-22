@@ -2,9 +2,16 @@ from storages.backends.s3boto3 import S3Boto3Storage, S3StaticStorage
 
 
 class MediaStorage(S3Boto3Storage):
-    location = '2023/media'
+    location = 'projects/woo_me_now/2025/media'
     file_overwrite = False
+    default_acl = "private"
+    custom_domain = False
+
+    @property
+    def querystring_auth(self):
+        return True
 
 
 class StaticStorage(S3StaticStorage):
-    location = '2023/static'
+    location = 'projects/woo_me_now/2025/static'
+    default_acl = "public-read"  # Ensure files are public

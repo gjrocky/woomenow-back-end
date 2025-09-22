@@ -196,10 +196,18 @@ if AWS_STORAGE_BUCKET_NAME:
         "default": {"BACKEND": "woo_me_now_backend.storage_backends.MediaStorage"},
     }
 
-    AWS_S3_REGION_NAME = env.str("AWS_S3_REGION_NAME")
+    AWS_REGION_NAME = env.str('AWS_REGION_NAME')
 
-    AWS_S3_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
-    AWS_S3_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+    AWS_ACCESS_KEY_ID = env.str('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env.str('AWS_SECRET_ACCESS_KEY')
+
+    AWS_S3_ENDPOINT_URL = env.str('AWS_S3_ENDPOINT_URL')
+    AWS_S3_CUSTOM_DOMAIN = env.str('AWS_S3_CUSTOM_DOMAIN')
+    STATIC_URL = f"{AWS_S3_ENDPOINT_URL}/static/"
+    MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/"
+    MEDIA_ROOT = ''
+    AWS_DEFAULT_ACL = 'public-read'
+
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "woo_me_now_backend"
@@ -226,20 +234,41 @@ SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_NAME = "sessionid"
 
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console_handler": {
-            "class": "logging.StreamHandler",
+    'version': 1,  # Required version key
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s %(name)-20s %(levelname)-8s %(message)s'
         },
     },
-    "loggers": {
-        # More info on '' (unnamed) loggers at the end of this comment
-        "": {
-            "level": "INFO",
-            "handlers": ["console_handler"],
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
         },
     },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'apps': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'django.request': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'django.server': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    }
 }
 
 DISCORD_WEBHOOK_URL = env.str("DISCORD_WEBHOOK_URL", "")
