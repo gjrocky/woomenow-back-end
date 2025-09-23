@@ -666,7 +666,7 @@ class GiveOfferAPIView(APIView):
                 if give_offer.review and give_offer.review.restaurant:
                     review = give_offer.review
                     restaurant = give_offer.review.restaurant
-                    reviewer_name = review.posted_by.name
+                    reviewer_name = f"{review.posted_by.first_name} {review.posted_by.last_name}"
 
                     offer_details = give_offer.get_goodwill_offer_display() or ""
 
