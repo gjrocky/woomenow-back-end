@@ -259,14 +259,18 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         return r_by
 
     def get_restaurant_image(self, obj):
-        # if not obj.restaurant_images:
-        #     return ''
-        # return obj.restaurant_images[0].value.file.url
+        """
+        Returns the first restaurant image URL if exists.
+        Uses .stream_data to avoid full block evaluation in Python.
+        """
         try:
-            first = obj.restaurant_images[0]
-            return getattr(getattr(first.value, "file", None), "url", "")
-        except Exception:
+            # Access the StreamField as JSON
+            first_block = obj.restaurant_images.stream_data[0]  # gets first block dict
+            if first_block['type'] == 'image' and first_block.get('value'):
+                return first_block['value'].file.url
+        except (IndexError, AttributeError):
             return ""
+        return ""
 
     class Meta:
         model = Restaurant

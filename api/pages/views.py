@@ -167,7 +167,6 @@ class RestaurantListingPageAPIView(ListAPIView):
             .prefetch_related(
                 "categories",
                 "restaurant_images__value__file",
-                "recommended_by__influencer__profile__file",
             )
             .annotate(
                 no_of_rating=Count("reviews", filter=Q(reviews__is_published=True)),
