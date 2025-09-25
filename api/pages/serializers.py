@@ -184,16 +184,16 @@ class InfluencerListSerializer(serializers.ModelSerializer):
         # return [{"id": res.id, "name": get_text(res.name), "image": res.restaurant_images[0].value.file.url,
         #          'city': res.city.name, 'state': res.city.state.ISO_code, "slug": res.slug} for res in
         #         obj.user.Restaurants.all()[:6]]
-        res_list = getattr(obj, 'prefetched_restaurants', [])
+        res_list = getattr(obj.user, 'prefetched_restaurants', [])
         result = []
         for res in res_list[:6]:
-            image_url = ""
+            image_url = None
             try:
-                # Only parse first block to avoid overhead
-                first_block = res.restaurant_images.stream_data[0]
-                if first_block['type'] == 'image' and first_block.get('value'):
-                    image_url = first_block['value'].file.url
-            except (IndexError, AttributeError):
+                # Get first image block
+                first_block = res.restaurant_images[0]
+                if first_block.block_type == 'image' and first_block.value:
+                    image_url = first_block.value.file.url
+            except (IndexError, AttributeError, TypeError):
                 pass
 
             result.append({
@@ -224,7 +224,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
     city = serializers.SerializerMethodField(source='city')
     categories = serializers.SerializerMethodField(source='categories')
     recommended_by = serializers.SerializerMethodField(source='recommended_by')
-    restaurant_image = serializers.SerializerMethodField(source='restaurant_images')
+    restaurant_image = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField(source='short_description')
     # no_of_rating = serializers.SerializerMethodField()
     no_of_rating = serializers.IntegerField(read_only=True)
@@ -265,35 +265,39 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         #     r_by.append(r_obj)
         # return r_by
         r_by = []
-        for r in obj.recommended_by.all():
+
+        for user in obj.recommended_by.all():
             influencer = None
-            try:
-                inf = r.influencer
-                if inf:
-                    image = getattr(getattr(inf.profile, "file", None), "url", None)
-                    influencer = {"id": inf.id, "name": inf.name, "image": image}
-            except Influencer.DoesNotExist:
-                influencer = None
+            inf = getattr(user, 'influencer', None)  # Get influencer if exists
+            if inf:
+                influencer = {
+                    "id": inf.id,
+                    "name": inf.name,
+                    "image": getattr(getattr(inf, "profile", None), "file", None) and inf.profile.file.url
+                }
 
             r_by.append({
                 "influencer": influencer,
-                "user": {"id": r.id, "name": r.first_name},
+                "user": {"id": user.id, "name": f"{user.first_name} {user.last_name}".strip() or user.email},
             })
+
         return r_by
 
     def get_restaurant_image(self, obj):
         """
         Returns the first restaurant image URL if exists.
-        Uses .stream_data to avoid full block evaluation in Python.
+        Properly resolves ImageChooserBlock from StreamField.
         """
         try:
-            # Access the StreamField as JSON
-            first_block = obj.restaurant_images.stream_data[0]  # gets first block dict
-            if first_block['type'] == 'image' and first_block.get('value'):
-                return first_block['value'].file.url
-        except (IndexError, AttributeError):
-            return ""
-        return ""
+            # Access the StreamField in its *normal* resolved form
+            for block in obj.restaurant_images:
+                if block.block_type == 'image' and block.value:
+                    image = block.value  # this is now a proper Image object
+                    if image and hasattr(image, "file"):
+                        return image.file.url
+            return None
+        except Exception:
+            return None
 
     class Meta:
         model = Restaurant

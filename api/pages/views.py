@@ -25,7 +25,7 @@ from apps.main.choices import BudgetType
 from apps.main.helper import email_dict
 from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, Invitation, \
     RestaurantListing, Franchise, HomePage, TermsOfService, PrivacyPolicy, ReviewSystem, DiamondStatus
-from apps.snippet.models import City, Category, Ambience, GiveOffer
+from apps.snippet.models import City, Category, Ambience, GiveOffer, CustomUser
 from send_email import send_email
 
 
@@ -114,7 +114,11 @@ class InfluencerListingPageAPIView(ListAPIView):
             restaurants_qs = restaurants_qs.filter(type=type_filter)
 
         queryset = queryset.prefetch_related(
-            Prefetch('user__Restaurants', queryset=restaurants_qs, to_attr='prefetched_restaurants')
+            Prefetch(
+                'user__Restaurants',
+                queryset=restaurants_qs,
+                to_attr='prefetched_restaurants'
+            )
         )
 
         if city:
@@ -167,15 +171,12 @@ class RestaurantListingPageAPIView(ListAPIView):
         city = self.request.query_params.get("city")
         q = self.request.query_params.get("q")
         is_featured = self.request.query_params.get("is_featured")
-
+        users_with_influencer = Prefetch('recommended_by', queryset=CustomUser.objects.select_related('influencer__profile'))
         # queryset = self.queryset.all()
         queryset = (
             self.queryset
             .select_related("city")
-            .prefetch_related(
-                "categories",
-                "recommended_by__influencer__profile__file",
-            )
+            .prefetch_related("categories", users_with_influencer)
             .annotate(
                 no_of_rating=Count("reviews", filter=Q(reviews__is_published=True)),
             )
