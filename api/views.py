@@ -48,16 +48,25 @@ class CategoryAPIView(ListAPIView):
 
     def get_queryset(self):
         categories = Category.objects.all()
+
+        # Prefetch parent category and image to avoid extra queries
+        categories = categories.select_related('parent_category', 'image')
+
         city_slug = self.request.query_params.get('city')
         category_type = self.request.query_params.get('type')
+
         q = Q()
         if city_slug:
             q &= Q(Restaurants__city__slug=city_slug)
         else:
             city = City.objects.first()
-            q &= Q(Restaurants__city__slug=city.slug)
+            if city:
+                q &= Q(Restaurants__city__slug=city.slug)
+
         if category_type:
             q &= Q(Restaurants__type=category_type)
+
+        # Only distinct categories after joins
         categories = categories.filter(q).distinct()
 
         return categories

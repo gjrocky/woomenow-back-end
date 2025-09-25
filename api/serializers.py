@@ -15,15 +15,17 @@ from apps.users.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField(source="image")
+    image = serializers.SerializerMethodField()
     parent_category = serializers.SerializerMethodField()
 
     def get_parent_category(self, obj):
+        # Already prefetched via select_related
         return obj.parent_category.name if obj.parent_category else None
 
     def get_image(self, obj):
+        # Already prefetched via select_related
         try:
-            return obj.image.file.url
+            return obj.image.file.url if obj.image else None
         except:
             return None
 
