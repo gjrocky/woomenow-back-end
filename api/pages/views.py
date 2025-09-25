@@ -1,7 +1,7 @@
 import json
 import uuid
 
-from django.db.models import Q, Count, Exists, OuterRef
+from django.db.models import Q, Count, Exists, OuterRef, Prefetch
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import (
@@ -103,10 +103,20 @@ class InfluencerListingPageAPIView(ListAPIView):
         city = self.request.query_params.get("city")
         state = self.request.query_params.get("state")
         city_wise = self.request.query_params.get("city-wise") == 'true'
-        type = self.request.query_params.get("type")
+        type_filter = self.request.query_params.get("type")
         q = self.request.query_params.get("q")
 
-        queryset = self.queryset.all()
+        queryset = self.queryset.all().select_related('profile', 'city', 'city__state')
+
+        # Prefetch related restaurants efficiently
+        restaurants_qs = Restaurant.objects.select_related('city', 'city__state')
+        if type_filter:
+            restaurants_qs = restaurants_qs.filter(type=type_filter)
+
+        queryset = queryset.prefetch_related(
+            Prefetch('user__Restaurants', queryset=restaurants_qs, to_attr='prefetched_restaurants')
+        )
+
         if city:
             queryset = queryset.filter(city__slug=city)
         elif city_wise:
@@ -114,11 +124,9 @@ class InfluencerListingPageAPIView(ListAPIView):
         elif state:
             queryset = queryset.filter(city__state__slug=state)
 
-        if type:
-            queryset = queryset.filter(user__Restaurants__type=type)
-
         if q:
             queryset = queryset.filter(name__icontains=q)
+
         return queryset.distinct()
 
     def list(self, request, *args, **kwargs):

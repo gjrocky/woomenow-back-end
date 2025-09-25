@@ -181,15 +181,38 @@ class InfluencerListSerializer(serializers.ModelSerializer):
     recommendations = serializers.SerializerMethodField()
 
     def get_recommendations(self, obj):
-        return [{"id": res.id, "name": get_text(res.name), "image": res.restaurant_images[0].value.file.url,
-                 'city': res.city.name, 'state': res.city.state.ISO_code, "slug": res.slug} for res in
-                obj.user.Restaurants.all()[:6]]
+        # return [{"id": res.id, "name": get_text(res.name), "image": res.restaurant_images[0].value.file.url,
+        #          'city': res.city.name, 'state': res.city.state.ISO_code, "slug": res.slug} for res in
+        #         obj.user.Restaurants.all()[:6]]
+        res_list = getattr(obj, 'prefetched_restaurants', [])
+        result = []
+        for res in res_list[:6]:
+            image_url = ""
+            try:
+                # Only parse first block to avoid overhead
+                first_block = res.restaurant_images.stream_data[0]
+                if first_block['type'] == 'image' and first_block.get('value'):
+                    image_url = first_block['value'].file.url
+            except (IndexError, AttributeError):
+                pass
+
+            result.append({
+                "id": res.id,
+                "name": get_text(res.name),
+                "image": image_url,
+                "city": res.city.name if res.city else None,
+                "state": res.city.state.ISO_code if res.city and res.city.state else None,
+                "slug": res.slug,
+            })
+
+        return result
 
     def get_profile_image(self, obj):
-        try:
-            return obj.profile.file.url
-        except:
-            return None
+        # try:
+        #     return obj.profile.file.url
+        # except:
+        #     return None
+        return getattr(getattr(obj.profile, 'file', None), 'url', None)
 
     class Meta:
         model = Influencer
