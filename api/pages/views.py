@@ -178,7 +178,8 @@ class RestaurantListingPageAPIView(ListAPIView):
             if slug:
                 # city_id = self.queryset.get(slug=slug).city.id
                 # queryset = self.queryset.filter(city_id=city_id).exclude(slug=slug)
-                queryset = queryset.filter(city__restaurants__slug=slug).exclude(slug=slug)
+                restaurant = Restaurant.objects.get(slug=slug)
+                queryset = queryset.filter(city=restaurant.city).exclude(slug=slug)
             elif city:
                 queryset = self.queryset.filter(city__slug=city)
             else:
