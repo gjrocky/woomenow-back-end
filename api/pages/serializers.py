@@ -203,7 +203,8 @@ class RestaurantListSerializer(serializers.ModelSerializer):
     recommended_by = serializers.SerializerMethodField(source='recommended_by')
     restaurant_image = serializers.SerializerMethodField(source='restaurant_images')
     description = serializers.SerializerMethodField(source='short_description')
-    no_of_rating = serializers.SerializerMethodField()
+    # no_of_rating = serializers.SerializerMethodField()
+    no_of_rating = serializers.IntegerField(read_only=True)
 
     def get_no_of_rating(self, obj):
         return obj.reviews.filter(is_published=True).count()
@@ -212,37 +213,60 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         return city(obj)
 
     def get_description(self, obj):
-        return get_text(obj.short_description)
+        # return get_text(obj.short_description)
+        return get_text(getattr(obj, "short_description", ""))
 
     def get_categories(self, obj):
-        categories = obj.categories.all().values('name', 'id')
-        if not categories:
-            return []
-        return categories
+        # categories = obj.categories.all().values('name', 'id')
+        # if not categories:
+        #     return []
+        # return categories
+        return list(obj.categories.values('name', 'id'))
 
     def get_recommended_by(self, obj):
-        recommended_by = obj.recommended_by.all().order_by('-influencer')
-        if not recommended_by:
-            return []
+        # recommended_by = obj.recommended_by.all().order_by('-influencer')
+        # if not recommended_by:
+        #     return []
+        # r_by = []
+        # for r in recommended_by:
+        #     try:
+        #         influencer = dict(id=r.influencer.id, name=r.influencer.name,
+        #                           image=r.influencer.profile.file.url)
+        #     except:
+        #         influencer = None
+        #
+        #     r_obj = dict(
+        #         influencer=influencer,
+        #         user=dict(id=r.id, name=r.first_name),
+        #     )
+        #     r_by.append(r_obj)
+        # return r_by
         r_by = []
-        for r in recommended_by:
+        for r in obj.recommended_by.all():
+            influencer = None
             try:
-                influencer = dict(id=r.influencer.id, name=r.influencer.name,
-                                  image=r.influencer.profile.file.url)
-            except:
+                inf = r.influencer
+                if inf:
+                    image = getattr(getattr(inf.profile, "file", None), "url", None)
+                    influencer = {"id": inf.id, "name": inf.name, "image": image}
+            except Influencer.DoesNotExist:
                 influencer = None
 
-            r_obj = dict(
-                influencer=influencer,
-                user=dict(id=r.id, name=r.first_name),
-            )
-            r_by.append(r_obj)
+            r_by.append({
+                "influencer": influencer,
+                "user": {"id": r.id, "name": r.first_name},
+            })
         return r_by
 
     def get_restaurant_image(self, obj):
-        if not obj.restaurant_images:
-            return ''
-        return obj.restaurant_images[0].value.file.url
+        # if not obj.restaurant_images:
+        #     return ''
+        # return obj.restaurant_images[0].value.file.url
+        try:
+            first = obj.restaurant_images[0]
+            return getattr(getattr(first.value, "file", None), "url", "")
+        except Exception:
+            return ""
 
     class Meta:
         model = Restaurant

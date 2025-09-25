@@ -160,12 +160,25 @@ class RestaurantListingPageAPIView(ListAPIView):
         q = self.request.query_params.get("q")
         is_featured = self.request.query_params.get("is_featured")
 
-        queryset = self.queryset.all()
+        # queryset = self.queryset.all()
+        queryset = (
+            self.queryset
+            .select_related("city")
+            .prefetch_related(
+                "categories",
+                "restaurant_images__value__file",
+                "recommended_by__influencer__profile__file",
+            )
+            .annotate(
+                no_of_rating=Count("reviews", filter=Q(reviews__is_published=True)),
+            )
+        )
 
         if not is_influencer:
             if slug:
-                city_id = self.queryset.get(slug=slug).city.id
-                queryset = self.queryset.filter(city_id=city_id).exclude(slug=slug)
+                # city_id = self.queryset.get(slug=slug).city.id
+                # queryset = self.queryset.filter(city_id=city_id).exclude(slug=slug)
+                queryset = queryset.filter(city__restaurants__slug=slug).exclude(slug=slug)
             elif city:
                 queryset = self.queryset.filter(city__slug=city)
             else:
@@ -214,15 +227,20 @@ class RestaurantListingPageAPIView(ListAPIView):
         # Category intersection (must contain *all* selected categories)
         if categories:
             categories = list(set(categories))
+            # queryset = (
+            #     queryset.filter(categories__id__in=categories)
+            #     .annotate(
+            #         match_count=Count(
+            #             'categories__id',
+            #             filter=Q(categories__id__in=categories),
+            #             distinct=True
+            #         )
+            #     )
+            #     .filter(match_count=len(categories))
+            # )
             queryset = (
                 queryset.filter(categories__id__in=categories)
-                .annotate(
-                    match_count=Count(
-                        'categories__id',
-                        filter=Q(categories__id__in=categories),
-                        distinct=True
-                    )
-                )
+                .annotate(match_count=Count("categories__id", filter=Q(categories__id__in=categories)))
                 .filter(match_count=len(categories))
             )
 
@@ -244,10 +262,15 @@ class RestaurantListingPageAPIView(ListAPIView):
         facets = {}
 
         # Categories
+        # category_counts = (
+        #     Restaurant.objects.filter(id__in=queryset.values("id"))  # restrict to same restaurants
+        #     .values("categories__id", "categories__name")
+        #     .annotate(count=Count("id", distinct=True))
+        #     .order_by("categories__id")
+        # )
         category_counts = (
-            Restaurant.objects.filter(id__in=queryset.values("id"))  # restrict to same restaurants
-            .values("categories__id", "categories__name")
-            .annotate(count=Count("id", distinct=True))
+            queryset.values("categories__id", "categories__name")
+            .annotate(count=Count("id"))
             .order_by("categories__id")
         )
         facets["categories"] = [
@@ -256,10 +279,15 @@ class RestaurantListingPageAPIView(ListAPIView):
         ]
 
         # Budget
+        # budget_counts = (
+        #     Restaurant.objects.filter(id__in=queryset.values("id"))  # restrict to same restaurants
+        #     .values("budget_friendly")
+        #     .annotate(count=Count("id", distinct=True))
+        #     .order_by("budget_friendly")
+        # )
         budget_counts = (
-            Restaurant.objects.filter(id__in=queryset.values("id"))  # restrict to same restaurants
-            .values("budget_friendly")
-            .annotate(count=Count("id", distinct=True))
+            queryset.values("budget_friendly")
+            .annotate(count=Count("id"))
             .order_by("budget_friendly")
         )
         facets["budget"] = [
@@ -268,9 +296,14 @@ class RestaurantListingPageAPIView(ListAPIView):
         ]
 
         # Influencers
+        # influencer_counts = (
+        #     Restaurant.objects.filter(id__in=queryset.values("id"))
+        #     .values("recommended_by__influencer__id", "recommended_by__influencer__name")
+        #     .annotate(count=Count("recommended_by", filter=Q(recommended_by__influencer__id__isnull=False)))
+        #     .order_by("-count")
+        # )
         influencer_counts = (
-            Restaurant.objects.filter(id__in=queryset.values("id"))
-            .values("recommended_by__influencer__id", "recommended_by__influencer__name")
+            queryset.values("recommended_by__influencer__id", "recommended_by__influencer__name")
             .annotate(count=Count("recommended_by", filter=Q(recommended_by__influencer__id__isnull=False)))
             .order_by("-count")
         )
@@ -325,7 +358,6 @@ class RestaurantListingPageAPIView(ListAPIView):
             "total_restaurant": full_queryset.count(),
             "facets": facets,
         }, status=status.HTTP_200_OK)
-
         return x
 
 
