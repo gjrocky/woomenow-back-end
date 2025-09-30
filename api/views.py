@@ -1,7 +1,9 @@
+import hashlib
 import json
 
 from bs4 import BeautifulSoup
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Q
 from pywebpush import webpush, WebPushException
 from rest_framework import permissions, status
@@ -70,6 +72,29 @@ class CategoryAPIView(ListAPIView):
         categories = categories.filter(q).distinct()
 
         return categories
+
+    def list(self, request, *args, **kwargs):
+        # Generate cache key based on query parameters
+        query_params = request.query_params.dict()
+        for key in request.query_params:
+            values = request.query_params.getlist(key)
+            if len(values) > 1:
+                query_params[key] = values
+        cache_key = "category_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
+
+        # Check if cached response exists
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
+        # Otherwise, generate queryset & serialize
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        response_data = serializer.data
+
+        cache.set(cache_key, response_data, timeout=86400)
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class StateAPIView(ListAPIView):

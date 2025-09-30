@@ -1,6 +1,8 @@
+import hashlib
 import json
 import uuid
 
+from django.core.cache import cache
 from django.db.models import Q, Count, Exists, OuterRef, Prefetch
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -134,6 +136,13 @@ class InfluencerListingPageAPIView(ListAPIView):
         return queryset.distinct()
 
     def list(self, request, *args, **kwargs):
+        query_params = request.query_params.dict()
+        cache_key = "influencer_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
+
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=200)
+
         is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
         limit = self.request.query_params.get("limit")
         queryset = self.get_queryset().all()
@@ -153,6 +162,9 @@ class InfluencerListingPageAPIView(ListAPIView):
             response_data = serializer.data[:int(limit)]
         else:
             response_data = serializer.data
+
+        cache.set(cache_key, response_data, timeout=86400)
+
         return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -171,7 +183,8 @@ class RestaurantListingPageAPIView(ListAPIView):
         city = self.request.query_params.get("city")
         q = self.request.query_params.get("q")
         is_featured = self.request.query_params.get("is_featured")
-        users_with_influencer = Prefetch('recommended_by', queryset=CustomUser.objects.select_related('influencer__profile'))
+        users_with_influencer = Prefetch('recommended_by',
+                                         queryset=CustomUser.objects.select_related('influencer__profile'))
         # queryset = self.queryset.all()
         queryset = (
             self.queryset
@@ -342,6 +355,16 @@ class RestaurantListingPageAPIView(ListAPIView):
         return facets
 
     def list(self, request, *args, **kwargs):
+        query_params = request.query_params.dict()
+        for key in request.query_params:
+            values = request.query_params.getlist(key)
+            if len(values) > 1:
+                query_params[key] = values
+        cache_key = "restaurant_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
+
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=200)
         is_paginate = request.query_params.get("is_pagination", "false") == "true"
         limit = request.query_params.get("limit")
 
@@ -362,12 +385,13 @@ class RestaurantListingPageAPIView(ListAPIView):
 
         facets = self.get_facets(full_queryset)
 
-        x = Response({
+        response_data = {
             "results": results if not is_paginate else results.get("results"),
             "total_restaurant": full_queryset.count(),
             "facets": facets,
-        }, status=status.HTTP_200_OK)
-        return x
+        }
+        cache.set(cache_key, response_data, timeout=86400)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class RestaurantPageAPIView(APIView):

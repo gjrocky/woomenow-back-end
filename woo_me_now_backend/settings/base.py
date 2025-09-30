@@ -383,3 +383,15 @@ VAPID_PRIVATE_KEY = env.str("VAPID_PRIVATE_KEY", default='')
 
 CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", default='')
 CELERY_RESULT_BACKEND = env.str("CELERY_RESULT_BACKEND", default='')
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env.str("REDIS_URL", default="redis://localhost:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "TIMEOUT": 60
+    }
+}
