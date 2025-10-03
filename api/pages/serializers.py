@@ -30,6 +30,7 @@ class FAQsSerializer(serializers.ModelSerializer):
 
 class BusinessSerializer(serializers.ModelSerializer):
     key_point = StreamFieldBlockSerializer()
+    how_it_work_steps = StreamFieldBlockSerializer()
     why_choose_us_cards = StreamFieldBlockSerializer()
     win_plan_cards = StreamFieldBlockSerializer()
     faq = StreamFieldBlockSerializer()
@@ -69,6 +70,8 @@ class BusinessSerializer(serializers.ModelSerializer):
             "video_1",
             "video_2",
             "video_3",
+            "how_it_work_heading",
+            "how_it_work_steps",
             "choose_heading",
             "choose_description",
             "choose_image",

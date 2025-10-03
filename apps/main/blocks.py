@@ -73,3 +73,7 @@ class DiamondStatusBlock(blocks.StructBlock):
 class ReviewSystemBlock(blocks.StructBlock):
     title = blocks.RichTextBlock(required=True, help_text='Title')
     description = blocks.RichTextBlock(required=True, help_text='Description')
+
+class HowItWorkSteps(blocks.StructBlock):
+    title = blocks.RichTextBlock(required=True, help_text='Title')
+    description = blocks.RichTextBlock(required=True, help_text='Description')

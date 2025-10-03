@@ -18,7 +18,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
 from apps.main.blocks import FAQS, KeyPoint, WhyChooseUsCards, WinPlanCards, OurMissionVision, PricingCard, \
-    ReadyToElevateBlock, TermsOfServiceBlock, PrivacyPolicyBlock, DiamondStatusBlock, ReviewSystemBlock
+    ReadyToElevateBlock, TermsOfServiceBlock, PrivacyPolicyBlock, DiamondStatusBlock, ReviewSystemBlock, HowItWorkSteps
 from apps.main.choices import RestaurantType, BudgetType
 from apps.main.helper import email_dict
 from apps.snippet.models import BaseModel, EmailCategory
@@ -100,7 +100,8 @@ class Business(Page):
         max_num=3,
         use_json_field=True,
     )
-
+    how_it_work_heading = RichTextField(_("Heading"), blank=True, null=True)
+    how_it_work_steps = StreamField([("how_it_work_steps", HowItWorkSteps())], min_num=1, use_json_field=True)
     choose_heading = RichTextField(_("Heading"), blank=True, null=True)
     choose_description = RichTextField(_("Description"), blank=True, null=True)
     choose_image = models.ForeignKey(
@@ -150,6 +151,14 @@ class Business(Page):
                 FieldPanel("key_point"),
             ],
             heading="Hero Section",
+            classname="collapsible collapsed",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("how_it_work_heading"),
+                FieldPanel("how_it_work_steps"),
+            ],
+            heading="How It Works Section",
             classname="collapsible collapsed",
         ),
         MultiFieldPanel(
