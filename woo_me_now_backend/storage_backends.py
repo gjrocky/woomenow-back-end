@@ -1,7 +1,7 @@
 from storages.backends.s3boto3 import S3Boto3Storage, S3StaticStorage
 
 
-class MediaStorage(S3StaticStorage):
+class MediaStorage(S3Boto3Storage):
     location = 'projects/woo_me_now/2025/media'
     file_overwrite = False
     default_acl = "public-read"  # Ensure files are public
