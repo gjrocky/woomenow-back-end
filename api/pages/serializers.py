@@ -10,7 +10,7 @@ from apps.main.models import (
     FAQs, Business, About, Pricing, JoinTheWoo, Influencer, Restaurant, Review, RestaurantMedia, HomePage,
     TermsOfService, PrivacyPolicy, DiamondStatus, ReviewSystem,
 )
-from apps.snippet.models import Category, Ambience, GiveOffer
+from apps.snippet.models import Category, Ambience
 
 
 class HomePageSerializer(serializers.ModelSerializer):
@@ -72,6 +72,11 @@ class BusinessSerializer(serializers.ModelSerializer):
             "video_3",
             "how_it_work_heading",
             "how_it_work_steps",
+            "plan_video_shoot_heading",
+            "plan_video_shoot_description",
+            "book_call_cta_text",
+            "book_call_cta_link",
+            "plan_video_shoot_last_description",
             "choose_heading",
             "choose_description",
             "choose_image",

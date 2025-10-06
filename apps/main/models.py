@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField, SET_NULL
+from django.db.models.fields import URLField
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.timezone import now
@@ -101,7 +102,12 @@ class Business(Page):
         use_json_field=True,
     )
     how_it_work_heading = RichTextField(_("Heading"), blank=True, null=True)
-    how_it_work_steps = StreamField([("how_it_work_steps", HowItWorkSteps())], min_num=1, use_json_field=True)
+    how_it_work_steps = StreamField([("how_it_work_steps", HowItWorkSteps())], min_num=1, use_json_field=True, default=list)
+    plan_video_shoot_heading = RichTextField(_("Heading"), blank=True, null=True)
+    plan_video_shoot_description = RichTextField(_("Description"), blank=True, null=True)
+    book_call_cta_text = RichTextField(_("CTA Text"), blank=True, null=True)
+    book_call_cta_link = URLField(_("CTA Link"), blank=True, null=True)
+    plan_video_shoot_last_description = RichTextField(_("Last Description"), blank=True, null=True)
     choose_heading = RichTextField(_("Heading"), blank=True, null=True)
     choose_description = RichTextField(_("Description"), blank=True, null=True)
     choose_image = models.ForeignKey(
@@ -159,6 +165,17 @@ class Business(Page):
                 FieldPanel("how_it_work_steps"),
             ],
             heading="How It Works Section",
+            classname="collapsible collapsed",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("plan_video_shoot_heading"),
+                FieldPanel("plan_video_shoot_description"),
+                FieldPanel("book_call_cta_text"),
+                FieldPanel("book_call_cta_link"),
+                FieldPanel("plan_video_shoot_last_description")
+            ],
+            heading="First Influencer Video Shoot Section",
             classname="collapsible collapsed",
         ),
         MultiFieldPanel(
