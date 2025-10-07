@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import uuid
 
 from django.core.cache import cache
@@ -29,6 +30,8 @@ from apps.main.models import FAQs, Business, About, Pricing, JoinTheWoo, Influen
     RestaurantListing, Franchise, HomePage, TermsOfService, PrivacyPolicy, ReviewSystem, DiamondStatus
 from apps.snippet.models import City, Category, Ambience, GiveOffer, CustomUser
 from send_email import send_email
+
+logger = logging.getLogger(__name__)
 
 
 class HomePageAPIView(RetrieveAPIView):
@@ -141,8 +144,10 @@ class InfluencerListingPageAPIView(ListAPIView):
 
         cached_data = cache.get(cache_key)
         if cached_data:
+            logger.info(f"Serving Influencer API from cache: {cache_key}")
             return Response(cached_data, status=200)
 
+        logger.info(f"Generating fresh Influencer API response for: {cache_key}")
         is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
         limit = self.request.query_params.get("limit")
         queryset = self.get_queryset().all()
@@ -164,7 +169,7 @@ class InfluencerListingPageAPIView(ListAPIView):
             response_data = serializer.data
 
         cache.set(cache_key, response_data, timeout=86400)
-
+        logger.info(f"Caching Influencer API response: {cache_key}")
         return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -173,7 +178,7 @@ class RestaurantListingPageAPIView(ListAPIView):
     serializer_class = RestaurantListSerializer
     pagination_class = None
 
-    def build_filtered_queryset(self):
+    def build_filtered_queryset(self, skip_category_intersection: bool = False):
         """
         Build the filtered queryset ONCE.
         This will be reused for results + facets.
@@ -281,6 +286,8 @@ class RestaurantListingPageAPIView(ListAPIView):
         return q
 
     def get_facets(self, queryset):
+        facet_queryset = self.build_filtered_queryset(skip_category_intersection=True)
+
         facets = {}
 
         # Categories
@@ -291,8 +298,8 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     .order_by("categories__id")
         # )
         category_counts = (
-            queryset.values("categories__id", "categories__name")
-            .annotate(count=Count("id"))
+            facet_queryset.values("categories__id", "categories__name")
+            .annotate(count=Count("id", distinct=True))
             .order_by("categories__id")
         )
         facets["categories"] = [
@@ -308,8 +315,8 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     .order_by("budget_friendly")
         # )
         budget_counts = (
-            queryset.values("budget_friendly")
-            .annotate(count=Count("id"))
+            facet_queryset.values("budget_friendly")
+            .annotate(count=Count("id", distinct=True))
             .order_by("budget_friendly")
         )
         facets["budget"] = [
@@ -325,7 +332,7 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     .order_by("-count")
         # )
         influencer_counts = (
-            queryset.values("recommended_by__influencer__id", "recommended_by__influencer__name")
+            facet_queryset.values("recommended_by__influencer__id", "recommended_by__influencer__name")
             .annotate(count=Count("recommended_by", filter=Q(recommended_by__influencer__id__isnull=False)))
             .order_by("-count")
         )
@@ -348,23 +355,58 @@ class RestaurantListingPageAPIView(ListAPIView):
         }
         rating_facets = []
         for key, val in rating_map.items():
-            count = queryset.filter(**val["filter"]).count()
+            count = facet_queryset.filter(**val["filter"]).count()
             rating_facets.append({"id": key, "label": val["label"], "count": count})
         facets["rating"] = rating_facets
 
         return facets
 
+    def generate_cache_key(self, request):
+        """Generate a normalized cache key for restaurant API"""
+        relevant_params = [
+            "page",
+            "city",
+            "type",
+            "categories",
+            "budget-type",
+            "ambience",
+            "recommended-by",
+            "rating",
+            "is_featured",
+            "is_influencer",
+            "q",
+            "is_desktop",
+            "is_pagination",
+            "limit",
+            "sort",
+            "slug",
+            "state",
+        ]
+
+        params = {}
+        for key in relevant_params:
+            values = request.query_params.getlist(key) or request.query_params.getlist(f"{key}[]")
+            if values:
+                # Normalize multi-value params
+                params[key] = sorted(values) if len(values) > 1 else values[0]
+
+        key_string = json.dumps(params, sort_keys=True)
+        return "restaurant_api_" + hashlib.md5(key_string.encode()).hexdigest()
+
     def list(self, request, *args, **kwargs):
-        query_params = request.query_params.dict()
-        for key in request.query_params:
-            values = request.query_params.getlist(key)
-            if len(values) > 1:
-                query_params[key] = values
-        cache_key = "restaurant_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
+        # query_params = request.query_params.dict()
+        # for key in request.query_params:
+        #     values = request.query_params.getlist(key)
+        #     if len(values) > 1:
+        #         query_params[key] = values
+        cache_key = self.generate_cache_key(request)
 
         cached_data = cache.get(cache_key)
         if cached_data:
+            logger.info(f"Serving Restaurant API from cache: {cache_key}")
             return Response(cached_data, status=200)
+
+        logger.info(f"Generating fresh Restaurant API response for: {cache_key}")
         is_paginate = request.query_params.get("is_pagination", "false") == "true"
         limit = request.query_params.get("limit")
 
@@ -391,6 +433,7 @@ class RestaurantListingPageAPIView(ListAPIView):
             "facets": facets,
         }
         cache.set(cache_key, response_data, timeout=86400)
+        logger.info(f"Caching Restaurant API response: {cache_key}")
         return Response(response_data, status=status.HTTP_200_OK)
 
 

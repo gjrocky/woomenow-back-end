@@ -4,3 +4,6 @@ from django.apps import AppConfig
 class SnippetConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.snippet'
+
+    def ready(self):
+        import apps.snippet.signals

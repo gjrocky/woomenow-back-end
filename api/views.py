@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -20,6 +21,8 @@ from api.serializers import CategorySerializer, StatesSerializer, FranchiseSeria
     CitiesSerializer, AmbienceSerializer, ReviewSerializer
 from apps.main.models import Franchise, Restaurant, Review, NotificationPermission, NotificationHistory, RestaurantMedia
 from apps.snippet.models import Category, State, City, Ambience, SiteVisit, PwaInstall
+
+logger = logging.getLogger(__name__)
 
 
 def get_client_ip(request):
@@ -85,15 +88,17 @@ class CategoryAPIView(ListAPIView):
         # Check if cached response exists
         cached_data = cache.get(cache_key)
         if cached_data:
+            logger.info(f"Serving Category API from cache: {cache_key}")
             return Response(cached_data, status=status.HTTP_200_OK)
 
         # Otherwise, generate queryset & serialize
+        logger.info(f"Generating fresh Category API response for: {cache_key}")
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         response_data = serializer.data
 
         cache.set(cache_key, response_data, timeout=86400)
-
+        logger.info(f"Caching Category API response: {cache_key}")
         return Response(response_data, status=status.HTTP_200_OK)
 
 
