@@ -252,7 +252,7 @@ class RestaurantListingPageAPIView(ListAPIView):
         queryset = queryset.filter(q_objects).distinct().order_by(order_by)
 
         # Category intersection (must contain *all* selected categories)
-        if categories:
+        if categories and not skip_category_intersection:
             categories = list(set(categories))
             # queryset = (
             #     queryset.filter(categories__id__in=categories)
