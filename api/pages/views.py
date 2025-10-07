@@ -285,10 +285,11 @@ class RestaurantListingPageAPIView(ListAPIView):
                 q |= Q(rating__lt=3.5)
         return q
 
-    def get_facets(self, queryset):
-        facet_queryset = self.build_filtered_queryset(skip_category_intersection=True)
+    def get_facets(self, full_queryset):
 
         facets = {}
+
+        full_ids = full_queryset.values_list("id", flat=True)
 
         # Categories
         # category_counts = (
@@ -297,14 +298,15 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     .annotate(count=Count("id", distinct=True))
         #     .order_by("categories__id")
         # )
-        category_counts = (
-            facet_queryset.values("categories__id", "categories__name")
-            .annotate(count=Count("id", distinct=True))
+        category_counts_qs = (
+            Restaurant.objects.filter(id__in=full_ids)
+            .values("categories__id", "categories__name")
+            .annotate(count=Count("id"))
             .order_by("categories__id")
         )
         facets["categories"] = [
             {"id": c["categories__id"], "label": c["categories__name"], "count": c["count"]}
-            for c in category_counts
+            for c in category_counts_qs
         ]
 
         # Budget
@@ -314,14 +316,15 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     .annotate(count=Count("id", distinct=True))
         #     .order_by("budget_friendly")
         # )
-        budget_counts = (
-            facet_queryset.values("budget_friendly")
-            .annotate(count=Count("id", distinct=True))
+        budget_counts_qs = (
+            Restaurant.objects.filter(id__in=full_ids)
+            .values("budget_friendly")
+            .annotate(count=Count("id"))
             .order_by("budget_friendly")
         )
         facets["budget"] = [
             {"id": b["budget_friendly"], "label": BudgetType(b["budget_friendly"]).label, "count": b["count"]}
-            for b in budget_counts
+            for b in budget_counts_qs
         ]
 
         # Influencers
@@ -331,19 +334,16 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     .annotate(count=Count("recommended_by", filter=Q(recommended_by__influencer__id__isnull=False)))
         #     .order_by("-count")
         # )
-        influencer_counts = (
-            facet_queryset.values("recommended_by__influencer__id", "recommended_by__influencer__name")
-            .annotate(count=Count("recommended_by", filter=Q(recommended_by__influencer__id__isnull=False)))
+        influencer_counts_qs = (
+            Restaurant.objects.filter(id__in=full_ids, recommended_by__influencer__isnull=False)
+            .values("recommended_by__influencer__id", "recommended_by__influencer__name")
+            .annotate(count=Count("id"))
             .order_by("-count")
         )
-
         facets["influencers"] = [
-            {
-                "id": i["recommended_by__influencer__id"],
-                "label": i["recommended_by__influencer__name"],
-                "count": i["count"],
-            }
-            for i in influencer_counts
+            {"id": i["recommended_by__influencer__id"], "label": i["recommended_by__influencer__name"],
+             "count": i["count"]}
+            for i in influencer_counts_qs
             if i["recommended_by__influencer__id"] is not None
         ]
 
@@ -355,7 +355,7 @@ class RestaurantListingPageAPIView(ListAPIView):
         }
         rating_facets = []
         for key, val in rating_map.items():
-            count = facet_queryset.filter(**val["filter"]).count()
+            count = full_queryset.filter(**val["filter"]).count()
             rating_facets.append({"id": key, "label": val["label"], "count": count})
         facets["rating"] = rating_facets
 
