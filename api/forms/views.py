@@ -373,7 +373,9 @@ class ReviewPostAPIView(APIView):
 
                 if email_template:
                     restaurant_email = [res.email]
-                    name = html.unescape(strip_tags(f"{request.user.first_name} {request.user.last_name}".strip()))
+                    name = html.unescape(strip_tags(res.name))
+                    owner_name = html.unescape(strip_tags(f"{request.user.first_name} {request.user.last_name}".strip()))
+
 
                     # Calculate automation_end_time (final step 5 execution time)
                     countdown_per_step = 24*60*60  # 60 seconds per step for production 24*60*60 24hrs
@@ -384,6 +386,7 @@ class ReviewPostAPIView(APIView):
 
                     context_data = {
                         "business_name": name,
+                        "owner_name": owner_name,
                         "restaurant": res.id,
                         **email_dict,
                     }
