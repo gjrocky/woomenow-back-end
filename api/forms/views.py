@@ -1,3 +1,4 @@
+import html
 import logging
 import uuid
 from datetime import timedelta
@@ -372,7 +373,7 @@ class ReviewPostAPIView(APIView):
 
                 if email_template:
                     restaurant_email = [res.email]
-                    name = strip_tags(res.name)
+                    name = html.unescape(strip_tags(f"{request.user.first_name} {request.user.last_name}".strip()))
 
                     # Calculate automation_end_time (final step 5 execution time)
                     countdown_per_step = 24*60*60  # 60 seconds per step for production 24*60*60 24hrs
@@ -408,7 +409,7 @@ class ReviewPostAPIView(APIView):
                                 f"for {restaurant_email[0]} in flow {category.slug}")
 
                     # Schedule Step 2
-                    countdown_seconds = 24*60*60  # for production 24*60*60 24hrs
+                    countdown_seconds = 24 * 60 * 60  # for production 24*60*60 24hrs
                     send_negative_reviews_email_step.apply_async(
                         args=[str(execution.execution_id), 2, res.id, automation_end_time.isoformat()],
                         countdown=countdown_seconds)
@@ -574,7 +575,7 @@ class RestaurantInvitationAPIView(APIView):
         )
         logger.info(f"[API] Created EmailExecution {execution.execution_id} for {restaurant_email[0]}")
 
-        countdown_seconds = 24*60*60  # for production use 24*60*60.
+        countdown_seconds = 24 * 60 * 60  # for production use 24*60*60.
         send_restaurant_email_step.apply_async(args=[execution_id, 2], countdown=countdown_seconds)
         logger.info(f"[API] Step 2 scheduled for execution_id={execution.execution_id} in {countdown_seconds}s")
 
