@@ -554,7 +554,7 @@ class Restaurant(Page):
         related_name="+",
     )
     reservation_time = JSONField(_("Reservation Time"), blank=True, null=True, default=default_reservation_time)
-    budget_friendly = models.CharField(_('Restaurant Type'), max_length=255, choices=BudgetType.choices,
+    budget_friendly = models.CharField(_('Restaurant Budget Type'), max_length=255, choices=BudgetType.choices,
                                        default=BudgetType.INEXPENSIVE)
     ambience = ParentalManyToManyField("snippet.Ambience", blank=True, related_name="Restaurants")
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='restaurants')
@@ -579,6 +579,7 @@ class Restaurant(Page):
                 FieldPanel("type"),
                 FieldPanel("categories"),
                 FieldPanel("city"),
+                FieldPanel("budget_friendly"),
                 FieldPanel("menus"),
                 FieldPanel("restaurant_images"),
                 FieldPanel("recommended_by"),
