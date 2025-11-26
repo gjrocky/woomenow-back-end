@@ -393,7 +393,7 @@ class ReviewPostAPIView(APIView):
 
                     execution_id = str(uuid.uuid4())
 
-                    send_db_email(restaurant_email, template_choice, context_data, execution_id)
+                    send_db_email(restaurant_email, template_choice, context_data, execution_id, settings.EMAIL_WOO_ME_NOW_REVIEW_EMAIL)
                     logger.info(f"[Review] Step 1 email sent to {restaurant_email} "
                                 f"(choice id: {template_choice.choice_id}) for execution_id={execution_id} "
                                 f"at {timezone.localtime(timezone.now()).strftime('%d %b %Y %I:%M %p')}")

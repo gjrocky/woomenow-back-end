@@ -1,5 +1,6 @@
 import re
 
+from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template import Template, Context
 from django.template.loader import render_to_string
@@ -75,13 +76,20 @@ def send_db_email(to_email, template_type, context_data: dict, execution_id=None
             },
         )
 
+        final_from_email = from_email or settings.DEFAULT_FROM_EMAIL
+
+        if final_from_email in [settings.DEFAULT_FROM_EMAIL, settings.EMAIL_WOO_ME_NOW_NO_REPLY_EMAIL]:
+            final_reply_to = [settings.EMAIL_WOO_ME_NOW_CONTACT_EMAIL]
+        else:
+            final_reply_to = [final_from_email]
+
         # Send email
         email = EmailMessage(
             subject=subject,
             body=full_html,
-            from_email=from_email or "himanshu.suchak@dcycle.design",
+            from_email=final_from_email,
             to=to_email if isinstance(to_email, list) else [to_email],
-            reply_to=["hr@dcycle.design"]
+            reply_to=final_reply_to
         )
         email.content_subtype = "html"
         email.send()

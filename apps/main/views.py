@@ -5,6 +5,7 @@ import logging
 import uuid
 from urllib.parse import unquote
 
+from django.conf import settings
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
@@ -48,9 +49,11 @@ class SendEmailAdminView(FormView):
         execution_id = str(uuid.uuid4())
 
         try:
-            send_db_email(recipient_email, template_obj.template, context_data, execution_id)
+            send_db_email(recipient_email, template_obj.template, context_data, execution_id,
+                          settings.EMAIL_WOO_ME_NOW_NO_REPLY_EMAIL)
             logger.info(
-                f"[Admin] Manual email sent: '{template_obj.name}' (ID: {template_obj.template.choice_id}) to {recipient_email}")
+                f"[Admin] Manual email sent: '{template_obj.name}' (ID: {template_obj.template.choice_id}) to "
+                f"{recipient_email}")
         except Exception as e:
             logger.error(f"[Admin] Failed to send manual email: {e}")
             form.add_error(None, f"Failed to send email: {e}")
@@ -71,7 +74,7 @@ class SendEmailAdminView(FormView):
                     f"Manual email sent: DB Index {template_obj.template.choice_id}")
 
         # Schedule automation based on flow
-        countdown_seconds = 24*60*60  # testing: 1 min; production: 24*60*60
+        countdown_seconds = 24 * 60 * 60  # testing: 1 min; production: 24*60*60
         if category_slug == "restaurant-and-experience-onboarding-playbook":
             send_restaurant_email_step.apply_async(
                 args=[str(execution.execution_id), 2],
