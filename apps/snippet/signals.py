@@ -10,18 +10,15 @@ from apps.snippet.models import Category
 logger = logging.getLogger(__name__)
 
 
-# Function to clear Category API cache
-def clear_category_cache():
-    deleted_count = cache.delete_pattern("category_api_*")
-    if deleted_count:
-        logger.info(f"Category API cache cleared ({deleted_count} keys).")
-    else:
-        logger.info("No Category API cache keys to clear.")
+# Function to clear cache whenever Category/Restaurant change
+def clear_cache():
+    cache.clear()
+    logger.info("Global cache cleared due to Category/Restaurant change.")
 
 
 # Signals to clear cache when Category or Restaurant changes
 @receiver([post_save, post_delete], sender=Category)
 @receiver([post_save, post_delete], sender=Restaurant)
 def clear_category_cache_signal(sender, **kwargs):
-    clear_category_cache()
+    clear_cache()
     logger.info(f"Cache cleared due to changes in {sender.__name__} model.")
