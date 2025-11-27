@@ -1,10 +1,9 @@
-import hashlib
+import json
 import json
 import logging
 
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.core.cache import cache
 from django.db.models import Q
 from pywebpush import webpush, WebPushException
 from rest_framework import permissions, status
@@ -77,28 +76,30 @@ class CategoryAPIView(ListAPIView):
         return categories
 
     def list(self, request, *args, **kwargs):
-        # Generate cache key based on query parameters
-        query_params = request.query_params.dict()
-        for key in request.query_params:
-            values = request.query_params.getlist(key)
-            if len(values) > 1:
-                query_params[key] = values
-        cache_key = "category_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
-
-        # Check if cached response exists
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            logger.info(f"Serving Category API from cache: {cache_key}")
-            return Response(cached_data, status=status.HTTP_200_OK)
-
+        # ---- DISABLE CACHING FOR NOW ----
+        # query_params = request.query_params.dict()
+        # for key in request.query_params:
+        #     values = request.query_params.getlist(key)
+        #     if len(values) > 1:
+        #         query_params[key] = values
+        # cache_key = "category_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
+        #
+        # # Check if cached response exists
+        # cached_data = cache.get(cache_key)
+        # if cached_data:
+        #     logger.info(f"Serving Category API from cache: {cache_key}")
+        #     return Response(cached_data, status=status.HTTP_200_OK)
+        #
         # Otherwise, generate queryset & serialize
-        logger.info(f"Generating fresh Category API response for: {cache_key}")
+        # logger.info(f"Generating fresh Category API response for: {cache_key}")
+
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         response_data = serializer.data
 
-        cache.set(cache_key, response_data, timeout=86400)
-        logger.info(f"Caching Category API response: {cache_key}")
+        # cache.set(cache_key, response_data, timeout=86400)
+        # logger.info(f"Caching Category API response: {cache_key}")
+
         return Response(response_data, status=status.HTTP_200_OK)
 
 

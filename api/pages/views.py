@@ -139,15 +139,15 @@ class InfluencerListingPageAPIView(ListAPIView):
         return queryset.distinct()
 
     def list(self, request, *args, **kwargs):
-        query_params = request.query_params.dict()
-        cache_key = "influencer_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
-
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            logger.info(f"Serving Influencer API from cache: {cache_key}")
-            return Response(cached_data, status=200)
-
-        logger.info(f"Generating fresh Influencer API response for: {cache_key}")
+        # query_params = request.query_params.dict()
+        # cache_key = "influencer_api_" + hashlib.md5(json.dumps(query_params, sort_keys=True).encode()).hexdigest()
+        #
+        # cached_data = cache.get(cache_key)
+        # if cached_data:
+        #     logger.info(f"Serving Influencer API from cache: {cache_key}")
+        #     return Response(cached_data, status=200)
+        #
+        # logger.info(f"Generating fresh Influencer API response for: {cache_key}")
         is_paginate = self.request.query_params.get("is_pagination", 'false') == 'true'
         limit = self.request.query_params.get("limit")
         queryset = self.get_queryset().all()
@@ -168,8 +168,8 @@ class InfluencerListingPageAPIView(ListAPIView):
         else:
             response_data = serializer.data
 
-        cache.set(cache_key, response_data, timeout=86400)
-        logger.info(f"Caching Influencer API response: {cache_key}")
+        # cache.set(cache_key, response_data, timeout=86400)
+        # logger.info(f"Caching Influencer API response: {cache_key}")
         return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -361,37 +361,37 @@ class RestaurantListingPageAPIView(ListAPIView):
 
         return facets
 
-    def generate_cache_key(self, request):
-        """Generate a normalized cache key for restaurant API"""
-        relevant_params = [
-            "page",
-            "city",
-            "type",
-            "categories",
-            "budget-type",
-            "ambience",
-            "recommended-by",
-            "rating",
-            "is_featured",
-            "is_influencer",
-            "q",
-            "is_desktop",
-            "is_pagination",
-            "limit",
-            "sort",
-            "slug",
-            "state",
-        ]
-
-        params = {}
-        for key in relevant_params:
-            values = request.query_params.getlist(key) or request.query_params.getlist(f"{key}[]")
-            if values:
-                # Normalize multi-value params
-                params[key] = sorted(values) if len(values) > 1 else values[0]
-
-        key_string = json.dumps(params, sort_keys=True)
-        return "restaurant_api_" + hashlib.md5(key_string.encode()).hexdigest()
+    # def generate_cache_key(self, request):
+    #     """Generate a normalized cache key for restaurant API"""
+    #     relevant_params = [
+    #         "page",
+    #         "city",
+    #         "type",
+    #         "categories",
+    #         "budget-type",
+    #         "ambience",
+    #         "recommended-by",
+    #         "rating",
+    #         "is_featured",
+    #         "is_influencer",
+    #         "q",
+    #         "is_desktop",
+    #         "is_pagination",
+    #         "limit",
+    #         "sort",
+    #         "slug",
+    #         "state",
+    #     ]
+    #
+    #     params = {}
+    #     for key in relevant_params:
+    #         values = request.query_params.getlist(key) or request.query_params.getlist(f"{key}[]")
+    #         if values:
+    #             # Normalize multi-value params
+    #             params[key] = sorted(values) if len(values) > 1 else values[0]
+    #
+    #     key_string = json.dumps(params, sort_keys=True)
+    #     return "restaurant_api_" + hashlib.md5(key_string.encode()).hexdigest()
 
     def list(self, request, *args, **kwargs):
         # query_params = request.query_params.dict()
@@ -399,14 +399,14 @@ class RestaurantListingPageAPIView(ListAPIView):
         #     values = request.query_params.getlist(key)
         #     if len(values) > 1:
         #         query_params[key] = values
-        cache_key = self.generate_cache_key(request)
+        # cache_key = self.generate_cache_key(request)
 
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            logger.info(f"Serving Restaurant API from cache: {cache_key}")
-            return Response(cached_data, status=200)
-
-        logger.info(f"Generating fresh Restaurant API response for: {cache_key}")
+        # cached_data = cache.get(cache_key)
+        # if cached_data:
+        #     logger.info(f"Serving Restaurant API from cache: {cache_key}")
+        #     return Response(cached_data, status=200)
+        #
+        # logger.info(f"Generating fresh Restaurant API response for: {cache_key}")
         is_paginate = request.query_params.get("is_pagination", "false") == "true"
         limit = request.query_params.get("limit")
 
@@ -432,8 +432,8 @@ class RestaurantListingPageAPIView(ListAPIView):
             "total_restaurant": full_queryset.count(),
             "facets": facets,
         }
-        cache.set(cache_key, response_data, timeout=86400)
-        logger.info(f"Caching Restaurant API response: {cache_key}")
+        # cache.set(cache_key, response_data, timeout=86400)
+        # logger.info(f"Caching Restaurant API response: {cache_key}")
         return Response(response_data, status=status.HTTP_200_OK)
 
 

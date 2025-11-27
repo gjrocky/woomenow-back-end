@@ -29,35 +29,35 @@ def handle_review_save(sender, instance, created, **kwargs):
         print(f"Error updating restaurant rating: {e}")
 
 
-def clear_global_cache(reason: str):
-    cache.clear()
-    logger.info(f"Global cache cleared due to {reason}.")
+# def clear_global_cache(reason: str):
+#     cache.clear()
+#     logger.info(f"Global cache cleared due to {reason}.")
 
 
-@page_published.connect
-def handle_restaurant_publish(sender, instance, **kwargs):
-    if instance.specific_class.__name__ == "Restaurant":
-        clear_global_cache(f'Restaurant publish event (title="{instance.title}", id={instance.id})')
-
-
-@page_unpublished.connect
-def handle_restaurant_unpublish(sender, instance, **kwargs):
-    if instance.specific_class.__name__ == "Restaurant":
-        clear_global_cache(f'Restaurant unpublish event (title="{instance.title}", id={instance.id})')
-
-
-@page_published.connect
-def handle_influencer_publish(sender, instance, **kwargs):
-    if instance.specific_class.__name__ == "Influencer":
-        clear_global_cache(f'Influencer publish event (title="{instance.title}", id={instance.id})')
-
-
-@page_unpublished.connect
-def handle_influencer_unpublish(sender, instance, **kwargs):
-    if instance.specific_class.__name__ == "Influencer":
-        clear_global_cache(f'Influencer unpublish event (title="{instance.title}", id={instance.id})')
-
-
-@receiver([post_save, post_delete], sender=Influencer)
-def handle_influencer_crud(sender, **kwargs):
-    clear_global_cache("Influencer model CRUD operation")
+# @page_published.connect
+# def handle_restaurant_publish(sender, instance, **kwargs):
+#     if instance.specific_class.__name__ == "Restaurant":
+#         clear_global_cache(f'Restaurant publish event (title="{instance.title}", id={instance.id})')
+#
+#
+# @page_unpublished.connect
+# def handle_restaurant_unpublish(sender, instance, **kwargs):
+#     if instance.specific_class.__name__ == "Restaurant":
+#         clear_global_cache(f'Restaurant unpublish event (title="{instance.title}", id={instance.id})')
+#
+#
+# @page_published.connect
+# def handle_influencer_publish(sender, instance, **kwargs):
+#     if instance.specific_class.__name__ == "Influencer":
+#         clear_global_cache(f'Influencer publish event (title="{instance.title}", id={instance.id})')
+#
+#
+# @page_unpublished.connect
+# def handle_influencer_unpublish(sender, instance, **kwargs):
+#     if instance.specific_class.__name__ == "Influencer":
+#         clear_global_cache(f'Influencer unpublish event (title="{instance.title}", id={instance.id})')
+#
+#
+# @receiver([post_save, post_delete], sender=Influencer)
+# def handle_influencer_crud(sender, **kwargs):
+#     clear_global_cache("Influencer model CRUD operation")
