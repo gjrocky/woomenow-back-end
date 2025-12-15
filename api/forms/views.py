@@ -579,7 +579,7 @@ class RestaurantInvitationAPIView(APIView):
         )
         logger.info(f"[API] Created EmailExecution {execution.execution_id} for {restaurant_email[0]}")
 
-        countdown_seconds = 24 * 60 * 60  # for production use 24*60*60.
+        countdown_seconds = 5 * 60  # for production use 24*60*60.
         send_restaurant_email_step.apply_async(args=(execution_id, 2), countdown=countdown_seconds)
         logger.info(f"[API] Step 2 scheduled for execution_id={execution.execution_id} in {countdown_seconds}s")
 
