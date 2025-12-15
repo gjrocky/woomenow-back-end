@@ -74,7 +74,7 @@ class SendEmailAdminView(FormView):
                     f"Manual email sent: DB Index {template_obj.template.choice_id}")
 
         # Schedule automation based on flow
-        countdown_seconds = 5 * 60  # testing: 1 min; production: 24*60*60
+        countdown_seconds = 24 * 60 * 60  # testing: 1 min; production: 24*60*60
         if category_slug == "restaurant-and-experience-onboarding-playbook":
             send_restaurant_email_step.apply_async(
                 args=(str(execution.execution_id), 2),

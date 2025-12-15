@@ -60,7 +60,7 @@ def send_restaurant_email_step(execution_uuid, step_number):
 
         # Step 2 logic: wait for CTA
         if step_number == 2:
-            wait_seconds = 5 * 60  # testing: 1 min; production: 24*60*60
+            wait_seconds = 24 * 60 * 60  # testing: 1 min; production: 24*60*60
             elapsed_seconds = (timezone.now() - execution.last_sent_at).total_seconds() if execution.last_sent_at else 0
 
             if elapsed_seconds < wait_seconds:
@@ -140,7 +140,7 @@ def send_restaurant_email_step(execution_uuid, step_number):
             # Schedule next drip step if any
             if next_index + 1 < len(drip_templates):
                 next_step_number = step_number + 1
-                countdown_seconds = 5 * 60  # testing: 1 min; production: 24*60*60
+                countdown_seconds = 24 * 60 * 60  # testing: 1 min; production: 24*60*60
                 logger.info(
                     f"[Step {step_number}] Scheduling next drip step {next_step_number} in {countdown_seconds}s")
                 send_restaurant_email_step.apply_async(args=(execution_uuid, next_step_number),
