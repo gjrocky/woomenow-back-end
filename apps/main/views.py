@@ -77,7 +77,7 @@ class SendEmailAdminView(FormView):
         countdown_seconds = 24 * 60 * 60  # testing: 1 min; production: 24*60*60
         if category_slug == "restaurant-and-experience-onboarding-playbook":
             send_restaurant_email_step.apply_async(
-                args=[str(execution.execution_id), 2],
+                args=(str(execution.execution_id), 2),
                 countdown=countdown_seconds
             )
             logger.info(f"[Admin] Step 2 scheduled for execution_id={execution.execution_id} in {countdown_seconds}s")

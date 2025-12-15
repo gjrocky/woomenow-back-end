@@ -374,11 +374,11 @@ class ReviewPostAPIView(APIView):
                 if email_template:
                     restaurant_email = [res.email]
                     name = html.unescape(strip_tags(res.name))
-                    owner_name = html.unescape(strip_tags(f"{request.user.first_name} {request.user.last_name}".strip()))
-
+                    owner_name = html.unescape(
+                        strip_tags(f"{request.user.first_name} {request.user.last_name}".strip()))
 
                     # Calculate automation_end_time (final step 5 execution time)
-                    countdown_per_step = 24*60*60  # 60 seconds per step for production 24*60*60 24hrs
+                    countdown_per_step = 24 * 60 * 60  # 60 seconds per step for production 24*60*60 24hrs
                     total_steps = 5
                     automation_end_time = timezone.localtime(
                         timezone.now() + timedelta(seconds=(total_steps - 1) * countdown_per_step)
@@ -393,7 +393,8 @@ class ReviewPostAPIView(APIView):
 
                     execution_id = str(uuid.uuid4())
 
-                    send_db_email(restaurant_email, template_choice, context_data, execution_id, settings.EMAIL_WOO_ME_NOW_REVIEW_EMAIL)
+                    send_db_email(restaurant_email, template_choice, context_data, execution_id,
+                                  settings.EMAIL_WOO_ME_NOW_REVIEW_EMAIL)
                     logger.info(f"[Review] Step 1 email sent to {restaurant_email} "
                                 f"(choice id: {template_choice.choice_id}) for execution_id={execution_id} "
                                 f"at {timezone.localtime(timezone.now()).strftime('%d %b %Y %I:%M %p')}")
@@ -414,7 +415,7 @@ class ReviewPostAPIView(APIView):
                     # Schedule Step 2
                     countdown_seconds = 24 * 60 * 60  # for production 24*60*60 24hrs
                     send_negative_reviews_email_step.apply_async(
-                        args=[str(execution.execution_id), 2, res.id, automation_end_time.isoformat()],
+                        args=(str(execution.execution_id), 2, res.id, automation_end_time.isoformat()),
                         countdown=countdown_seconds)
                     logger.info(f"[Review] Scheduled step 2 for execution_id={execution.execution_id} "
                                 f"in {countdown_seconds}s")
@@ -579,7 +580,7 @@ class RestaurantInvitationAPIView(APIView):
         logger.info(f"[API] Created EmailExecution {execution.execution_id} for {restaurant_email[0]}")
 
         countdown_seconds = 24 * 60 * 60  # for production use 24*60*60.
-        send_restaurant_email_step.apply_async(args=[execution_id, 2], countdown=countdown_seconds)
+        send_restaurant_email_step.apply_async(args=(execution_id, 2), countdown=countdown_seconds)
         logger.info(f"[API] Step 2 scheduled for execution_id={execution.execution_id} in {countdown_seconds}s")
 
         return Response(
