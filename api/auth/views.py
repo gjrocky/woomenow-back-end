@@ -106,10 +106,7 @@ class SignupAPIView(APIView):
         template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=1)
         email_template = EmailTemplate.objects.filter(template=template_choice).first()
         if not email_template:
-            return Response(
-                {"error": f"No email template found for choice {template_choice.label}"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+            raise Exception(f"No email template found for choice {template_choice.label}")
         e = [email]
         # body = 'emails/confirmation.html'
         context = dict(username=user.first_name, otp=otp_code, **email_dict)
@@ -143,12 +140,13 @@ class SignupAPIView(APIView):
             user.phone = phone
             try:
                 OTPVerification.objects.get(user=user).delete()
-            except:
+            except OTPVerification.DoesNotExist:
                 pass
-            self.create_or_update_user(user, password, email)
 
+            self.create_or_update_user(user, password, email)
             return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
-        except Exception as e:
+
+        except User.DoesNotExist:
             if password != confirm_password:
                 return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -161,6 +159,9 @@ class SignupAPIView(APIView):
             self.create_or_update_user(user, password, email)
 
             return Response({"message": "OTP sent to email"}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VerifyOTPAPIView(APIView):

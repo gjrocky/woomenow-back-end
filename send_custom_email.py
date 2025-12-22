@@ -1,4 +1,6 @@
+import logging
 import re
+from smtplib import SMTPAuthenticationError, SMTPException
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -8,6 +10,8 @@ from django.template.loader import render_to_string
 from apps.snippet.models import EmailTemplate
 from woo_me_now_backend.utils.helpers import replace_tracking_link, replace_restaurant_id_and_respond_link, \
     inject_icons_in_list_items, add_padding_to_p_before_ul_or_a, style_otp
+
+logger = logging.getLogger(__name__)
 
 
 def send_db_email(to_email, template_type, context_data: dict, execution_id=None, from_email=None):
@@ -95,4 +99,17 @@ def send_db_email(to_email, template_type, context_data: dict, execution_id=None
         email.send()
 
     except EmailTemplate.DoesNotExist:
+        logger.error(f"Email template '{template_type}' not found.")
         raise Exception(f"Email template '{template_type}' not found.")
+
+    except SMTPAuthenticationError:
+        logger.error('SMTP Authentication failed', exc_info=True)
+        raise Exception('Email service authentication failed.')
+
+    except SMTPException:
+        logger.error('SMTP Error while sending email', exc_info=True)
+        raise Exception('Email service error while sending email.')
+
+    except Exception:
+        logger.error('Unexpected error while sending email', exc_info=True)
+        raise Exception('Failed to send email.')
