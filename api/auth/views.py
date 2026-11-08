@@ -1,4 +1,4 @@
-import random
+import secrets
 from datetime import datetime
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -16,7 +16,14 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
+from api.auth.otp import generate_otp
 from api.auth.serializers import UserSerializer
+from api.auth.throttles import (
+    OTPIssueEmailThrottle,
+    OTPIssueIPThrottle,
+    OTPVerifyEmailThrottle,
+    OTPVerifyIPThrottle,
+)
 from api.auth.tokens import issue_password_reset_token, password_reset_token_is_valid
 from api.helper import password_checker
 from apps.main.helper import email_dict
@@ -92,6 +99,8 @@ class UserView(APIView):
 
 
 class SignupAPIView(APIView):
+    throttle_classes = [OTPIssueIPThrottle, OTPIssueEmailThrottle]
+
 
     def create_or_update_user(self, user, password, email):
 
@@ -100,7 +109,7 @@ class SignupAPIView(APIView):
         user.save()
 
         # Generate OTP
-        otp_code = str(random.randint(100000, 999999))
+        otp_code = generate_otp()
         OTPVerification.objects.create(user=user, otp=otp_code, expires_at=now() + timedelta(minutes=10))
 
         category = get_object_or_404(EmailCategory, slug='security-flow')
@@ -166,6 +175,8 @@ class SignupAPIView(APIView):
 
 
 class VerifyOTPAPIView(APIView):
+    throttle_classes = [OTPVerifyIPThrottle, OTPVerifyEmailThrottle]
+
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         otp_code = request.data.get("otp")
@@ -174,7 +185,12 @@ class VerifyOTPAPIView(APIView):
             user = User.objects.get(email=email)
             otp_entry = OTPVerification.objects.get(user=user)
 
-            if otp_entry.otp == otp_code and otp_entry.is_valid():
+            # Encoded rather than compared as str because compare_digest
+            # rejects non-ASCII input, which a client can send.
+            codes_match = secrets.compare_digest(
+                otp_entry.otp.encode(), str(otp_code or "").encode()
+            )
+            if codes_match and otp_entry.is_valid():
                 if not user.is_active:
                     category = get_object_or_404(EmailCategory, slug='user-onboarding-flow')
                     template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=1)
@@ -203,6 +219,14 @@ class VerifyOTPAPIView(APIView):
                     status=status.HTTP_200_OK,
                 )
             else:
+                # Spend a guess. Without this a 6-digit code can be walked
+                # through from enough source addresses.
+                otp_entry.register_failed_attempt()
+                if otp_entry.is_locked:
+                    return Response(
+                        {"error": "Too many incorrect codes. Please request a new one."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
         except (User.DoesNotExist, OTPVerification.DoesNotExist):
@@ -210,16 +234,20 @@ class VerifyOTPAPIView(APIView):
 
 
 class ResendOTPAPIView(APIView):
+    throttle_classes = [OTPIssueIPThrottle, OTPIssueEmailThrottle]
+
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
 
         try:
             user = User.objects.get(email=email)
             otp_entry, created = OTPVerification.objects.get_or_create(user=user)
-            otp = str(random.randint(100000, 999999))
+            otp = generate_otp()
 
             otp_entry.otp = otp
             otp_entry.expires_at = now() + timedelta(minutes=10)
+            # A fresh code gets a fresh guess budget.
+            otp_entry.attempts = 0
             otp_entry.save()
             category = get_object_or_404(EmailCategory, slug='security-flow')
             template_choice = get_object_or_404(EmailTemplateChoice, category=category, choice_id=2)
@@ -243,14 +271,18 @@ class ResendOTPAPIView(APIView):
 
 
 class ResetPasswordAPIView(APIView):
+    throttle_classes = [OTPIssueIPThrottle, OTPIssueEmailThrottle]
+
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
         try:
             user = User.objects.get(email=email)
             otp_entry, created = OTPVerification.objects.get_or_create(user=user)
-            otp = str(random.randint(100000, 999999))
+            otp = generate_otp()
             otp_entry.otp = otp
             otp_entry.expires_at = now() + timedelta(minutes=10)
+            # A fresh code gets a fresh guess budget.
+            otp_entry.attempts = 0
             otp_entry.save()
 
             category = get_object_or_404(EmailCategory, slug='security-flow')

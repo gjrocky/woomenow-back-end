@@ -658,12 +658,27 @@ class BecomeInfluencer(BaseModel):
 
 
 class OTPVerification(models.Model):
+    # A 6-digit code is only 900k possibilities, and verifying one is the last
+    # barrier before a password reset. Rate limits can be sidestepped by
+    # rotating source IPs, so the number of guesses per issued code is capped
+    # here instead; that bound holds no matter where the requests come from.
+    MAX_ATTEMPTS = 5
+
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
     expires_at = models.DateTimeField(default=now)
+    attempts = models.PositiveSmallIntegerField(_("Failed Attempts"), default=0)
 
     def is_valid(self):
-        return now() < self.expires_at
+        return now() < self.expires_at and self.attempts < self.MAX_ATTEMPTS
+
+    def register_failed_attempt(self):
+        self.attempts += 1
+        self.save(update_fields=["attempts"])
+
+    @property
+    def is_locked(self):
+        return self.attempts >= self.MAX_ATTEMPTS
 
 
 class NotificationPermission(BaseModel):

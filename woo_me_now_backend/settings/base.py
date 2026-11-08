@@ -278,6 +278,18 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    # Applied per-view by the classes in api/auth/throttles.py. Counters live
+    # in the Django cache, which is Redis here, so they are shared across
+    # gunicorn workers.
+    'DEFAULT_THROTTLE_RATES': {
+        # Guessing a code. The per-code attempt cap on OTPVerification is the
+        # hard bound; these stop someone cycling fresh codes at speed.
+        'otp_verify_ip': '30/min',
+        'otp_verify_email': '30/hour',
+        # Requesting a code. Also the email-bomb and enumeration limit.
+        'otp_issue_ip': '15/hour',
+        'otp_issue_email': '8/hour',
+    },
 }
 REST_USE_JWT = True
 SIMPLE_JWT = {
