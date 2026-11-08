@@ -17,6 +17,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from api.auth.serializers import UserSerializer
+from api.auth.tokens import issue_password_reset_token, password_reset_token_is_valid
 from api.helper import password_checker
 from apps.main.helper import email_dict
 from apps.main.models import OTPVerification
@@ -192,7 +193,15 @@ class VerifyOTPAPIView(APIView):
                 user.is_active = True
                 user.save()
                 otp_entry.delete()  # OTP used, remove entry
-                return Response({"message": "Email verified"}, status=status.HTTP_200_OK)
+                # Verifying the code consumes it, so hand back proof that it
+                # was checked. change-password requires this.
+                return Response(
+                    {
+                        "message": "Email verified",
+                        "reset_token": issue_password_reset_token(user),
+                    },
+                    status=status.HTTP_200_OK,
+                )
             else:
                 return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -272,10 +281,19 @@ class ChangePasswordAPIView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
         confirm_password = request.data.get("confirm_password")
+        reset_token = request.data.get("reset_token")
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Without this the endpoint would take over any account from the email
+        # address alone. The token is only issued after a verified OTP.
+        if not password_reset_token_is_valid(reset_token, user):
+            return Response(
+                {"error": "This password reset session is invalid or has expired. Please request a new code."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if password != confirm_password:
             return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
